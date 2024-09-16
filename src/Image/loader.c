@@ -3,10 +3,11 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
+#include <err.h>
 
 #include "Utils/image.h"
-#include "Proprocess/binary.h"
-#include "Proprocess/grayscale.h"
+#include "Preprocess/binary.h"
+#include "Preprocess/grayscale.h"
 
 int init_sdl()
 {
@@ -26,7 +27,6 @@ int init_sdl()
     return 0;
 }
 
-
 SDL_Surface *load_surface(const char *image_path)
 {
     SDL_Surface *surface = IMG_Load(image_path);
@@ -36,7 +36,6 @@ SDL_Surface *load_surface(const char *image_path)
     }
     return surface;
 }
-
 
 iImage *create_image(unsigned int width, unsigned int height, const char *image_path)
 {
@@ -142,15 +141,51 @@ iImage *load_image(const char *image_path)
     return img;
 }
 
-void saveImage(Image *img, char *path)
+void save_image(iImage *img, const char *image_path)
 {
-    SDL_Surface *surface = createSurface(image);
-
-    if (SDL_SaveBMP(surface, path) != 0)
+    if (img == NULL || img->pixels == NULL)
     {
-        errx(EXIT_FAILURE, "Error while saving file");
+        fprintf(stderr, "Erreur : image ou pixels invalide.\n");
+        return;
     }
+
+    // Création d'une surface SDL pour contenir l'image en format RGB
+    SDL_Surface *surface = SDL_CreateRGBSurfaceWithFormat(0, img->width, img->height, 24, SDL_PIXELFORMAT_RGB24);
+    if (surface == NULL)
+    {
+        fprintf(stderr, "Erreur lors de la création de la surface SDL : %s\n", SDL_GetError());
+        return;
+    }
+
+    // Remplir la surface SDL avec les pixels de l'image
+    for (unsigned int y = 0; y < img->height; y++)
+    {
+        for (unsigned int x = 0; x < img->width; x++)
+        {
+            // Accéder au pixel dans la surface SDL
+            Uint32 *target_pixel = (Uint32 *)((Uint8 *)surface->pixels + y * surface->pitch + x * 3);
+            // Obtenir le pixel depuis iImage
+            pPixel current_pixel = img->pixels[y][x];
+
+            // Encoder le pixel en format RGB pour SDL
+            Uint32 rgb_pixel = SDL_MapRGB(surface->format, current_pixel.r, current_pixel.g, current_pixel.b);
+
+            // Stocker le pixel dans la surface SDL
+            *target_pixel = rgb_pixel;
+        }
+    }
+
+    // Sauvegarde de la surface en PNG
+    if (IMG_SavePNG(surface, image_path) != 0)
+    {
+        fprintf(stderr, "Erreur lors de la sauvegarde de l'image PNG : %s\n", IMG_GetError());
+        SDL_FreeSurface(surface);
+        return;
+    }
+
+    // Libérer la surface
     SDL_FreeSurface(surface);
+    printf("Image sauvegardée avec succès dans le fichier : %s\n", image_path);
 }
 
 void free_image(iImage *img)
@@ -175,9 +210,9 @@ void free_image(iImage *img)
 
 int main(int argc, char *argv[])
 {
-    if (argc < 2)
+    if (argc != 3)
     {
-        printf("Usage: %s <path_to_image>\n", argv[0]);
+        printf("Usage: %s <path_to_image> <output_image>\n", argv[0]);
         return 1;
     }
 
@@ -186,7 +221,9 @@ int main(int argc, char *argv[])
     if (img != NULL)
     {
         printf("Image chargée avec succès : %dx%d pixels\n", img->width, img->height);
-        grayscale()
+        grayscale(img);
+        //binary(img);
+        save_image(img, argv[2]);
         free_image(img);
     }
 

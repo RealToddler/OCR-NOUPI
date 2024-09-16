@@ -23,8 +23,10 @@ iImage *create_image(unsigned int width, unsigned int height, const char *image_
 
 void extract_pixels(SDL_Surface *surface, iImage *img);
 
-iImage *load_image(const char *path);
+iImage *load_image(const char *image_path);
 
 void free_image(iImage *image_path);
+
+void save_image(iImage *img, const char *image_path);
 
 #endif
