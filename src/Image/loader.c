@@ -6,8 +6,14 @@
 #include <err.h>
 
 #include "Utils/image.h"
+
+#include "Image/resize.h"
+#include "Image/deskew.h"
+
 #include "Preprocess/binary.h"
 #include "Preprocess/grayscale.h"
+#include "Preprocess/otsu.h"
+#include "Preprocess/contrasts.h"
 
 int init_sdl()
 {
@@ -216,14 +222,19 @@ int main(int argc, char *argv[])
         return 1;
     }
 
-    // Charger l'image
+    // Charger l'image + resize
     iImage *img = load_image(argv[1]);
+
     if (img != NULL)
     {
         printf("Image chargée avec succès : %dx%d pixels\n", img->width, img->height);
         grayscale(img);
-        //binary(img);
-        save_image(img, argv[2]);
+        otsu_threshold(img);
+        binary(img);
+        increase_contrast(img, 2);
+        iImage *deskewed = deskew_image(img);
+        iImage *resized = resize_image(deskewed, 500, 500);
+        save_image(resized, argv[2]);
         free_image(img);
     }
 
