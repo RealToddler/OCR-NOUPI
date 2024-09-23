@@ -10,7 +10,7 @@ void grayscale(iImage *img)
     {
         for (unsigned int x = 0; x < width; x++)
         {
-            pPixel *pixel = &img->pixels[y][x]; // Accès correct au pixel
+            pPixel *pixel = &img->pixels[y][x];
             double graylevel = 0.3 * pixel->r + 0.59 * pixel->g + 0.11 * pixel->b;
             unsigned char gray = (unsigned char)graylevel;
 

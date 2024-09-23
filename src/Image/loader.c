@@ -8,30 +8,13 @@
 #include "Utils/image.h"
 
 #include "Image/resize.h"
-#include "Image/deskew.h"
 
 #include "Preprocess/binary.h"
 #include "Preprocess/grayscale.h"
 #include "Preprocess/otsu.h"
 #include "Preprocess/contrasts.h"
-
-int init_sdl()
-{
-    if (SDL_Init(SDL_INIT_VIDEO) != 0)
-    {
-        printf("Erreur d'initialisation de SDL: %s\n", SDL_GetError());
-        return -1;
-    }
-
-    if (!(IMG_Init(IMG_INIT_PNG) & IMG_INIT_PNG))
-    {
-        printf("Erreur d'initialisation de SDL_image: %s\n", IMG_GetError());
-        SDL_Quit();
-        return -1;
-    }
-
-    return 0;
-}
+#include "Preprocess/denoise.h"
+#include "Preprocess/rotation.h"
 
 SDL_Surface *load_surface(const char *image_path)
 {
@@ -95,14 +78,41 @@ iImage *create_image(unsigned int width, unsigned int height, const char *image_
 
 void extract_pixels(SDL_Surface *surface, iImage *img)
 {
-    Uint32 *sdl_pixels = (Uint32 *)surface->pixels;
-    int pitch = surface->pitch / 4;
+    SDL_LockSurface(surface);
+
+    Uint8 *pixels = (Uint8 *)surface->pixels;
+    int bpp = surface->format->BytesPerPixel;
+    int pitch = surface->pitch;
 
     for (unsigned int y = 0; y < img->height; ++y)
     {
         for (unsigned int x = 0; x < img->width; ++x)
         {
-            unsigned int pixel_value = sdl_pixels[y * pitch + x];
+            Uint8 *p = pixels + y * pitch + x * bpp;
+            Uint32 pixel_value;
+
+            switch (bpp)
+            {
+            case 1:
+                pixel_value = *p;
+                break;
+            case 2:
+                pixel_value = *(Uint16 *)p;
+                break;
+            case 3:
+                if (SDL_BYTEORDER == SDL_BIG_ENDIAN)
+                    pixel_value = p[0] << 16 | p[1] << 8 | p[2];
+                else
+                    pixel_value = p[0] | p[1] << 8 | p[2] << 16;
+                break;
+            case 4:
+                pixel_value = *(Uint32 *)p;
+                break;
+            default:
+                pixel_value = 0; // Should not happen
+                break;
+            }
+
             Uint8 r, g, b;
             SDL_GetRGB(pixel_value, surface->format, &r, &g, &b);
 
@@ -111,20 +121,15 @@ void extract_pixels(SDL_Surface *surface, iImage *img)
             img->pixels[y][x].b = b;
         }
     }
+
+    SDL_UnlockSurface(surface);
 }
 
 iImage *load_image(const char *image_path)
 {
-    if (init_sdl() != 0)
-    {
-        return NULL;
-    }
-
     SDL_Surface *surface = load_surface(image_path);
     if (surface == NULL)
     {
-        IMG_Quit();
-        SDL_Quit();
         return NULL;
     }
 
@@ -132,17 +137,12 @@ iImage *load_image(const char *image_path)
     if (img == NULL)
     {
         SDL_FreeSurface(surface);
-        IMG_Quit();
-        SDL_Quit();
         return NULL;
     }
 
     extract_pixels(surface, img);
 
     SDL_FreeSurface(surface);
-
-    IMG_Quit();
-    SDL_Quit();
 
     return img;
 }
@@ -163,23 +163,24 @@ void save_image(iImage *img, const char *image_path)
         return;
     }
 
-    // Remplir la surface SDL avec les pixels de l'image
+    SDL_LockSurface(surface);
+
+    Uint8 *pixels = (Uint8 *)surface->pixels;
+    int pitch = surface->pitch;
+
     for (unsigned int y = 0; y < img->height; y++)
     {
         for (unsigned int x = 0; x < img->width; x++)
         {
-            // Accéder au pixel dans la surface SDL
-            Uint32 *target_pixel = (Uint32 *)((Uint8 *)surface->pixels + y * surface->pitch + x * 3);
-            // Obtenir le pixel depuis iImage
             pPixel current_pixel = img->pixels[y][x];
-
-            // Encoder le pixel en format RGB pour SDL
-            Uint32 rgb_pixel = SDL_MapRGB(surface->format, current_pixel.r, current_pixel.g, current_pixel.b);
-
-            // Stocker le pixel dans la surface SDL
-            *target_pixel = rgb_pixel;
+            Uint8 *p = pixels + y * pitch + x * 3;
+            p[0] = current_pixel.r;
+            p[1] = current_pixel.g;
+            p[2] = current_pixel.b;
         }
     }
+
+    SDL_UnlockSurface(surface);
 
     // Sauvegarde de la surface en PNG
     if (IMG_SavePNG(surface, image_path) != 0)
@@ -222,21 +223,49 @@ int main(int argc, char *argv[])
         return 1;
     }
 
+    if (SDL_Init(SDL_INIT_VIDEO) != 0)
+    {
+        printf("Erreur d'initialisation de SDL: %s\n", SDL_GetError());
+        return -1;
+    }
+
+    if (!(IMG_Init(IMG_INIT_PNG) & IMG_INIT_PNG))
+    {
+        printf("Erreur d'initialisation de SDL_image: %s\n", IMG_GetError());
+        SDL_Quit();
+        return -1;
+    }
+
+    // temp params
+    double angle = -42.0;
+    float sharpness = 2.5f;
+
     // Charger l'image + resize
-    iImage *img = load_image(argv[1]);
+    iImage *img = resize_image(load_image(argv[1]), 1000, 1000);
+    iImage *temp_img;
 
     if (img != NULL)
     {
         printf("Image chargée avec succès : %dx%d pixels\n", img->width, img->height);
+
+        if (angle != -42) {
+            temp_img = rotate_image(img, angle);
+            img = temp_img;
+        }
+
         grayscale(img);
-        otsu_threshold(img);
         binary(img);
-        increase_contrast(img, 2);
-        iImage *deskewed = deskew_image(img);
-        iImage *resized = resize_image(deskewed, 500, 500);
-        save_image(resized, argv[2]);
+        increase_contrast(img, -100);
+        apply_unsharp_mask(img, sharpness);
+        otsu_threshold(img);
+
+
+        save_image(img, argv[2]);
         free_image(img);
     }
+
+    IMG_Quit();
+    SDL_Quit();
 
     return 0;
 }
