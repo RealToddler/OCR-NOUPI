@@ -9,6 +9,8 @@
 
 #include "Image/resize.h"
 
+#include "Detection/letters.h"
+
 #include "Preprocess/binary.h"
 #include "Preprocess/grayscale.h"
 #include "Preprocess/otsu.h"
@@ -238,7 +240,7 @@ int main(int argc, char *argv[])
 
     // temp params
     double angle = -42.0;
-    float sharpness = 2.5f;
+    float sharpness = 12.5f;
 
     // Charger l'image + resize
     iImage *img = resize_image(load_image(argv[1]), 1000, 1000);
@@ -254,10 +256,11 @@ int main(int argc, char *argv[])
         }
 
         grayscale(img);
-        binary(img);
-        increase_contrast(img, -100);
+        binary(img); // besoins d'une condition qui test si l image est toute blance ou non
+        increase_contrast(img, 1);
         apply_unsharp_mask(img, sharpness);
-        otsu_threshold(img);
+        apply_canny(img);
+        // otsu_threshold(img);
 
 
         save_image(img, argv[2]);

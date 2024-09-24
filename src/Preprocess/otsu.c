@@ -44,7 +44,7 @@ void otsu_threshold(iImage *img)
     unsigned int width = img->width;
     unsigned int height = img->height;
 
-    const unsigned int block_size = 25;
+    const unsigned int block_size = 20;
 
     for (unsigned int by = 0; by < height; by += block_size)
     {
