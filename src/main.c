@@ -1,13 +1,19 @@
-#include "Image/resize.h"
-#include "Image/image.h"
-
-#include "Image/Detection/Letters/letters.h"
+#include <string.h>
 
 #include "Image/Preprocess/ColorTreatment/binary.h"
 #include "Image/Preprocess/ColorTreatment/grayscale.h"
+#include "Image/Preprocess/ColorTreatment/invertColors.h"
+
 #include "Image/Preprocess/NoiseReduction/otsu.h"
 #include "Image/Preprocess/NoiseReduction/contrasts.h"
 #include "Image/Preprocess/NoiseReduction/denoise.h"
+
+#include "Image/resize.h"
+#include "Image/image.h"
+#include "Image/crop.h"
+
+#include "Image/Detection/Letters/letters.h"
+
 #include "Image/Preprocess/Rotation/manualRotation.h"
 
 int main(int argc, char *argv[])
@@ -35,7 +41,7 @@ int main(int argc, char *argv[])
     double angle = -42.0;
 
     // Charger l'image + resize
-    iImage *img = resize_image(load_image(argv[1]), 1000, 1000);
+    iImage *img =resize_image((load_image(argv[1])), 32, 32);
     iImage *temp_img;
 
     if (img != NULL)
@@ -48,14 +54,16 @@ int main(int argc, char *argv[])
             img = temp_img;
         }
 
-        grayscale(img);
-        binary(img); // besoins d'une condition qui test si l image est toute blance ou non
-        increase_contrast(img, 1);
+        // grayscale(img);
+        // binary(img); // besoins d'une condition qui test si l image est toute blance ou non
+        // increase_contrast(img, 1);
         // apply_gaussian_blur(img);
-        otsu_threshold(img);
-        apply_canny(img);
+        // otsu_threshold(img);
+        // invert_colors(img);
+        // apply_canny(img);
 
-        save_image(img, argv[2]);
+
+        save_image(img,  argv[2]);
         free_image(img);
     }
 

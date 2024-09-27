@@ -11,8 +11,8 @@ iImage *resize_image(iImage *img, unsigned int new_width, unsigned int new_heigh
     iImage *resized_img = create_image(new_width, new_height, img->path);
     if (resized_img == NULL)
     {
-        printf("Erreur lors de la création de l'image redimensionnée.\n");
-        return NULL;
+        printf("Err\n");
+        return resized_img;
     }
 
     double x_ratio = (double)old_width / new_width;
