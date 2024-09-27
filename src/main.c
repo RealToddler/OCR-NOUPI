@@ -41,7 +41,7 @@ int main(int argc, char *argv[])
     double angle = -42.0;
 
     // Charger l'image + resize
-    iImage *img =resize_image((load_image(argv[1])), 32, 32);
+    iImage *img =resize_image(crop_image((load_image(argv[1]))), 32, 32);
     iImage *temp_img;
 
     if (img != NULL)
@@ -59,7 +59,7 @@ int main(int argc, char *argv[])
         // increase_contrast(img, 1);
         // apply_gaussian_blur(img);
         // otsu_threshold(img);
-        // invert_colors(img);
+        invert_colors(img);
         // apply_canny(img);
 
 
