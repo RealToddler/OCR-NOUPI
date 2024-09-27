@@ -3,7 +3,7 @@
 #include <math.h>
 #include <SDL2/SDL.h>
 
-#include "Utils/image.h"
+#include "../Image/image.h"
 
 pPixel apply_gaussian_filter(iImage *image, int x, int y)
 {
@@ -43,13 +43,14 @@ pPixel apply_gaussian_filter(iImage *image, int x, int y)
     return blurred_pixel;
 }
 
-
-void apply_unsharp_mask(iImage *image, float sharpness)
+void apply_gaussian_blur(iImage *image)
 {
     iImage blurred_image;
     blurred_image.height = image->height;
     blurred_image.width = image->width;
     blurred_image.pixels = (pPixel **)malloc(image->height * sizeof(pPixel *));
+
+    // Appliquer le filtre gaussien à chaque pixel
     for (unsigned int i = 0; i < image->height; i++)
     {
         blurred_image.pixels[i] = (pPixel *)malloc(image->width * sizeof(pPixel));
@@ -59,19 +60,16 @@ void apply_unsharp_mask(iImage *image, float sharpness)
         }
     }
 
+    // Copier les pixels floutés dans l'image originale
     for (unsigned int i = 0; i < image->height; i++)
     {
         for (unsigned int j = 0; j < image->width; j++)
         {
-            pPixel *original_pixel = &image->pixels[i][j];
-            pPixel *blurred_pixel = &blurred_image.pixels[i][j];
-
-            original_pixel->r = (Uint8)fmin(fmax(original_pixel->r + sharpness * (original_pixel->r - blurred_pixel->r), 0), 255);
-            original_pixel->g = (Uint8)fmin(fmax(original_pixel->g + sharpness * (original_pixel->g - blurred_pixel->g), 0), 255);
-            original_pixel->b = (Uint8)fmin(fmax(original_pixel->b + sharpness * (original_pixel->b - blurred_pixel->b), 0), 255);
+            image->pixels[i][j] = blurred_image.pixels[i][j];
         }
     }
 
+    // Libérer la mémoire de l'image floutée temporaire
     for (unsigned int i = 0; i < blurred_image.height; i++)
     {
         free(blurred_image.pixels[i]);

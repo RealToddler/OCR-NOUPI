@@ -5,18 +5,7 @@
 #include <string.h>
 #include <err.h>
 
-#include "Utils/image.h"
-
-#include "Image/resize.h"
-
-#include "Detection/letters.h"
-
-#include "Preprocess/binary.h"
-#include "Preprocess/grayscale.h"
-#include "Preprocess/otsu.h"
-#include "Preprocess/contrasts.h"
-#include "Preprocess/denoise.h"
-#include "Preprocess/rotation.h"
+#include "../Image/image.h"
 
 SDL_Surface *load_surface(const char *image_path)
 {
@@ -157,7 +146,6 @@ void save_image(iImage *img, const char *image_path)
         return;
     }
 
-    // Création d'une surface SDL pour contenir l'image en format RGB
     SDL_Surface *surface = SDL_CreateRGBSurfaceWithFormat(0, img->width, img->height, 24, SDL_PIXELFORMAT_RGB24);
     if (surface == NULL)
     {
@@ -184,7 +172,6 @@ void save_image(iImage *img, const char *image_path)
 
     SDL_UnlockSurface(surface);
 
-    // Sauvegarde de la surface en PNG
     if (IMG_SavePNG(surface, image_path) != 0)
     {
         fprintf(stderr, "Erreur lors de la sauvegarde de l'image PNG : %s\n", IMG_GetError());
@@ -192,7 +179,6 @@ void save_image(iImage *img, const char *image_path)
         return;
     }
 
-    // Libérer la surface
     SDL_FreeSurface(surface);
     printf("Image sauvegardée avec succès dans le fichier : %s\n", image_path);
 }
@@ -215,60 +201,4 @@ void free_image(iImage *img)
         }
         free(img);
     }
-}
-
-int main(int argc, char *argv[])
-{
-    if (argc != 3)
-    {
-        printf("Usage: %s <path_to_image> <output_image>\n", argv[0]);
-        return 1;
-    }
-
-    if (SDL_Init(SDL_INIT_VIDEO) != 0)
-    {
-        printf("Erreur d'initialisation de SDL: %s\n", SDL_GetError());
-        return -1;
-    }
-
-    if (!(IMG_Init(IMG_INIT_PNG) & IMG_INIT_PNG))
-    {
-        printf("Erreur d'initialisation de SDL_image: %s\n", IMG_GetError());
-        SDL_Quit();
-        return -1;
-    }
-
-    // temp params
-    double angle = -42.0;
-    float sharpness = 12.5f;
-
-    // Charger l'image + resize
-    iImage *img = resize_image(load_image(argv[1]), 1000, 1000);
-    iImage *temp_img;
-
-    if (img != NULL)
-    {
-        printf("Image chargée avec succès : %dx%d pixels\n", img->width, img->height);
-
-        if (angle != -42) {
-            temp_img = rotate_image(img, angle);
-            img = temp_img;
-        }
-
-        grayscale(img);
-        binary(img); // besoins d'une condition qui test si l image est toute blance ou non
-        increase_contrast(img, 1);
-        apply_unsharp_mask(img, sharpness);
-        apply_canny(img);
-        // otsu_threshold(img);
-
-
-        save_image(img, argv[2]);
-        free_image(img);
-    }
-
-    IMG_Quit();
-    SDL_Quit();
-
-    return 0;
 }

@@ -1,4 +1,4 @@
-#include "Utils/image.h"
+#include "../Image/image.h"
 
 unsigned int compute_otsu_threshold(unsigned int *histogram, unsigned int total_pixels)
 {

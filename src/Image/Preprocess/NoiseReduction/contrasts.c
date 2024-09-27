@@ -1,4 +1,4 @@
-#include "Utils/image.h"
+#include "../Image/image.h"
 
 void increase_contrast(iImage *img, float alpha)
 {

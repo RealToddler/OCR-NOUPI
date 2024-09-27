@@ -1,5 +1,5 @@
-#include "Preprocess/grayscale.h"
-#include "Utils/image.h"
+#include "grayscale.h"
+#include "../Image/image.h"
 
 void grayscale(iImage *img)
 {

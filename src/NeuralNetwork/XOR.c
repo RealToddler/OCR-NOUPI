@@ -40,6 +40,7 @@ void shuffle(int *array, size_t n)
 #define OUTPUTS_NUMBER 1
 #define TRAINING_SETS_NUMBER 4
 
+/*
 int main(void)
 {
     const double lr = 0.1f;
@@ -89,7 +90,7 @@ int main(void)
 
     int training_set_order[] = {0, 1, 2, 3};
 
-    int number_of_epochs = 10000;
+    int number_of_epochs = 1000000;
 
     // train the neural network for a number of epochs
     for (int epoch = 0; epoch < number_of_epochs; epoch++)
@@ -212,3 +213,4 @@ int main(void)
 
     return 0;
 }
+*/

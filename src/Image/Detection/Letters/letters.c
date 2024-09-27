@@ -1,4 +1,4 @@
-#include "Utils/image.h"
+#include "../Image/image.h"
 
 #define PI 3.14
 
@@ -17,7 +17,7 @@ typedef struct
     unsigned char b;
 } Color;
 
-// Calcul des gradients avec le filtre de Sobel
+
 void calculate_gradients(iImage *img, float **gradient_magnitude, float **gradient_direction)
 {
     int Gx[3][3] = {
@@ -52,7 +52,6 @@ void calculate_gradients(iImage *img, float **gradient_magnitude, float **gradie
                 }
             }
 
-            // Calcul de la magnitude et de la direction du gradient (on simplifie en moyenne)
             float grad_r = sqrt(gx_r * gx_r + gy_r * gy_r);
             float grad_g = sqrt(gx_g * gx_g + gy_g * gy_g);
             float grad_b = sqrt(gx_b * gx_b + gy_b * gy_b);
@@ -64,7 +63,7 @@ void calculate_gradients(iImage *img, float **gradient_magnitude, float **gradie
     }
 }
 
-// Suppression des non-maxima
+
 void non_max_suppression(iImage *img, float **gradient_magnitude, float **gradient_direction, float **edges)
 {
     for (unsigned int y = 1; y < img->height - 1; y++)
@@ -75,7 +74,6 @@ void non_max_suppression(iImage *img, float **gradient_magnitude, float **gradie
             float magnitude = gradient_magnitude[y][x];
             float mag1, mag2;
 
-            // Approximations des directions (0°, 45°, 90°, 135°)
             if ((direction >= -22.5 && direction <= 22.5) || (direction >= 157.5 || direction <= -157.5))
             {
                 mag1 = gradient_magnitude[y][x - 1];
@@ -97,7 +95,6 @@ void non_max_suppression(iImage *img, float **gradient_magnitude, float **gradie
                 mag2 = gradient_magnitude[y + 1][x + 1];
             }
 
-            // Suppression des non-maxima
             if (magnitude >= mag1 && magnitude >= mag2)
             {
                 edges[y][x] = magnitude;
@@ -110,10 +107,9 @@ void non_max_suppression(iImage *img, float **gradient_magnitude, float **gradie
     }
 }
 
-// Hystérésis
+
 void hysteresis_recursive(unsigned char **edge_map, unsigned int y, unsigned int x, unsigned int height, unsigned int width)
 {
-    // Parcours des 8 voisins
     for (int dy = -1; dy <= 1; dy++)
     {
         for (int dx = -1; dx <= 1; dx++)
@@ -126,7 +122,7 @@ void hysteresis_recursive(unsigned char **edge_map, unsigned int y, unsigned int
             {
                 if (edge_map[ny][nx] == 1)
                 {
-                    edge_map[ny][nx] = 2; // Marquer comme bord fort
+                    edge_map[ny][nx] = 2;
                     hysteresis_recursive(edge_map, ny, nx, height, width);
                 }
             }
@@ -134,10 +130,9 @@ void hysteresis_recursive(unsigned char **edge_map, unsigned int y, unsigned int
     }
 }
 
-// Seuillage par hystérésis
+
 void hysteresis_thresholding(iImage *img, float **edges, float low_thresh, float high_thresh, unsigned char **edge_map)
 {
-    // Initialisation
     for (unsigned int y = 0; y < img->height; y++)
     {
         for (unsigned int x = 0; x < img->width; x++)
@@ -146,27 +141,25 @@ void hysteresis_thresholding(iImage *img, float **edges, float low_thresh, float
         }
     }
 
-    // Marquage des pixels
     for (unsigned int y = 1; y < img->height - 1; y++)
     {
         for (unsigned int x = 1; x < img->width - 1; x++)
         {
             if (edges[y][x] >= high_thresh)
             {
-                edge_map[y][x] = 2; // Bord fort
+                edge_map[y][x] = 2;
             }
             else if (edges[y][x] >= low_thresh)
             {
-                edge_map[y][x] = 1; // Bord faible
+                edge_map[y][x] = 1;
             }
             else
             {
-                edge_map[y][x] = 0; // Non-bord
+                edge_map[y][x] = 0;
             }
         }
     }
 
-    // Suivi des bords
     for (unsigned int y = 1; y < img->height - 1; y++)
     {
         for (unsigned int x = 1; x < img->width - 1; x++)
@@ -178,7 +171,6 @@ void hysteresis_thresholding(iImage *img, float **edges, float low_thresh, float
         }
     }
 
-    // Suppression des bords faibles non connectés
     for (unsigned int y = 0; y < img->height; y++)
     {
         for (unsigned int x = 0; x < img->width; x++)
@@ -189,16 +181,15 @@ void hysteresis_thresholding(iImage *img, float **edges, float low_thresh, float
             }
             else if (edge_map[y][x] == 2)
             {
-                edge_map[y][x] = 1; // Bords finaux
+                edge_map[y][x] = 1;
             }
         }
     }
 }
 
-// Dilation
+
 void dilate(unsigned char **input, unsigned char **output, unsigned int height, unsigned int width)
 {
-    // Initialisation de la sortie
     for (unsigned int y = 0; y < height; y++)
     {
         for (unsigned int x = 0; x < width; x++)
@@ -207,7 +198,6 @@ void dilate(unsigned char **input, unsigned char **output, unsigned int height, 
         }
     }
 
-    // Dilation avec un élément structurant 3x3
     for (unsigned int y = 1; y < height - 1; y++)
     {
         for (unsigned int x = 1; x < width - 1; x++)
@@ -226,7 +216,7 @@ void dilate(unsigned char **input, unsigned char **output, unsigned int height, 
     }
 }
 
-// Fusion des bounding boxes qui se chevauchent ou sont proches
+
 void merge_bounding_boxes(BoundingBox *boxes, int *num_boxes)
 {
     int merged = 1;
@@ -237,19 +227,16 @@ void merge_bounding_boxes(BoundingBox *boxes, int *num_boxes)
         {
             for (int j = i + 1; j < *num_boxes; j++)
             {
-                // Vérifier si les bounding boxes se chevauchent ou sont proches
                 int overlap_x = (boxes[i].min_x <= boxes[j].max_x + 5) && (boxes[j].min_x <= boxes[i].max_x + 5);
                 int overlap_y = (boxes[i].min_y <= boxes[j].max_y + 5) && (boxes[j].min_y <= boxes[i].max_y + 5);
 
                 if (overlap_x && overlap_y)
                 {
-                    // Fusionner les bounding boxes
                     boxes[i].min_x = (boxes[i].min_x < boxes[j].min_x) ? boxes[i].min_x : boxes[j].min_x;
                     boxes[i].max_x = (boxes[i].max_x > boxes[j].max_x) ? boxes[i].max_x : boxes[j].max_x;
                     boxes[i].min_y = (boxes[i].min_y < boxes[j].min_y) ? boxes[i].min_y : boxes[j].min_y;
                     boxes[i].max_y = (boxes[i].max_y > boxes[j].max_y) ? boxes[i].max_y : boxes[j].max_y;
 
-                    // Supprimer la bounding box fusionnée
                     for (int k = j; k < *num_boxes - 1; k++)
                     {
                         boxes[k] = boxes[k + 1];
@@ -265,7 +252,7 @@ void merge_bounding_boxes(BoundingBox *boxes, int *num_boxes)
     }
 }
 
-// Flood Fill pour le marquage des composantes connexes
+
 void flood_fill(unsigned char **edge_map, int **label_map, unsigned int x, unsigned int y, unsigned int height, unsigned int width, int label, BoundingBox *box)
 {
     typedef struct
@@ -288,7 +275,6 @@ void flood_fill(unsigned char **edge_map, int **label_map, unsigned int x, unsig
         int cx = stack[stack_size].x;
         int cy = stack[stack_size].y;
 
-        // Mise à jour de la bounding box
         if (cx < box->min_x)
             box->min_x = cx;
         if (cx > box->max_x)
@@ -298,7 +284,6 @@ void flood_fill(unsigned char **edge_map, int **label_map, unsigned int x, unsig
         if (cy > box->max_y)
             box->max_y = cy;
 
-        // Vérification des voisins
         for (int dy = -1; dy <= 1; dy++)
         {
             for (int dx = -1; dx <= 1; dx++)
@@ -324,7 +309,7 @@ void flood_fill(unsigned char **edge_map, int **label_map, unsigned int x, unsig
     free(stack);
 }
 
-// Trouver les bounding boxes des composantes connexes
+
 void find_bounding_boxes(unsigned char **edge_map, unsigned int height, unsigned int width, BoundingBox **boxes, int *num_boxes)
 {
     int **label_map = (int **)malloc(height * sizeof(int *));
@@ -377,10 +362,10 @@ void find_bounding_boxes(unsigned char **edge_map, unsigned int height, unsigned
     free(label_map);
 }
 
-// Dessiner un rectangle sur l'image
+
 void draw_rectangle(iImage *img, int min_x, int min_y, int max_x, int max_y, Color color)
 {
-    // Dessiner les lignes horizontales
+
     for (int x = min_x; x <= max_x; x++)
     {
         if (min_y >= 0 && min_y < img->height)
@@ -396,7 +381,7 @@ void draw_rectangle(iImage *img, int min_x, int min_y, int max_x, int max_y, Col
             img->pixels[max_y][x].b = color.b;
         }
     }
-    // Dessiner les lignes verticales
+
     for (int y = min_y; y <= max_y; y++)
     {
         if (min_x >= 0 && min_x < img->width)
@@ -414,12 +399,9 @@ void draw_rectangle(iImage *img, int min_x, int min_y, int max_x, int max_y, Col
     }
 }
 
-// Fonction principale pour appliquer Canny
+
 void apply_canny(iImage *img)
 {
-    // Étape 1 : Conversion en niveaux de gris (si nécessaire)
-
-    // Étape 2 : Calcul des gradients
     float **gradient_magnitude = (float **)malloc(img->height * sizeof(float *));
     float **gradient_direction = (float **)malloc(img->height * sizeof(float *));
     for (unsigned int i = 0; i < img->height; i++)
@@ -429,7 +411,6 @@ void apply_canny(iImage *img)
     }
     calculate_gradients(img, gradient_magnitude, gradient_direction);
 
-    // Étape 3 : Suppression des non-maxima
     float **edges = (float **)malloc(img->height * sizeof(float *));
     for (unsigned int i = 0; i < img->height; i++)
     {
@@ -437,7 +418,6 @@ void apply_canny(iImage *img)
     }
     non_max_suppression(img, gradient_magnitude, gradient_direction, edges);
 
-    // Étape 4 : Seuillage par hystérésis
     unsigned char **edge_map = (unsigned char **)malloc(img->height * sizeof(unsigned char *));
     for (unsigned int i = 0; i < img->height; i++)
     {
@@ -447,7 +427,6 @@ void apply_canny(iImage *img)
     float high_thresh = 50.0;
     hysteresis_thresholding(img, edges, low_thresh, high_thresh, edge_map);
 
-    // Étape 5 : Dilatation pour combler les lacunes
     unsigned char **dilated_edge_map = (unsigned char **)malloc(img->height * sizeof(unsigned char *));
     for (unsigned int i = 0; i < img->height; i++)
     {
@@ -455,19 +434,15 @@ void apply_canny(iImage *img)
     }
     dilate(edge_map, dilated_edge_map, img->height, img->width);
 
-    // Étape 6 : Trouver les bounding boxes
     BoundingBox *boxes;
     int num_boxes;
     find_bounding_boxes(dilated_edge_map, img->height, img->width, &boxes, &num_boxes);
 
-    // Étape 7 : Fusionner les bounding boxes
     merge_bounding_boxes(boxes, &num_boxes);
 
-    // Étape 8 : Dessiner les rectangles sur l'image
-    Color red = {255, 0, 0}; // Couleur rouge pour les rectangles
+    Color red = {255, 0, 0};
     for (int i = 0; i < num_boxes; i++)
     {
-        // Filtrer les bounding boxes trop petites pour éliminer le bruit
         int width = boxes[i].max_x - boxes[i].min_x;
         int height = boxes[i].max_y - boxes[i].min_y;
         if (width > 5 && height > 5)
@@ -476,7 +451,6 @@ void apply_canny(iImage *img)
         }
     }
 
-    // Nettoyage mémoire
     for (unsigned int i = 0; i < img->height; i++)
     {
         free(gradient_magnitude[i]);

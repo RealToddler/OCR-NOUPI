@@ -13,6 +13,7 @@ void printGrid(char grid[10][10]) {
     }
 }
 
+/*
 int main() {
     const char *word = "CACA";
     int rows = 10;
@@ -76,3 +77,4 @@ int main() {
     }
         return 0;
     }
+*/
