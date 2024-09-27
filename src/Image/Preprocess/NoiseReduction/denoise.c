@@ -50,7 +50,6 @@ void apply_gaussian_blur(iImage *image)
     blurred_image.width = image->width;
     blurred_image.pixels = (pPixel **)malloc(image->height * sizeof(pPixel *));
 
-    // Appliquer le filtre gaussien à chaque pixel
     for (unsigned int i = 0; i < image->height; i++)
     {
         blurred_image.pixels[i] = (pPixel *)malloc(image->width * sizeof(pPixel));
@@ -60,7 +59,6 @@ void apply_gaussian_blur(iImage *image)
         }
     }
 
-    // Copier les pixels floutés dans l'image originale
     for (unsigned int i = 0; i < image->height; i++)
     {
         for (unsigned int j = 0; j < image->width; j++)
@@ -69,7 +67,6 @@ void apply_gaussian_blur(iImage *image)
         }
     }
 
-    // Libérer la mémoire de l'image floutée temporaire
     for (unsigned int i = 0; i < blurred_image.height; i++)
     {
         free(blurred_image.pixels[i]);
