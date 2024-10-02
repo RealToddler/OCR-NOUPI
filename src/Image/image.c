@@ -12,6 +12,7 @@ SDL_Surface *load_surface(const char *image_path)
     SDL_Surface *surface = IMG_Load(image_path);
     if (surface == NULL)
     {
+        printf("%s\n", image_path);
         printf("Erreur de chargement de l'image: %s\n", IMG_GetError());
     }
     return surface;
@@ -116,7 +117,7 @@ void extract_pixels(SDL_Surface *surface, iImage *img)
     SDL_UnlockSurface(surface);
 }
 
-iImage *load_image(const char *image_path)
+iImage *load_image(const char *image_path, int label)
 {
     SDL_Surface *surface = load_surface(image_path);
     if (surface == NULL)
@@ -125,6 +126,7 @@ iImage *load_image(const char *image_path)
     }
 
     iImage *img = create_image(surface->w, surface->h, image_path);
+    img->label = label;
     if (img == NULL)
     {
         SDL_FreeSurface(surface);
