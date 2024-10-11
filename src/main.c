@@ -41,7 +41,7 @@ int main(int argc, char *argv[])
     double angle = -42.0;
 
     // Charger l'image + resize
-    iImage *img =resize_image((load_image(argv[1])), 1000,1000);
+    iImage *img =resize_image(crop_image((load_image(argv[1]))), 32, 32);
     iImage *temp_img;
 
     if (img != NULL)
