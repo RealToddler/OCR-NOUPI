@@ -46,9 +46,9 @@ iImage *rotate_image(iImage *image, double angle_deg)
     {
         for (unsigned int x = 0; x < width; x++)
         {
-            rotated_image->pixels[y][x].r = 0;
-            rotated_image->pixels[y][x].g = 0;
-            rotated_image->pixels[y][x].b = 0;
+            rotated_image->pixels[y][x].r = 255;
+            rotated_image->pixels[y][x].g = 255;
+            rotated_image->pixels[y][x].b = 255;
         }
     }
 

@@ -56,7 +56,7 @@ int main(int argc, char *argv[])
 
         grayscale(img);
         apply_gaussian_blur(img);
-        increase_contrast(img, 1.2, 1);
+        increase_contrast(img, 10,8);
         binary(img);
         otsu_threshold(img, 32);
         invert_colors(img);
