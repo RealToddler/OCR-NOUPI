@@ -1,6 +1,8 @@
 #include "../image.h"
 #include "refineImage.h"
 
+#include <stdio.h>
+
 int is_in_interval(long x, long y, long val) {
     return  val >= x && val <= y;
 }
@@ -29,7 +31,7 @@ BoundingBox *sort(BoundingBox *boxes, int mod, int numBoxes)
         {
             for (int j = 0; j < numBoxes - i - 1; j++)
             {
-                if (boxes[j].max_y - boxes[j].min_y > boxes[j+1].max_y - boxes[j+1].min_y)
+                if (boxes[j].height > boxes[j+1].height)
                 {
                     swap = boxes[j];
                     boxes[j] = boxes[j+1];
@@ -45,7 +47,7 @@ BoundingBox *sort(BoundingBox *boxes, int mod, int numBoxes)
         {
             for (int j = 0; j < numBoxes - i - 1; j++)
             {
-                if (boxes[j].max_x - boxes[j].min_x > boxes[j + 1].max_x - boxes[j + 1].min_x)
+                if (boxes[j].width > boxes[j + 1].width)
                 {
                     swap = boxes[j];
                     boxes[j] = boxes[j + 1];
@@ -61,14 +63,7 @@ BoundingBox *sort(BoundingBox *boxes, int mod, int numBoxes)
         {
             for (int j = 0; j < numBoxes - i - 1; j++)
             {
-                int width1 = boxes[j].max_x - boxes[j].min_x;
-                int height1 = boxes[j].max_y - boxes[j].min_y;
-                long surface1 = width1 * height1;
-
-                int width2 = boxes[j+1].max_x - boxes[j+1].min_x;
-                int height2 = boxes[j+1].max_y - boxes[j+1].min_y;
-                long surface2 = width2 * height2;
-                if (surface1 > surface2)
+                if (boxes[j].surface > boxes[j+1].surface)
                 {
                     swap = boxes[j];
                     boxes[j] = boxes[j + 1];
@@ -79,4 +74,58 @@ BoundingBox *sort(BoundingBox *boxes, int mod, int numBoxes)
     }
 
     return res;
+}
+
+unsigned int *compute_histogram(BoundingBox *sortedBoxes, int mod, int numBoxes) {
+    int max;
+
+    if (mod == 1)
+    {
+        max = sortedBoxes[numBoxes - 1].height;
+    } else if (mod == 2) {
+        max = sortedBoxes[numBoxes - 1].width;
+    } else {
+        max = sortedBoxes[numBoxes - 1].surface;
+    }
+
+    // we wont take 0 in consideration. Therefore will count
+    // from 1 to max (included)
+
+    printf("%d\n", max);
+
+    unsigned int *histogram = calloc(max + 1, sizeof(unsigned int));
+
+    for (int i = 0; i < numBoxes; i++)
+    {
+        if (mod == 1)
+        {
+            if (sortedBoxes[i].height <= max)
+            {
+                histogram[sortedBoxes[i].height]++;
+            }
+        }
+        else if (mod == 2)
+        {
+            if (sortedBoxes[i].width <= max)
+            {
+                histogram[sortedBoxes[i].width]++;
+            }
+        }
+        else
+        {
+            if (sortedBoxes[i].surface <= max)
+            {
+                histogram[sortedBoxes[i].surface]++;
+            }
+        }
+    }
+
+    /*
+    for (int i = 0; i < max + 1; i++)
+    {
+        printf("val = %d : %d occurences\n", i, histogram[i]);
+    }
+    */
+
+    return histogram;
 }

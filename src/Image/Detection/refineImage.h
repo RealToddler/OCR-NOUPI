@@ -14,8 +14,7 @@ void erase(iImage *img, BoundingBox boxe);
 BoundingBox* sort(BoundingBox *boxes, int mod, int numBoxes);
 
 // one function that compute an histogram of some values of the boxes
-// mod 1 = height mod 2 = width mod 3 = surface
-double* compute_histogram(BoundingBox *boxes, int mod);
+unsigned int *compute_histogram(BoundingBox *sortedBoxes, int mod, int numBoxes);
 
 // in order to know the median and average sizes
 // mod 1 = height mod 2 = width mod 3 = surface

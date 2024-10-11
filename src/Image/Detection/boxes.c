@@ -124,6 +124,10 @@ void find_bounding_boxes(unsigned char **edge_map, unsigned int height, unsigned
 
                 flood_fill(edge_map, label_map, x, y, height, width, label, &box);
 
+                box.height = box.max_y - box.min_y;
+                box.width = box.max_x - box.min_x;
+                box.surface = box.height * box.width;
+
                 temp_boxes[*num_boxes] = box;
                 (*num_boxes)++;
                 label++;
@@ -166,6 +170,10 @@ void merge_bounding_boxes(BoundingBox *boxes, int *num_boxes)
                     boxes[i].max_x = (boxes[i].max_x > boxes[j].max_x) ? boxes[i].max_x : boxes[j].max_x;
                     boxes[i].min_y = (boxes[i].min_y < boxes[j].min_y) ? boxes[i].min_y : boxes[j].min_y;
                     boxes[i].max_y = (boxes[i].max_y > boxes[j].max_y) ? boxes[i].max_y : boxes[j].max_y;
+
+                    boxes[i].height = boxes[i].max_y - boxes[i].min_y;
+                    boxes[i].width = boxes[i].max_x - boxes[i].min_x;
+                    boxes[i].surface = boxes[i].height * boxes[i].width;
 
                     for (int k = j; k < *num_boxes - 1; k++)
                     {

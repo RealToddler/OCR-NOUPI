@@ -170,13 +170,13 @@ void apply_canny(iImage *img)
 
     // merge_bounding_boxes(boxes, &num_boxes);
     Color red = {255, 0, 0};
+
+    boxes = sort(boxes, 1, num_boxes);
+    compute_histogram(boxes, 3, num_boxes);
     for (int i = 0; i < num_boxes; i++)
     {
-        int width = boxes[i].max_x - boxes[i].min_x;
-        int height = boxes[i].max_y - boxes[i].min_y;
-        long surface = width * height;
-
-        if (height < 5 || width < 5)
+        // printf("%d\n", boxes[i].surface);
+        if (boxes[i].height < 5 || boxes[i].width < 5)
         {
             erase(img, boxes[i]);
         } else {

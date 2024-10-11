@@ -5,10 +5,13 @@
 
 typedef struct
 {
-    int min_x;
-    int max_x;
-    int min_y;
-    int max_y;
+    unsigned int min_x;
+    unsigned int max_x;
+    unsigned int min_y;
+    unsigned int max_y;
+    unsigned int height;
+    unsigned int width;
+    unsigned int surface;
 } BoundingBox;
 
 typedef struct
