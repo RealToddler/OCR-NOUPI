@@ -166,52 +166,19 @@ void apply_canny(iImage *img)
     int num_boxes;
     find_bounding_boxes(dilated_edge_map, img->height, img->width, &boxes, &num_boxes);
 
-    // merge_bounding_boxes(boxes, &num_boxes);
+    merge_bounding_boxes(boxes, &num_boxes);
 
     Color red = {255, 0, 0};
     for (int i = 0; i < num_boxes; i++)
     {
         int width = boxes[i].max_x - boxes[i].min_x;
         int height = boxes[i].max_y - boxes[i].min_y;
-        long surface = width * height;
-
-        if (surface < 10000)
+        if (width > 5 && height > 5)
         {
-            if (width < height && surface > 2000)
-            {
-
-                for (unsigned int y = boxes[i].min_y; y < boxes[i].max_y; y++)
-                {
-                    for (unsigned int x = boxes[i].min_x; x < boxes[i].max_x; x++)
-                    {
-                        pPixel *pixel = &img->pixels[y][x];
-                        pixel->r = 0;
-                        pixel->g = 0;
-                        pixel->b = 0;
-                        }
-                    }
-                }
-            } else if (surface > 6000) {
-                if (width < height && surface > 2000)
-                {
-
-                    for (unsigned int y = boxes[i].min_y; y < boxes[i].max_y; y++)
-                    {
-                        for (unsigned int x = boxes[i].min_x; x < boxes[i].max_x; x++)
-                        {
-                            pPixel *pixel = &img->pixels[y][x];
-                            pixel->r = 0;
-                            pixel->g = 0;
-                            pixel->b = 0;
-                        }
-                    }
-                }
-            }
-        
-            
-            // draw_rectangle(img, boxes[i].min_x, boxes[i].min_y, boxes[i].max_x, boxes[i].max_y, red);
+            draw_rectangle(img, boxes[i].min_x, boxes[i].min_y, boxes[i].max_x, boxes[i].max_y, red);
             // here should go the function that will extract each letters
         }
+    }
 
     for (unsigned int i = 0; i < img->height; i++)
     {
