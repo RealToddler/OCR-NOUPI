@@ -2,8 +2,10 @@
 #include "boxes.h"
 #include "canny.h"
 #include "hysteresis.h"
+#include "refineImage.h"
 
 #define PI 3.14
+#define MAX_SURFACE 1000000 // 1000 * 1000
 
 // for the grid detection, we should stock in a heap every boxes with a surface between  200px et 350/400px
 // then find the boxes with the highest x, lowest x, highest y and lowest y then draw a rectangle
@@ -175,44 +177,17 @@ void apply_canny(iImage *img)
         int height = boxes[i].max_y - boxes[i].min_y;
         long surface = width * height;
 
-        if (surface < 10000)
+        if (width < height &&  surface < 10000 && surface > 2000)
         {
-            if (width < height && surface > 2000)
-            {
-
-                for (unsigned int y = boxes[i].min_y; y < boxes[i].max_y; y++)
-                {
-                    for (unsigned int x = boxes[i].min_x; x < boxes[i].max_x; x++)
-                    {
-                        pPixel *pixel = &img->pixels[y][x];
-                        pixel->r = 0;
-                        pixel->g = 0;
-                        pixel->b = 0;
-                        }
-                    }
-                }
-            } else if (surface > 6000) {
-                if (width < height && surface > 2000)
-                {
-
-                    for (unsigned int y = boxes[i].min_y; y < boxes[i].max_y; y++)
-                    {
-                        for (unsigned int x = boxes[i].min_x; x < boxes[i].max_x; x++)
-                        {
-                            pPixel *pixel = &img->pixels[y][x];
-                            pixel->r = 0;
-                            pixel->g = 0;
-                            pixel->b = 0;
-                        }
-                    }
-                }
-            }
-        
-            
-            // draw_rectangle(img, boxes[i].min_x, boxes[i].min_y, boxes[i].max_x, boxes[i].max_y, red);
-            // here should go the function that will extract each letters
+            erase(img, boxes[i]);
         }
+        
 
+        printf("%ld\n", surface);
+        
+
+            // draw_rectangle(img, boxes[i].min_x, boxes[i].min_y, boxes[i].max_x, boxes[i].max_y, red);
+    }
     for (unsigned int i = 0; i < img->height; i++)
     {
         free(gradient_magnitude[i]);
