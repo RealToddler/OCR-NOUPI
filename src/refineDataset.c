@@ -68,7 +68,7 @@ void list_files_recursively(const char *base_path)
 
             // Rogner l'image
 
-            
+            /*
             iImage *cropped = crop_image(img);
             if (cropped == NULL)
             {
@@ -76,10 +76,10 @@ void list_files_recursively(const char *base_path)
                 free_image(img);
                 continue;
             }
-            
+            */
 
             // Redimensionner l'image
-            iImage *resized = resize_image(cropped, 32, 32);
+            iImage *resized = resize_image(img, 32, 32);
             if (resized == NULL)
             {
                 printf("Erreur : Échec du redimensionnement de l'image %s\n", path);
@@ -92,7 +92,7 @@ void list_files_recursively(const char *base_path)
 
             // Libérer les ressources des images
             free_image(resized);
-            free_image(cropped);
+            // free_image(cropped);
             free_image(img);
         }
     }

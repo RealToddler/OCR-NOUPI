@@ -1,5 +1,5 @@
 # Variables pour les fichiers sources
-SRC = main.c Image/*.c Image/Detection/*.c Image/Preprocess/ColorTreatment/*.c \
+SRC = main.c Image/*.c Image/Detection/Letters/*.c Image/Preprocess/ColorTreatment/*.c \
       Image/Preprocess/NoiseReduction/*.c Image/Preprocess/Rotation/*.c
 
 # Variable pour l'exécutable

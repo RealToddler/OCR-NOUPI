@@ -12,7 +12,7 @@
 #include "Image/image.h"
 #include "Image/crop.h"
 
-#include "Image/Detection/canny.h"
+#include "Image/Detection/Letters/letters.h"
 
 #include "Image/Preprocess/Rotation/manualRotation.h"
 
