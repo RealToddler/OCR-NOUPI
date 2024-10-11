@@ -13,7 +13,6 @@ typedef struct iImage {
     unsigned int height, width;
     char *path;
     pPixel **pixels;
-    int label;
 } iImage;
 
 int init_sdl();
@@ -24,7 +23,7 @@ iImage *create_image(unsigned int width, unsigned int height, const char *image_
 
 void extract_pixels(SDL_Surface *surface, iImage *img);
 
-iImage *load_image(const char *image_path, int label);
+iImage *load_image(const char *image_path);
 
 void free_image(iImage *image_path);
 

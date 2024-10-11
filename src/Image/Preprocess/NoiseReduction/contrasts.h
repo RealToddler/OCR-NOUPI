@@ -3,6 +3,6 @@
 
 #include "../../image.h"
 
-void increase_contrast(iImage *img, float alpha, float threshold);
+void increase_contrast(iImage *img, float alpha);
 
 #endif

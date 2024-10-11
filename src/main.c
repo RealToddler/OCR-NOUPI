@@ -6,7 +6,7 @@
 
 #include "Image/Preprocess/NoiseReduction/otsu.h"
 #include "Image/Preprocess/NoiseReduction/contrasts.h"
-#include "Image/Preprocess/NoiseReduction/gaussianBlur.h"
+#include "Image/Preprocess/NoiseReduction/denoise.h"
 
 #include "Image/resize.h"
 #include "Image/image.h"
@@ -54,13 +54,13 @@ int main(int argc, char *argv[])
             img = temp_img;
         }
 
-        grayscale(img);
-        apply_gaussian_blur(img);
-        increase_contrast(img, 1.2, 1);
-        binary(img);
-        // otsu_threshold(img, 32);
-        // invert_colors(img);
-        apply_canny(img);
+        // grayscale(img);
+        // binary(img); // besoins d'une condition qui test si l image est toute blance ou non
+        // increase_contrast(img, 1);
+        // apply_gaussian_blur(img);
+        // otsu_threshold(img);
+        invert_colors(img);
+        // apply_canny(img);
 
 
         save_image(img,  argv[2]);

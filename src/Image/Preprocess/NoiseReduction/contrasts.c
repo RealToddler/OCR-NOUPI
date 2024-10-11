@@ -1,6 +1,6 @@
 #include "../Image/image.h"
 
-void increase_contrast(iImage *img, float alpha, float threshold)
+void increase_contrast(iImage *img, float alpha)
 {
     unsigned int width = img->width;
     unsigned int height = img->height;
@@ -11,31 +11,26 @@ void increase_contrast(iImage *img, float alpha, float threshold)
         for (unsigned int x = 0; x < width; x++)
         {
             pPixel *pixel = &img->pixels[y][x];
-            sum += pixel->r; 
+            sum += pixel->r;
         }
     }
-    float mean = sum / (width * height); // Calcul de la luminance moyenne
+    float mean = sum / (width * height);
 
     for (unsigned int y = 0; y < height; y++)
     {
         for (unsigned int x = 0; x < width; x++)
         {
             pPixel *pixel = &img->pixels[y][x];
-            float pixel_value = pixel->r; // Utilisation du canal rouge comme intensité de référence
+            int new_intensity = (int)(alpha * (pixel->r - mean) + mean);
 
-            if (fabs(pixel_value - mean) > threshold)
-            {
-                int new_intensity = (int)(alpha * (pixel_value - mean) + mean);
+            if (new_intensity > 255)
+                new_intensity = 255;
+            else if (new_intensity < 0)
+                new_intensity = 0;
 
-                if (new_intensity > 255)
-                    new_intensity = 255;
-                else if (new_intensity < 0)
-                    new_intensity = 0;
-
-                pixel->r = (uint8_t)new_intensity;
-                pixel->g = (uint8_t)new_intensity;
-                pixel->b = (uint8_t)new_intensity;
-            } 
+            pixel->r = (uint8_t)new_intensity;
+            pixel->g = (uint8_t)new_intensity;
+            pixel->b = (uint8_t)new_intensity;
         }
     }
 }

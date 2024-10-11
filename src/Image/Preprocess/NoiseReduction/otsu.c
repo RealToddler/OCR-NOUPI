@@ -39,11 +39,12 @@ unsigned int compute_otsu_threshold(unsigned int *histogram, unsigned int total_
     return threshold;
 }
 
-void otsu_threshold(iImage *img, const unsigned int block_size)
+void otsu_threshold(iImage *img)
 {
     unsigned int width = img->width;
     unsigned int height = img->height;
 
+    const unsigned int block_size = 20;
 
     for (unsigned int by = 0; by < height; by += block_size)
     {
