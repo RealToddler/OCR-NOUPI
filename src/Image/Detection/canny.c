@@ -169,7 +169,6 @@ void apply_canny(iImage *img)
     find_bounding_boxes(dilated_edge_map, img->height, img->width, &boxes, &num_boxes);
 
     // merge_bounding_boxes(boxes, &num_boxes);
-
     Color red = {255, 0, 0};
     for (int i = 0; i < num_boxes; i++)
     {
@@ -177,16 +176,12 @@ void apply_canny(iImage *img)
         int height = boxes[i].max_y - boxes[i].min_y;
         long surface = width * height;
 
-        if (width < height &&  surface < 10000 && surface > 2000)
+        if (height < 5 || width < 5)
         {
             erase(img, boxes[i]);
+        } else {
+            draw_rectangle(img, boxes[i].min_x, boxes[i].min_y, boxes[i].max_x, boxes[i].max_y, red);
         }
-        
-
-        printf("%ld\n", surface);
-        
-
-            // draw_rectangle(img, boxes[i].min_x, boxes[i].min_y, boxes[i].max_x, boxes[i].max_y, red);
     }
     for (unsigned int i = 0; i < img->height; i++)
     {
