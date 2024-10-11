@@ -2,12 +2,11 @@
 #include <stdio.h>
 #include <math.h>
 #include <string.h>
-#include <dirent.h>
+#include <dirent.h> // For directory traversal
 #include <SDL2/SDL.h>
 #include <SDL2/SDL_image.h>
 
 #include "../Image/image.h"
-#include "neuralNetwork.h"
 
 // Activation functions
 double sigmoid(double x)
@@ -20,29 +19,6 @@ double d_sigmoid(double x)
     return x * (1 - x);
 }
 
-// Softmax function
-void softmax(double *output_layer, int size)
-{
-    double max = output_layer[0];
-    for (int i = 1; i < size; i++)
-    {
-        if (output_layer[i] > max)
-            max = output_layer[i];
-    }
-
-    double sum = 0.0;
-    for (int i = 0; i < size; i++)
-    {
-        output_layer[i] = exp(output_layer[i] - max); // For numerical stability
-        sum += output_layer[i];
-    }
-
-    for (int i = 0; i < size; i++)
-    {
-        output_layer[i] /= sum;
-    }
-}
-
 // Weight initialization
 double init_weights()
 {
@@ -50,11 +26,11 @@ double init_weights()
 }
 
 // Neural network parameters
-#define IMAGE_SIZE 32
+#define IMAGE_SIZE 32 // Corrected from 32 to match 28x28 images
 #define INPUTS_NUMBER (IMAGE_SIZE * IMAGE_SIZE)
 #define HIDDEN_NODES_NUMBER 24
 #define OUTPUTS_NUMBER 26 // Number of letters in the English alphabet
-#define MAX_IMAGES 15000   // Adjust based on your dataset size
+#define MAX_IMAGES 8000   // Adjust based on your dataset size
 
 // Function to load images from dataset directory
 int load_dataset(const char *dataset_path, iImage **images)
@@ -62,7 +38,7 @@ int load_dataset(const char *dataset_path, iImage **images)
     int image_count = 0;
 
     // Loop over each letter directory
-    for (char letter = 'A'; letter <= 'Z'; letter++)
+    for (char letter = 'a'; letter <= 'z'; letter++)
     {
         char letter_dir[256];
         snprintf(letter_dir, sizeof(letter_dir), "%s/%c", dataset_path, letter);
@@ -84,7 +60,7 @@ int load_dataset(const char *dataset_path, iImage **images)
             char filepath[512];
             snprintf(filepath, sizeof(filepath), "%s/%s", letter_dir, entry->d_name);
 
-            iImage *image = load_image(filepath, letter - 'A');
+            iImage *image = load_image(filepath, letter - 'a');
             if (image != NULL)
             {
                 images[image_count++] = image;
@@ -181,7 +157,7 @@ int main(void)
 
     // Load dataset
     iImage *images[MAX_IMAGES];
-    int total_images = load_dataset("../../mydataset", images);
+    int total_images = load_dataset("../../dataset", images);
     if (total_images == 0)
     {
         printf("No images loaded.\n");
@@ -199,15 +175,19 @@ int main(void)
 
         for (int x = 0; x < total_images; x++)
         {
-            // Flatten image pixels to input array
+            // Flatten image pixels to input array and normalize
             double input_layer[INPUTS_NUMBER];
             int idx = 0;
-            for (int i = 0; i < images[x]->height; i++)
+            for (int i = 0; i < IMAGE_SIZE; i++)
             {
-                for (int j = 0; j < images[x]->width; j++)
+                for (int j = 0; j < IMAGE_SIZE; j++)
                 {
-                    Uint8 pixel_value = images[x]->pixels[i][j].r;    // Assuming binary image stored in red channel
-                    input_layer[idx++] = pixel_value > 0 ? 1.0 : 0.0; // Binary values: 1 or 0
+                    // Convert RGB to grayscale by averaging
+                    Uint8 r = images[x]->pixels[i][j].r;
+                    Uint8 g = images[x]->pixels[i][j].g;
+                    Uint8 b = images[x]->pixels[i][j].b;
+                    Uint8 grayscale = (r + g + b) / 3;
+                    input_layer[idx++] = grayscale / 255.0; // Normalize to [0,1]
                 }
             }
 
@@ -231,29 +211,25 @@ int main(void)
                 {
                     activation += hidden_layer[k] * output_weights[k][j];
                 }
-                output_layer[j] = activation; // No activation yet
+                output_layer[j] = sigmoid(activation);
             }
-
-            // Apply softmax activation
-            softmax(output_layer, OUTPUTS_NUMBER);
 
             // Expected output (one-hot encoding)
             double expected_output[OUTPUTS_NUMBER] = {0};
             expected_output[images[x]->label] = 1.0;
 
             // Backpropagation
-            // Calculate output layer deltas
             double delta_output[OUTPUTS_NUMBER];
             for (int j = 0; j < OUTPUTS_NUMBER; j++)
             {
-                delta_output[j] = output_layer[j] - expected_output[j];
+                double error = expected_output[j] - output_layer[j];
+                delta_output[j] = error * d_sigmoid(output_layer[j]);
             }
 
-            // Calculate hidden layer deltas
             double delta_hidden[HIDDEN_NODES_NUMBER];
             for (int j = 0; j < HIDDEN_NODES_NUMBER; j++)
             {
-                double error = 0.0;
+                double error = 0.0f;
                 for (int k = 0; k < OUTPUTS_NUMBER; k++)
                 {
                     error += delta_output[k] * output_weights[j][k];
@@ -264,20 +240,20 @@ int main(void)
             // Update weights and biases for output layer
             for (int j = 0; j < OUTPUTS_NUMBER; j++)
             {
-                output_layer_bias[j] -= delta_output[j] * lr;
+                output_layer_bias[j] += delta_output[j] * lr;
                 for (int k = 0; k < HIDDEN_NODES_NUMBER; k++)
                 {
-                    output_weights[k][j] -= hidden_layer[k] * delta_output[j] * lr;
+                    output_weights[k][j] += hidden_layer[k] * delta_output[j] * lr;
                 }
             }
 
             // Update weights and biases for hidden layer
             for (int j = 0; j < HIDDEN_NODES_NUMBER; j++)
             {
-                hidden_layer_bias[j] -= delta_hidden[j] * lr;
+                hidden_layer_bias[j] += delta_hidden[j] * lr;
                 for (int k = 0; k < INPUTS_NUMBER; k++)
                 {
-                    hidden_weights[k][j] -= input_layer[k] * delta_hidden[j] * lr;
+                    hidden_weights[k][j] += input_layer[k] * delta_hidden[j] * lr;
                 }
             }
         }
@@ -304,17 +280,23 @@ int main(void)
             continue;
         }
 
+        // Flatten and normalize test image
         double test_input[INPUTS_NUMBER];
         int idx = 0;
-        for (int i = 0; i < test_image->height; i++)
+        for (int i = 0; i < IMAGE_SIZE; i++)
         {
-            for (int j = 0; j < test_image->width; j++)
+            for (int j = 0; j < IMAGE_SIZE; j++)
             {
-                Uint8 pixel_value = test_image->pixels[i][j].r;  // Assuming binary image stored in red channel
-                test_input[idx++] = pixel_value > 0 ? 1.0 : 0.0; // Binary values: 1 or 0
+                // Convert RGB to grayscale by averaging
+                Uint8 r = test_image->pixels[i][j].r;
+                Uint8 g = test_image->pixels[i][j].g;
+                Uint8 b = test_image->pixels[i][j].b;
+                Uint8 grayscale = (r + g + b) / 3;
+                test_input[idx++] = grayscale / 255.0; // Normalize to [0,1]
             }
         }
 
+        // Forward pass for test image
         // Compute activations for hidden layer
         for (int j = 0; j < HIDDEN_NODES_NUMBER; j++)
         {
@@ -334,11 +316,10 @@ int main(void)
             {
                 activation += hidden_layer[k] * output_weights[k][j];
             }
-            output_layer[j] = activation; // No activation yet
+            output_layer[j] = sigmoid(activation);
         }
 
-        softmax(output_layer, OUTPUTS_NUMBER);
-
+        // Find the index with the highest output value
         int predicted_label = 0;
         double max_output = output_layer[0];
         for (int i = 1; i < OUTPUTS_NUMBER; i++)
@@ -350,7 +331,7 @@ int main(void)
             }
         }
 
-        printf("Predicted Letter: %c\n", 'A' + predicted_label);
+        printf("Predicted Letter: %c\n", 'a' + predicted_label);
 
         // Free test_image
         for (int y = 0; y < test_image->height; y++)

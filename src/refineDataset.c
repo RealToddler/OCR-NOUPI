@@ -56,20 +56,19 @@ void list_files_recursively(const char *base_path)
             printf("Fichier : %s\n", path);
 
             // Charger l'image
-            iImage *img = load_image(path, -1);
+            iImage *img = load_image(path);
             if (img == NULL)
             {
                 printf("Erreur : Impossible de charger l'image %s\n", path);
                 continue;
             }
 
-             grayscale(img);
-            binary(img);
+             // grayscale(img);
+            // binary(img);
 
             // Rogner l'image
-
             /*
-            iImage *cropped = crop_image(img);
+                        iImage *cropped = crop_image(img);
             if (cropped == NULL)
             {
                 printf("Erreur : Échec du rognage de l'image %s\n", path);
