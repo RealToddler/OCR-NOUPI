@@ -171,16 +171,32 @@ void apply_canny(iImage *img)
     // merge_bounding_boxes(boxes, &num_boxes);
     Color red = {255, 0, 0};
 
-    boxes = sort(boxes, 1, num_boxes);
-    compute_histogram(boxes, 3, num_boxes);
+    BoundingBox *sorted_by_height_boxes = sort(boxes, 1, num_boxes);
+    int *histogram_by_height = compute_histogram(sorted_by_height_boxes, 1, num_boxes);
+    double height_average = compute_average(sorted_by_height_boxes, 1, num_boxes);
+
+    BoundingBox *sorted_by_width_boxes = sort(boxes, 2, num_boxes);
+    int *histogram_by_width = compute_histogram(sorted_by_width_boxes, 2, num_boxes);
+    double width_average = compute_average(sorted_by_height_boxes, 1, num_boxes);
+
+    BoundingBox *sorted_by_surface_boxes = sort(boxes, 3, num_boxes);
+    int *histogram_by_surface = compute_histogram(sorted_by_surface_boxes, 3, num_boxes);
+    double surface_average = compute_average(sorted_by_height_boxes, 1, num_boxes);
+
+    printf("%lf\n", compute_average(boxes, 1, num_boxes));
     for (int i = 0; i < num_boxes; i++)
     {
+        if ((is_in_interval(height_average - 15, height_average + 15, boxes[i].height) || is_in_interval(width_average-15, width_average + 15, boxes[i].width)) && boxes[i].height + 15 >= boxes[i].width)
+        {
+            draw_rectangle(img, boxes[i].min_x, boxes[i].min_y, boxes[i].max_x, boxes[i].max_y, red);
+        }
+        
         // printf("%d\n", boxes[i].surface);
         if (boxes[i].height < 5 || boxes[i].width < 5)
         {
             erase(img, boxes[i]);
         } else {
-            draw_rectangle(img, boxes[i].min_x, boxes[i].min_y, boxes[i].max_x, boxes[i].max_y, red);
+            // draw_rectangle(img, boxes[i].min_x, boxes[i].min_y, boxes[i].max_x, boxes[i].max_y, red);
         }
     }
     for (unsigned int i = 0; i < img->height; i++)

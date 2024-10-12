@@ -76,7 +76,7 @@ BoundingBox *sort(BoundingBox *boxes, int mod, int numBoxes)
     return res;
 }
 
-unsigned int *compute_histogram(BoundingBox *sortedBoxes, int mod, int numBoxes) {
+int *compute_histogram(BoundingBox *sortedBoxes, int mod, int numBoxes) {
     int max;
 
     if (mod == 1)
@@ -91,9 +91,9 @@ unsigned int *compute_histogram(BoundingBox *sortedBoxes, int mod, int numBoxes)
     // we wont take 0 in consideration. Therefore will count
     // from 1 to max (included)
 
-    printf("%d\n", max);
+    // printf("%d\n", max);
 
-    unsigned int *histogram = calloc(max + 1, sizeof(unsigned int));
+    int *histogram = calloc(max + 1, sizeof(unsigned int));
 
     for (int i = 0; i < numBoxes; i++)
     {
@@ -128,4 +128,33 @@ unsigned int *compute_histogram(BoundingBox *sortedBoxes, int mod, int numBoxes)
     */
 
     return histogram;
+}
+
+double compute_median(int *histogram)
+{
+    // to be made
+    return 1.00;
+}
+
+double compute_average(BoundingBox *boxes, int mod, int numBoxes)
+{
+
+    double average = 0;
+    for (int i = 0; i < numBoxes - 1; i++)
+    {
+        if (mod == 1)
+        {
+            average += boxes[i].height;
+        }
+        else if (mod == 2)
+        {
+            average += boxes[i].width;
+        }
+        else
+        {
+            average += boxes[i].surface;
+        }
+    }
+
+    return average / numBoxes;
 }
