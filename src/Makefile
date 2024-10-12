@@ -1,14 +1,25 @@
-# Variables pour les fichiers sources
-SRC = main.c Image/*.c Image/Detection/*.c Image/Preprocess/ColorTreatment/*.c \
-      Image/Preprocess/NoiseReduction/*.c Image/Preprocess/Rotation/*.c
-
-# Variable pour l'exécutable
 EXEC = test
 
-# Règle pour la compilation
-$(EXEC): $(SRC)
-	gcc $(SRC) -o $(EXEC) -IImage `pkg-config --cflags --libs sdl2 SDL2_image`
+CFLAGS = -Wall -Wextra -IImage `pkg-config --cflags sdl2 SDL2_image`
+LDFLAGS = `pkg-config --libs sdl2 SDL2_image`
 
-# Optionnel : Règle de nettoyage
+SRC = $(wildcard main.c Image/*.c Image/Detection/*.c Image/Preprocess/ColorTreatment/*.c \
+      Image/Preprocess/NoiseReduction/*.c Image/Preprocess/Rotation/*.c)
+OBJ = $(SRC:.c=.o)
+
+all: $(EXEC)
+
+$(EXEC): $(OBJ)
+	$(CC) $(OBJ) -o $(EXEC) $(LDFLAGS)
+
+%.o: %.c
+	$(CC) -c $< -o $@ $(CFLAGS)
+
+format:
+	clang-format -i $(SRC) $(wildcard Image/*.h Image/Detection/*.h Image/Preprocess/**/*.h)
+
 clean:
+	rm -f $(OBJ) $(EXEC)
+
+clean-all: clean
 	rm -f $(EXEC)

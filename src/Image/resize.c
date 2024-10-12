@@ -1,16 +1,15 @@
 #include <stdlib.h>
 
-#include "resize.h"
 #include "../Image/image.h"
+#include "resize.h"
 
-iImage *resize_image(iImage *img, unsigned int new_width, unsigned int new_height)
-{
+iImage *resize_image(iImage *img, unsigned int new_width,
+                     unsigned int new_height) {
     unsigned int old_width = img->width;
     unsigned int old_height = img->height;
 
     iImage *resized_img = create_image(new_width, new_height, img->path);
-    if (resized_img == NULL)
-    {
+    if (resized_img == NULL) {
         printf("Err\n");
         return resized_img;
     }
@@ -18,10 +17,8 @@ iImage *resize_image(iImage *img, unsigned int new_width, unsigned int new_heigh
     double x_ratio = (double)old_width / new_width;
     double y_ratio = (double)old_height / new_height;
 
-    for (unsigned int y = 0; y < new_height; y++)
-    {
-        for (unsigned int x = 0; x < new_width; x++)
-        {
+    for (unsigned int y = 0; y < new_height; y++) {
+        for (unsigned int x = 0; x < new_width; x++) {
             unsigned int orig_x = (unsigned int)(x * x_ratio);
             unsigned int orig_y = (unsigned int)(y * y_ratio);
 

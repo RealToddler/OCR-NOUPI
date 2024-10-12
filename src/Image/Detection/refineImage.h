@@ -11,7 +11,7 @@ void erase(iImage *img, BoundingBox boxe);
 
 // one sort function (to find the biggest boxe which is the grid)
 // mod 1 = height mod 2 = width mod 3 = surface
-BoundingBox* sort(BoundingBox *boxes, int mod, int numBoxes);
+BoundingBox *sort(BoundingBox *boxes, int mod, int numBoxes);
 
 // one function that compute an histogram of some values of the boxes
 int *compute_histogram(BoundingBox *sortedBoxes, int mod, int numBoxes);

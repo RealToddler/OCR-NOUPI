@@ -20,7 +20,8 @@ int init_sdl();
 
 SDL_Surface *load_surface(const char *image_path);
 
-iImage *create_image(unsigned int width, unsigned int height, const char *image_path);
+iImage *create_image(unsigned int width, unsigned int height,
+                     const char *image_path);
 
 void extract_pixels(SDL_Surface *surface, iImage *img);
 
