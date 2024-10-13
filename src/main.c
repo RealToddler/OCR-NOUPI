@@ -13,6 +13,7 @@
 #include "Image/resize.h"
 
 #include "Image/Detection/canny.h"
+#include "Image/Detection/extract.h"
 
 #include "Image/Preprocess/Rotation/manualRotation.h"
 
@@ -56,6 +57,12 @@ int main(int argc, char *argv[]) {
         otsu_threshold(img, 32);
         invert_colors(img);
         apply_canny(img);
+
+        for (int *i = 0; i < 310; i++)
+        {
+            save_box_as_image(img, i);
+        }
+        
 
         save_image(img, argv[2]);
         free_image(img);

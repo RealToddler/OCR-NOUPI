@@ -1,6 +1,7 @@
 #include "canny.h"
 #include "../image.h"
 #include "boxes.h"
+#include "extract.h"
 #include "hysteresis.h"
 #include "refineImage.h"
 
@@ -165,7 +166,7 @@ void apply_canny(iImage *img) {
     double surface_average =
         compute_average(sorted_by_height_boxes, 1, num_boxes);
 
-    printf("%lf\n", compute_average(boxes, 1, num_boxes));
+    // printf("%lf\n", compute_average(boxes, 1, num_boxes));
     for (int i = 0; i < num_boxes; i++) {
         if ((is_in_interval(height_average - 15, height_average + 15,
                             boxes[i].height) ||

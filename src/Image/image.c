@@ -83,9 +83,7 @@ void extract_pixels(SDL_Surface *surface, iImage *img) {
                     pixel_value = p[0] | p[1] << 8 | p[2] << 16;
                 break;
             case 4: pixel_value = *(Uint32 *)p; break;
-            default:
-                pixel_value = 0; // Should not happen
-                break;
+            default: pixel_value = 0; break;
             }
 
             Uint8 r, g, b;
@@ -159,7 +157,7 @@ void save_image(iImage *img, const char *image_path) {
     }
 
     SDL_FreeSurface(surface);
-    printf("Image sauvegardée avec succès dans le fichier : %s\n", image_path);
+    // printf("Image sauvegardée avec succès dans le fichier : %s\n", image_path);
 }
 
 void free_image(iImage *img) {
