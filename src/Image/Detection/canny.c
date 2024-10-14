@@ -179,7 +179,7 @@ void apply_canny(iImage *img) {
             // boxes[i].max_x, boxes[i].max_y, red);
         }
     }
-    for (int i = 0; i < img->height; i++) {
+    for ( int i = 0; i < img->height; i++) {
         free(gradient_magnitude[i]);
         free(gradient_direction[i]);
         free(edges[i]);

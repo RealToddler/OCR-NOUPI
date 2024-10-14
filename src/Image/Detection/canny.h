@@ -9,6 +9,7 @@ void non_max_suppression(iImage *img, float **gradient_magnitude,
                          float **gradient_direction, float **edges);
 void dilate(unsigned char **input, unsigned char **output, int height,
             int width);
+
 void apply_canny(iImage *img);
 
 #endif // CANNY_H

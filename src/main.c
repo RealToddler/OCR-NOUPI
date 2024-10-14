@@ -58,6 +58,7 @@ int main(int argc, char *argv[]) {
         invert_colors(img);
         apply_canny(img);
 
+        extract_image(img);
         save_image(img, argv[2]);
         free_image(img);
     }
