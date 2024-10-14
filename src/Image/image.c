@@ -68,8 +68,8 @@ void extract_pixels(SDL_Surface *surface, iImage *img) {
     int bpp = surface->format->BytesPerPixel;
     int pitch = surface->pitch;
 
-    for (unsigned int y = 0; y < img->height; ++y) {
-        for (unsigned int x = 0; x < img->width; ++x) {
+    for (int y = 0; y < img->height; ++y) {
+        for (int x = 0; x < img->width; ++x) {
             Uint8 *p = pixels + y * pitch + x * bpp;
             Uint32 pixel_value;
 
@@ -137,8 +137,8 @@ void save_image(iImage *img, const char *image_path) {
     Uint8 *pixels = (Uint8 *)surface->pixels;
     int pitch = surface->pitch;
 
-    for (unsigned int y = 0; y < img->height; y++) {
-        for (unsigned int x = 0; x < img->width; x++) {
+    for (int y = 0; y < img->height; y++) {
+        for (int x = 0; x < img->width; x++) {
             pPixel current_pixel = img->pixels[y][x];
             Uint8 *p = pixels + y * pitch + x * 3;
             p[0] = current_pixel.r;
@@ -163,7 +163,7 @@ void save_image(iImage *img, const char *image_path) {
 void free_image(iImage *img) {
     if (img != NULL) {
         if (img->pixels != NULL) {
-            for (unsigned int i = 0; i < img->height; ++i) {
+            for (int i = 0; i < img->height; ++i) {
                 free(img->pixels[i]);
             }
             free(img->pixels);

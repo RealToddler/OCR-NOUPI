@@ -1,8 +1,8 @@
 #include "boxes.h"
 #include "../image.h"
 
-void flood_fill(unsigned char **edge_map, int **label_map, unsigned int x,
-                unsigned int y, unsigned int height, unsigned int width,
+void flood_fill(unsigned char **edge_map, int **label_map, int x,
+                int y, int height, int width,
                 int label, BoundingBox *box) {
     typedef struct {
         int x;

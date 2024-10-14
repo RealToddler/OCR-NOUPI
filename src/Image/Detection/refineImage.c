@@ -8,8 +8,8 @@ int is_in_interval(long x, long y, long val) {
 }
 
 void erase(iImage *img, BoundingBox boxe) {
-    for (unsigned int y = boxe.min_y; y < boxe.max_y; y++) {
-        for (unsigned int x = boxe.min_x; x < boxe.max_x; x++) {
+    for (int y = boxe.min_y; y < boxe.max_y; y++) {
+        for (int x = boxe.min_x; x < boxe.max_x; x++) {
             pPixel *pixel = &img->pixels[y][x];
             pixel->r = 0;
             pixel->g = 0;
@@ -80,7 +80,7 @@ int *compute_histogram(BoundingBox *sortedBoxes, int mod, int numBoxes) {
 
     // printf("%d\n", max);
 
-    int *histogram = calloc(max + 1, sizeof(unsigned int));
+    int *histogram = calloc(max + 1, sizeof(int));
 
     for (int i = 0; i < numBoxes; i++) {
         if (mod == 1) {
@@ -108,10 +108,10 @@ int *compute_histogram(BoundingBox *sortedBoxes, int mod, int numBoxes) {
     return histogram;
 }
 
-double compute_median(int *histogram) {
+// double compute_median(int *histogram) {
     // to be made
-    return 1.00;
-}
+   //  return 1.00;
+// }
 
 double compute_average(BoundingBox *boxes, int mod, int numBoxes) {
 

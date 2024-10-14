@@ -4,13 +4,13 @@
 #include "../image.h"
 
 typedef struct {
-    unsigned int min_x;
-    unsigned int max_x;
-    unsigned int min_y;
-    unsigned int max_y;
-    unsigned int height;
-    unsigned int width;
-    unsigned int surface;
+    int min_x;
+    int max_x;
+    int min_y;
+    int max_y;
+    int height;
+    int width;
+    int surface;
 } BoundingBox;
 
 typedef struct {
@@ -19,8 +19,8 @@ typedef struct {
     unsigned char b;
 } Color;
 
-void flood_fill(unsigned char **edge_map, int **label_map, unsigned int x,
-                unsigned int y, unsigned int height, unsigned int width,
+void flood_fill(unsigned char **edge_map, int **label_map, int x,
+                int y, int height, int width,
                 int label, BoundingBox *box);
 void draw_rectangle(iImage *img, int min_x, int min_y, int max_x, int max_y,
                     Color color);

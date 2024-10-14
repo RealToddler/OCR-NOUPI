@@ -10,7 +10,7 @@ typedef struct pPixel {
 } pPixel;
 
 typedef struct iImage {
-    unsigned int height, width;
+    int height, width;
     char *path;
     pPixel **pixels;
     int label;

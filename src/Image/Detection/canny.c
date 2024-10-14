@@ -19,8 +19,8 @@ void calculate_gradients(iImage *img, float **gradient_magnitude,
     int Gx[3][3] = {{-1, 0, 1}, {-2, 0, 2}, {-1, 0, 1}};
     int Gy[3][3] = {{-1, -2, -1}, {0, 0, 0}, {1, 2, 1}};
 
-    for (unsigned int y = 1; y < img->height - 1; y++) {
-        for (unsigned int x = 1; x < img->width - 1; x++) {
+    for (int y = 1; y < img->height - 1; y++) {
+        for (int x = 1; x < img->width - 1; x++) {
             int gx_r = 0, gy_r = 0;
             int gx_g = 0, gy_g = 0;
             int gx_b = 0, gy_b = 0;
@@ -52,8 +52,8 @@ void calculate_gradients(iImage *img, float **gradient_magnitude,
 
 void non_max_suppression(iImage *img, float **gradient_magnitude,
                          float **gradient_direction, float **edges) {
-    for (unsigned int y = 1; y < img->height - 1; y++) {
-        for (unsigned int x = 1; x < img->width - 1; x++) {
+    for (int y = 1; y < img->height - 1; y++) {
+        for (int x = 1; x < img->width - 1; x++) {
             float direction = gradient_direction[y][x];
             float magnitude = gradient_magnitude[y][x];
             float mag1, mag2;
@@ -84,16 +84,16 @@ void non_max_suppression(iImage *img, float **gradient_magnitude,
     }
 }
 
-void dilate(unsigned char **input, unsigned char **output, unsigned int height,
-            unsigned int width) {
-    for (unsigned int y = 0; y < height; y++) {
-        for (unsigned int x = 0; x < width; x++) {
+void dilate(unsigned char **input, unsigned char **output, int height,
+            int width) {
+    for (int y = 0; y < height; y++) {
+        for (int x = 0; x < width; x++) {
             output[y][x] = 0;
         }
     }
 
-    for (unsigned int y = 1; y < height - 1; y++) {
-        for (unsigned int x = 1; x < width - 1; x++) {
+    for (int y = 1; y < height - 1; y++) {
+        for (int x = 1; x < width - 1; x++) {
             if (input[y][x] == 1) {
                 for (int dy = -1; dy <= 1; dy++) {
                     for (int dx = -1; dx <= 1; dx++) {
@@ -110,21 +110,21 @@ void apply_canny(iImage *img) {
         (float **)malloc(img->height * sizeof(float *));
     float **gradient_direction =
         (float **)malloc(img->height * sizeof(float *));
-    for (unsigned int i = 0; i < img->height; i++) {
+    for (int i = 0; i < img->height; i++) {
         gradient_magnitude[i] = (float *)malloc(img->width * sizeof(float));
         gradient_direction[i] = (float *)malloc(img->width * sizeof(float));
     }
     calculate_gradients(img, gradient_magnitude, gradient_direction);
 
     float **edges = (float **)malloc(img->height * sizeof(float *));
-    for (unsigned int i = 0; i < img->height; i++) {
+    for (int i = 0; i < img->height; i++) {
         edges[i] = (float *)malloc(img->width * sizeof(float));
     }
     non_max_suppression(img, gradient_magnitude, gradient_direction, edges);
 
     unsigned char **edge_map =
         (unsigned char **)malloc(img->height * sizeof(unsigned char *));
-    for (unsigned int i = 0; i < img->height; i++) {
+    for (int i = 0; i < img->height; i++) {
         edge_map[i] =
             (unsigned char *)malloc(img->width * sizeof(unsigned char));
     }
@@ -134,7 +134,7 @@ void apply_canny(iImage *img) {
 
     unsigned char **dilated_edge_map =
         (unsigned char **)malloc(img->height * sizeof(unsigned char *));
-    for (unsigned int i = 0; i < img->height; i++) {
+    for (int i = 0; i < img->height; i++) {
         dilated_edge_map[i] =
             (unsigned char *)malloc(img->width * sizeof(unsigned char));
     }
@@ -149,22 +149,16 @@ void apply_canny(iImage *img) {
     Color red = {255, 0, 0};
 
     BoundingBox *sorted_by_height_boxes = sort(boxes, 1, num_boxes);
-    int *histogram_by_height =
-        compute_histogram(sorted_by_height_boxes, 1, num_boxes);
-    double height_average =
-        compute_average(sorted_by_height_boxes, 1, num_boxes);
+    // int *histogram_by_height = compute_histogram(sorted_by_height_boxes, 1, num_boxes);
+    double height_average = compute_average(sorted_by_height_boxes, 1, num_boxes);
 
-    BoundingBox *sorted_by_width_boxes = sort(boxes, 2, num_boxes);
-    int *histogram_by_width =
-        compute_histogram(sorted_by_width_boxes, 2, num_boxes);
-    double width_average =
-        compute_average(sorted_by_height_boxes, 1, num_boxes);
+    // BoundingBox *sorted_by_width_boxes = sort(boxes, 2, num_boxes);
+    // int *histogram_by_width = compute_histogram(sorted_by_width_boxes, 2, num_boxes);
+    double width_average = compute_average(sorted_by_height_boxes, 1, num_boxes);
 
-    BoundingBox *sorted_by_surface_boxes = sort(boxes, 3, num_boxes);
-    int *histogram_by_surface =
-        compute_histogram(sorted_by_surface_boxes, 3, num_boxes);
-    double surface_average =
-        compute_average(sorted_by_height_boxes, 1, num_boxes);
+    // BoundingBox *sorted_by_surface_boxes = sort(boxes, 3, num_boxes);
+    // int *histogram_by_surface = compute_histogram(sorted_by_surface_boxes, 3, num_boxes);
+    // double surface_average = compute_average(sorted_by_height_boxes, 1, num_boxes);
 
     // printf("%lf\n", compute_average(boxes, 1, num_boxes));
     for (int i = 0; i < num_boxes; i++) {
@@ -185,7 +179,7 @@ void apply_canny(iImage *img) {
             // boxes[i].max_x, boxes[i].max_y, red);
         }
     }
-    for (unsigned int i = 0; i < img->height; i++) {
+    for (int i = 0; i < img->height; i++) {
         free(gradient_magnitude[i]);
         free(gradient_direction[i]);
         free(edges[i]);

@@ -58,12 +58,6 @@ int main(int argc, char *argv[]) {
         invert_colors(img);
         apply_canny(img);
 
-        for (int *i = 0; i < 310; i++)
-        {
-            save_box_as_image(img, i);
-        }
-        
-
         save_image(img, argv[2]);
         free_image(img);
     }
