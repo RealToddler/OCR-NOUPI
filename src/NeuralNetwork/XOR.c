@@ -61,10 +61,10 @@ int main(void)
         {1.0f, 1.0f}};
 
     double training_outputs[TRAINING_SETS_NUMBER][OUTPUTS_NUMBER] = {
+        {1.0f},
         {0.0f},
-        {1.0f},
-        {1.0f},
-        {0.0f}};
+        {0.0f},
+        {1.0f}};
 
     for (int i = 0; i < INPUTS_NUMBER; i++)
     {

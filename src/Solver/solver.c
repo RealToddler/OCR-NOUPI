@@ -14,7 +14,7 @@ void printGrid(char grid[10][10]) {
 }
 
 /*
-int main() {
+void solder(char * word, char) {
     const char *word = "CACA";
     int rows = 10;
     int cols = 10;
