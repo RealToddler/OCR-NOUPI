@@ -112,7 +112,7 @@ int main() {
         default: printf("Choice is not valid. Please try again.\n"); break;
         }
         printf("\n");
-    } while (choice != 6);
+    } while (choice != 9);
 
     IMG_Quit();
     SDL_Quit();
