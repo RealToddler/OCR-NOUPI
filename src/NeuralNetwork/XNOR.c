@@ -43,7 +43,7 @@ void shuffle(int *array, size_t n) {
 #define OUTPUTS_NUMBER 2
 #define TRAINING_SETS_NUMBER 4
 
-int main(void) {
+void XNOR(void) {
     const double lr = 0.1f;
 
     double hidden_layer[HIDDEN_NODES_NUMBER];
@@ -186,6 +186,4 @@ int main(void) {
 
         printf("Output : %d\n", output_layer[1] > output_layer[0] ? 1 : 0);
     }
-
-    return 0;
 }

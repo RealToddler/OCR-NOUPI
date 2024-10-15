@@ -149,16 +149,21 @@ void apply_canny(iImage *img) {
     Color red = {255, 0, 0};
 
     BoundingBox *sorted_by_height_boxes = sort(boxes, 1, num_boxes);
-    // int *histogram_by_height = compute_histogram(sorted_by_height_boxes, 1, num_boxes);
-    double height_average = compute_average(sorted_by_height_boxes, 1, num_boxes);
+    // int *histogram_by_height = compute_histogram(sorted_by_height_boxes, 1,
+    // num_boxes);
+    double height_average =
+        compute_average(sorted_by_height_boxes, 1, num_boxes);
 
     // BoundingBox *sorted_by_width_boxes = sort(boxes, 2, num_boxes);
-    // int *histogram_by_width = compute_histogram(sorted_by_width_boxes, 2, num_boxes);
-    double width_average = compute_average(sorted_by_height_boxes, 1, num_boxes);
+    // int *histogram_by_width = compute_histogram(sorted_by_width_boxes, 2,
+    // num_boxes);
+    double width_average =
+        compute_average(sorted_by_height_boxes, 1, num_boxes);
 
     // BoundingBox *sorted_by_surface_boxes = sort(boxes, 3, num_boxes);
-    // int *histogram_by_surface = compute_histogram(sorted_by_surface_boxes, 3, num_boxes);
-    // double surface_average = compute_average(sorted_by_height_boxes, 1, num_boxes);
+    // int *histogram_by_surface = compute_histogram(sorted_by_surface_boxes, 3,
+    // num_boxes); double surface_average =
+    // compute_average(sorted_by_height_boxes, 1, num_boxes);
 
     // printf("%lf\n", compute_average(boxes, 1, num_boxes));
     for (int i = 0; i < num_boxes; i++) {
@@ -179,7 +184,7 @@ void apply_canny(iImage *img) {
             // boxes[i].max_x, boxes[i].max_y, red);
         }
     }
-    for ( int i = 0; i < img->height; i++) {
+    for (int i = 0; i < img->height; i++) {
         free(gradient_magnitude[i]);
         free(gradient_direction[i]);
         free(edges[i]);

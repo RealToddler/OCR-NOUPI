@@ -19,9 +19,8 @@ typedef struct {
     unsigned char b;
 } Color;
 
-void flood_fill(unsigned char **edge_map, int **label_map, int x,
-                int y, int height, int width,
-                int label, BoundingBox *box);
+void flood_fill(unsigned char **edge_map, int **label_map, int x, int y,
+                int height, int width, int label, BoundingBox *box);
 void draw_rectangle(iImage *img, int min_x, int min_y, int max_x, int max_y,
                     Color color);
 void find_bounding_boxes(unsigned char **edge_map, unsigned int height,

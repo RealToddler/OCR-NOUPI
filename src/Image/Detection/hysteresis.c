@@ -1,8 +1,7 @@
 #include "../image.h"
 
-void hysteresis_recursive(unsigned char **edge_map, int y,
-                        int x,  int height,
-                        int width) {
+void hysteresis_recursive(unsigned char **edge_map, int y, int x, int height,
+                          int width) {
     for (int dy = -1; dy <= 1; dy++) {
         for (int dx = -1; dx <= 1; dx++) {
             if (dy == 0 && dx == 0)

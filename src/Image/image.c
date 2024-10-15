@@ -157,7 +157,8 @@ void save_image(iImage *img, const char *image_path) {
     }
 
     SDL_FreeSurface(surface);
-    // printf("Image sauvegardée avec succès dans le fichier : %s\n", image_path);
+    // printf("Image sauvegardée avec succès dans le fichier : %s\n",
+    // image_path);
 }
 
 void free_image(iImage *img) {

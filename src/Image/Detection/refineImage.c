@@ -109,8 +109,8 @@ int *compute_histogram(BoundingBox *sortedBoxes, int mod, int numBoxes) {
 }
 
 // double compute_median(int *histogram) {
-    // to be made
-   //  return 1.00;
+// to be made
+//  return 1.00;
 // }
 
 double compute_average(BoundingBox *boxes, int mod, int numBoxes) {

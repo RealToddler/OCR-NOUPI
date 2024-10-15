@@ -17,32 +17,36 @@
 
 #include "Image/Preprocess/Rotation/manualRotation.h"
 
+#include "NeuralNetwork/XNOR.h"
+
+#include "Solver/checks.h"
+#include "Solver/loadGrid.h"
+#include "Solver/solver.h"
+
 int main() {
     if (SDL_Init(SDL_INIT_VIDEO) != 0) {
-        printf("An error occured while initializing SDL : %s\n", SDL_GetError());
+        printf("An error occured while initializing SDL : %s\n",
+               SDL_GetError());
         return -1;
     }
 
     if (!(IMG_Init(IMG_INIT_PNG) & IMG_INIT_PNG)) {
-        printf("An error occured while initializing SDL_Image : %s\n", IMG_GetError());
+        printf("An error occured while initializing SDL_Image : %s\n",
+               IMG_GetError());
         SDL_Quit();
         return -1;
     }
 
     const char *path_to_preprocess[8] = {
-        "test_data/preprocess_1_1.png",
-        "test_data/preprocess_1_2.png",
-        "test_data/preprocess_2_1.png",
-        "test_data/preprocess_2_2.png",
-        "test_data/preprocess_3_1.png",
-        "test_data/preprocess_3_2.png",
-        "test_data/preprocess_4_1.png",
-        "test_data/preprocess_4_2.png",
+        "preprocess_1_1.png", "preprocess_1_2.png",
+        "preprocess_2_1.png", "preprocess_2_2.png",
+        "preprocess_3_1.png", "preprocess_3_2.png",
+        "preprocess_4_1.png", "preprocess_4_2.png",
     };
 
-    const char *path_to_rotation = "test_data/rotation_2_2.png";
+    const char *path_to_rotation = "rotation_2_2.png";
 
-        int choice;
+    int choice;
 
     do {
         printf("======== OCR-NOUPI ========\n");
@@ -58,13 +62,14 @@ int main() {
         scanf("%d", &choice);
 
         switch (choice) {
-        case 1:
-            printf("You chose  'Image Preprocessing'\n");
+        case 1: {
+            printf("You chose 'Image Preprocessing'\n");
 
             for (int i = 1; i < 8; i++) {
                 for (int j = 1; j < 3; i++) {
-                    iImage *img =
-                        resize_image(load_image(path_to_images[i], -1), 1000, 1000);
+                    iImage *img = resize_image(
+                        // should be "data_test/" + path_to_preprocess[i]
+                        load_image(path_to_preprocess[i], -1), 1000, 1000);
 
                     if (img == NULL) {
                         printf("An error occured while loading the image");
@@ -81,20 +86,24 @@ int main() {
                     otsu_threshold(img, 32);
                     invert_colors(img);
 
-                    const char* output_path = "foo.png";
+                    const char *output_path = "foo.png";
 
                     save_image(img, output_path);
                     printf("Preprocessed image saved at "
-                           "outputs/%s\n", output_path);
+                           "outputs/%s\n",
+                           output_path);
 
                     free(img);
                 }
             }
             break;
-        case 2:
+        }
+        case 2: {
             printf("You chose 'Manual Rotation'\n");
-            
-            iImage *img = resize_image(load_image(path_to_rotation, -1), 1000, 1000);
+
+            iImage *img =
+                // should be "data_test/" + path_to_preprocess[i]
+                resize_image(load_image(path_to_rotation, -1), 1000, 1000);
 
             if (img == NULL) {
                 printf("An error occured while loading the image");
@@ -107,41 +116,51 @@ int main() {
             double angle;
 
             printf("Please select an angle :\n");
-            scanf("%ld", &angle);
+            scanf("%lf", &angle);
 
             rotate_image(img, angle);
 
-            save_image(img, "outputs/preprocessed_image.png");
-            printf("Rotated image saved at outputs/rotated_image_<i>.png");
-            
+            save_image(img, "outputs/rotated_2_2.png");
+            printf("Rotated image saved at outputs/rotation_2_2.png");
+
             free(img);
             break;
+        }
         case 3: // not working rn
             // for img in test_data:
-                // iImage *grid = extract_grid(img);
-                // save_image(grid, path);
+            // iImage *grid = extract_grid(img);
+            // save_image(grid, path);
             break;
-        case 4:  // not working rn
+        case 4: // not working rn
             // for img in test_data:
-                // iImage words_list = extract_words_list(img);
-                // save_image(grid, path)
+            // iImage words_list = extract_words_list(img);
+            // save_image(grid, path)
             break;
         case 5: // not working rn
             // for img in test_data:
-                // iImage words = extract_words_list(img);
-                // save_image(grid, path)
+            // iImage words = extract_words_list(img);
+            // save_image(grid, path)
             break;
-        case 6:  // not working rn
-            // arrays containing each words of a specific word list and grids
-            // function to extract letters
-        case 7:  // done, works fine
+        case 6: // not working rn
+                // arrays containing each words of a specific word list and
+                // grids function to extract letters
+        case 7: // done, works fine
             XNOR();
             break;
-        case 8: 
-            // char* word;
-            // char* path_to_grid;
-            // solver(word, path_to_grid);
+        case 8: {
+            // to be tested; not sure if it works atm
+            char word[256];
+            char path_to_grid[256];
+
+            printf("Please enter the path to the grid file:\n");
+            scanf("%255s", path_to_grid);
+
+            printf("Please enter the word you want to find in the grid:\n");
+            scanf("%255s", word);
+
+            solver(word, path_to_grid);
             break;
+        }
         case 9: break;
         default: printf("Choice is not valid. Please try again.\n"); break;
         }
