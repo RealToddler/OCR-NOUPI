@@ -4,6 +4,9 @@
 
 #include "loadGrid.h"
 
+/*
+    This function returns the grid loaded from a .txt file
+ */
 gGrid *load_grid(char *filename) {
     FILE *file = fopen(filename, "r");
     if (file == NULL) {

@@ -162,40 +162,24 @@ int main() {
             break;
         }
         case 3: // not working rn
-            // for img in test_data:
-            // iImage *grid = extract_grid(img);
-            // save_image(grid, path);
             break;
         case 4: // not working rn
-            // for img in test_data:
-            // iImage words_list = extract_words_list(img);
-            // save_image(grid, path)
             break;
         case 5: // not working rn
-            // for img in test_data:
-            // iImage words = extract_words_list(img);
-            // save_image(grid, path)
             break;
         case 6:   // not working rn
-                  // arrays containing each words of a specific word list and
-                  // grids function to extract letters
         case 7: { // done, works fine
             printf("\nYou chose XNOR.\n");
             XNOR();
             break;
         }
-        case 8: {
-            // to be fixed
+        case 8: { // done, works fine
             char word[256];
-            char path_to_grid[256];
 
-            printf("Please enter the path to the grid file:\n");
-            scanf("%255s", path_to_grid);
-
-            printf("Please enter the word you want to find in the grid:\n");
+            printf("\nPlease enter the word you want to find in the grid: ");
             scanf("%255s", word);
 
-            solver(word, path_to_grid);
+            solver(word, "data_test/grid.txt");
             break;
         }
         case 9: break;
