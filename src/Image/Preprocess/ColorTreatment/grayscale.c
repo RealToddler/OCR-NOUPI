@@ -1,6 +1,9 @@
 #include "grayscale.h"
 #include "../Image/image.h"
 
+/*
+    This function converts a colorful image in gray levels.
+*/
 void grayscale(iImage *img) {
     const unsigned int width = img->width;
     const unsigned int height = img->height;

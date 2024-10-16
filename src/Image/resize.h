@@ -6,4 +6,4 @@
 iImage *resize_image(iImage *img, unsigned int new_width,
                      unsigned int new_height);
 
-#endif
+#endif // RESIZE_H

@@ -3,6 +3,9 @@
 #include "../Image/image.h"
 #include "resize.h"
 
+/*
+    Returns a resized image, using ratios.
+*/
 iImage *resize_image(iImage *img, unsigned int new_width,
                      unsigned int new_height) {
     unsigned int old_width = img->width;
@@ -10,7 +13,7 @@ iImage *resize_image(iImage *img, unsigned int new_width,
 
     iImage *resized_img = create_image(new_width, new_height, img->path);
     if (resized_img == NULL) {
-        printf("Err\n");
+        printf("An error occured creating the resized image.\n");
         return resized_img;
     }
 

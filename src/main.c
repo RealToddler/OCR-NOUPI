@@ -1,6 +1,6 @@
-#include <string.h>
 #include <stdio.h>
 #include <stdlib.h>
+#include <string.h>
 
 #include "Image/Preprocess/ColorTreatment/binary.h"
 #include "Image/Preprocess/ColorTreatment/grayscale.h"
@@ -40,9 +40,8 @@ int main() {
     }
 
     const char *path_to_preprocess[8] = {
-        "preprocess_1_1.png", "preprocess_1_2.png",
-        "preprocess_2_1.png", "preprocess_2_2.png",
-        "preprocess_3_1.png", "preprocess_3_2.png",
+        "preprocess_1_1.png", "preprocess_1_2.png", "preprocess_2_1.png",
+        "preprocess_2_2.png", "preprocess_3_1.png", "preprocess_3_2.png",
         "preprocess_4_1.png", "preprocess_4_2.png",
     };
 
@@ -76,8 +75,7 @@ int main() {
                 strcat(input_path, path_to_preprocess[i]);
 
                 iImage *original_img = load_image(input_path, -1);
-                if (original_img == NULL)
-                { 
+                if (original_img == NULL) {
                     printf("original_img is NULL \n");
                     free(original_img);
                     IMG_Quit();
@@ -107,7 +105,7 @@ int main() {
 
                 save_image(img, output_path);
                 printf("Preprocessed image saved at %s\n", output_path);
-                
+
                 free(original_img);
                 free(img);
             }
@@ -147,13 +145,12 @@ int main() {
 
             iImage *rotated_image = rotate_image(img, angle);
 
-            if (rotated_image == NULL)
-            {
+            if (rotated_image == NULL) {
                 free(img);
                 free(original_img);
                 free(rotated_image);
                 printf("An error occured while rotating the image.\n");
-                return  EXIT_FAILURE;
+                return EXIT_FAILURE;
             }
 
             save_image(rotated_image, "./outputs/rotated_2_2.png");
@@ -179,16 +176,16 @@ int main() {
             // iImage words = extract_words_list(img);
             // save_image(grid, path)
             break;
-        case 6: // not working rn
-                // arrays containing each words of a specific word list and
-                // grids function to extract letters
-        case 7: {// done, works fine
+        case 6:   // not working rn
+                  // arrays containing each words of a specific word list and
+                  // grids function to extract letters
+        case 7: { // done, works fine
             printf("\nYou chose XNOR.\n");
             XNOR();
             break;
         }
         case 8: {
-            // to be tested; not sure if it works atm
+            // to be fixed
             char word[256];
             char path_to_grid[256];
 

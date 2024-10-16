@@ -7,6 +7,9 @@
 
 #include "../Image/image.h"
 
+/*
+    Loads a surface from a path using SDL2
+*/
 SDL_Surface *load_surface(const char *image_path) {
     SDL_Surface *surface = IMG_Load(image_path);
     if (surface == NULL) {
@@ -16,11 +19,14 @@ SDL_Surface *load_surface(const char *image_path) {
     return surface;
 }
 
+/*
+    Creates an image from a path
+*/
 iImage *create_image(unsigned int width, unsigned int height,
                      const char *image_path) {
     iImage *img = (iImage *)malloc(sizeof(iImage));
     if (img == NULL) {
-        printf("Erreur d'allocation mémoire pour l'image\n");
+        printf("An error occured while allocating memory.\n");
         return NULL;
     }
 
@@ -29,7 +35,8 @@ iImage *create_image(unsigned int width, unsigned int height,
 
     img->path = (char *)malloc(strlen(image_path) + 1);
     if (img->path == NULL) {
-        printf("Erreur d'allocation mémoire pour le chemin\n");
+        printf(
+            "An error occured while allocating memory for the path's data.\n");
         free(img);
         return NULL;
     }
@@ -37,7 +44,8 @@ iImage *create_image(unsigned int width, unsigned int height,
 
     img->pixels = (pPixel **)malloc(height * sizeof(pPixel *));
     if (img->pixels == NULL) {
-        printf("Erreur d'allocation mémoire pour les pixels\n");
+        printf("An error occured while allocating memory for the pixels's "
+               "data. \n");
         free(img->path);
         free(img);
         return NULL;
@@ -46,7 +54,8 @@ iImage *create_image(unsigned int width, unsigned int height,
     for (unsigned int i = 0; i < height; ++i) {
         img->pixels[i] = (pPixel *)malloc(width * sizeof(pPixel));
         if (img->pixels[i] == NULL) {
-            printf("Erreur d'allocation mémoire pour la ligne de pixels %d\n",
+            printf("An error occured while allocating memory for the pixels's "
+                   "line, %d\n",
                    i);
             for (unsigned int j = 0; j < i; ++j) {
                 free(img->pixels[j]);
@@ -61,6 +70,9 @@ iImage *create_image(unsigned int width, unsigned int height,
     return img;
 }
 
+/*
+    Extracts pixels from SDL surface and copy them in a iImage struct
+*/
 void extract_pixels(SDL_Surface *surface, iImage *img) {
     SDL_LockSurface(surface);
 
@@ -98,6 +110,9 @@ void extract_pixels(SDL_Surface *surface, iImage *img) {
     SDL_UnlockSurface(surface);
 }
 
+/*
+    Loads an image from its path and assign a label
+*/
 iImage *load_image(const char *image_path, int label) {
     SDL_Surface *surface = load_surface(image_path);
     if (surface == NULL) {
@@ -118,17 +133,19 @@ iImage *load_image(const char *image_path, int label) {
     return img;
 }
 
+/*
+    Saves an image at a given path
+*/
 void save_image(iImage *img, const char *image_path) {
     if (img == NULL || img->pixels == NULL) {
-        fprintf(stderr, "Erreur : image ou pixels invalide.\n");
+        fprintf(stderr, "Error with pixels or image.\n");
         return;
     }
 
     SDL_Surface *surface = SDL_CreateRGBSurfaceWithFormat(
         0, img->width, img->height, 24, SDL_PIXELFORMAT_RGB24);
     if (surface == NULL) {
-        fprintf(stderr, "Erreur lors de la création de la surface SDL : %s\n",
-                SDL_GetError());
+        fprintf(stderr, "Error with surface : %s\n", SDL_GetError());
         return;
     }
 
@@ -150,17 +167,17 @@ void save_image(iImage *img, const char *image_path) {
     SDL_UnlockSurface(surface);
 
     if (IMG_SavePNG(surface, image_path) != 0) {
-        fprintf(stderr, "Erreur lors de la sauvegarde de l'image PNG : %s\n",
-                IMG_GetError());
+        fprintf(stderr, "Error while saving the image : %s\n", IMG_GetError());
         SDL_FreeSurface(surface);
         return;
     }
 
     SDL_FreeSurface(surface);
-    // printf("Image sauvegardée avec succès dans le fichier : %s\n",
-    // image_path);
 }
 
+/*
+    Frees an image
+*/
 void free_image(iImage *img) {
     if (img != NULL) {
         if (img->pixels != NULL) {

@@ -1,6 +1,9 @@
 #include "binary.h"
 #include "../Image/image.h"
 
+/*
+    This function converts a given image which has already been grayscaled in black and white image.
+*/
 void binary(iImage *img) {
     unsigned int width = img->width;
     unsigned int height = img->height;

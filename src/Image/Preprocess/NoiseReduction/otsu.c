@@ -1,5 +1,9 @@
 #include "../Image/image.h"
 
+/*
+    This function implements the Otsu Method :
+    https://en.wikipedia.org/wiki/Otsu%27s_method
+*/
 unsigned int compute_otsu_threshold(unsigned int *histogram,
                                     unsigned int total_pixels) {
     double sum = 0;
@@ -37,6 +41,10 @@ unsigned int compute_otsu_threshold(unsigned int *histogram,
     return threshold;
 }
 
+
+/*
+    This function applies the Otsu Method on sub-blocks of the image.
+*/
 void otsu_threshold(iImage *img, const unsigned int block_size) {
     unsigned int width = img->width;
     unsigned int height = img->height;

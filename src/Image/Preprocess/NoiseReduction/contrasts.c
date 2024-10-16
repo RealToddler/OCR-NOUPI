@@ -1,5 +1,11 @@
 #include "../Image/image.h"
 
+/*
+    This function increases constrasts on a given image, according to
+    specific parameters : 
+        - alpha, which is the adjustment factor
+        - treshold which is the constrast sensitivity
+*/
 void increase_contrast(iImage *img, float alpha, float threshold) {
     unsigned int width = img->width;
     unsigned int height = img->height;

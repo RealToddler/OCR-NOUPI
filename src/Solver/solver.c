@@ -13,6 +13,10 @@ void solver(char *word, char *filename) {
     int y = 0;
     int word_size = strlen(word);
 
+    for (int i = 0; i < word_size; i++) {
+        word[i] = toupper(word[i]);
+    }
+
     while (1) {
         printf("x = %d      y = %d\n", x, y);
         first_coords =

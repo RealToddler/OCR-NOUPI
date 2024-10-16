@@ -1,6 +1,9 @@
 #include "invertColors.h"
 #include "../Image/image.h"
 
+/*
+    This function inverts the color of an image assuming its already binarized.
+*/
 void invert_colors(iImage *img) {
     const unsigned int width = img->width;
     const unsigned int height = img->height;
