@@ -1,7 +1,7 @@
 EXEC = test
 
-CFLAGS = -Wall -Wextra -std=c99 -IImage `pkg-config --cflags sdl2 SDL2_image`
-LDFLAGS = `pkg-config --libs sdl2 SDL2_image` -lm
+CFLAGS = -Wall -Wextra -std=c99 -IImage `pkg-config --cflags sdl2 SDL2_image` -g
+LDFLAGS = `pkg-config --libs sdl2 SDL2_image` -lm -fsanitize=address
 
 SRC = $(wildcard main.c Image/*.c Image/Detection/*.c Image/Preprocess/ColorTreatment/*.c \
       Image/Preprocess/NoiseReduction/*.c Image/Preprocess/Rotation/*.c Solver/*.c NeuralNetwork/*.c)

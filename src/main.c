@@ -1,4 +1,6 @@
 #include <string.h>
+#include <stdio.h>
+#include <stdlib.h>
 
 #include "Image/Preprocess/ColorTreatment/binary.h"
 #include "Image/Preprocess/ColorTreatment/grayscale.h"
@@ -58,56 +60,81 @@ int main() {
         printf("[ 6 ] Letters Extraction.\n");
         printf("[ 7 ] NeuralNetwork - Proof of Concept (XNOR).\n");
         printf("[ 8 ] Solver.\n");
-        printf("[ 9 ]  Quit.\n");
+        printf("[ 9 ] Quit.\n");
+        printf("\nMake your choice : ");
         scanf("%d", &choice);
 
         switch (choice) {
-        case 1: {
-            printf("You chose 'Image Preprocessing'\n");
+        case 1: { // done, works fine
+            printf("\nYou chose 'Image Preprocessing'\n");
 
-            for (int i = 1; i < 8; i++) {
-                for (int j = 1; j < 3; i++) {
-                    iImage *img = resize_image(
-                        // should be "data_test/" + path_to_preprocess[i]
-                        load_image(path_to_preprocess[i], -1), 1000, 1000);
+            for (int i = 0; i < 8; i++) {
+                char input_path[256] = "";
+                char output_path[256] = "";
 
-                    if (img == NULL) {
-                        printf("An error occured while loading the image");
-                        free(img);
-                        IMG_Quit();
-                        SDL_Quit();
-                        return EXIT_FAILURE;
-                    }
+                strcat(input_path, "data_test/");
+                strcat(input_path, path_to_preprocess[i]);
 
-                    grayscale(img);
-                    apply_gaussian_blur(img);
-                    increase_contrast(img, 10, 8);
-                    binary(img);
-                    otsu_threshold(img, 32);
-                    invert_colors(img);
-
-                    const char *output_path = "foo.png";
-
-                    save_image(img, output_path);
-                    printf("Preprocessed image saved at "
-                           "outputs/%s\n",
-                           output_path);
-
-                    free(img);
+                iImage *original_img = load_image(input_path, -1);
+                if (original_img == NULL)
+                { 
+                    printf("original_img is NULL \n");
+                    free(original_img);
+                    IMG_Quit();
+                    SDL_Quit();
+                    return EXIT_FAILURE;
                 }
+                iImage *img = resize_image(original_img, 1000, 1000);
+
+                if (img == NULL) {
+                    printf("An error occured while loading the image");
+                    free(img);
+                    free(original_img);
+                    IMG_Quit();
+                    SDL_Quit();
+                    return EXIT_FAILURE;
+                }
+
+                grayscale(img);
+                apply_gaussian_blur(img);
+                increase_contrast(img, 10, 8);
+                binary(img);
+                otsu_threshold(img, 32);
+                invert_colors(img);
+
+                strcat(output_path, "outputs/");
+                strcat(output_path, path_to_preprocess[i]);
+
+                save_image(img, output_path);
+                printf("Preprocessed image saved at %s\n", output_path);
+                
+                free(original_img);
+                free(img);
             }
             break;
         }
-        case 2: {
-            printf("You chose 'Manual Rotation'\n");
+        case 2: { // done, works fine
+            printf("\nYou chose 'Manual Rotation'\n");
 
-            iImage *img =
-                // should be "data_test/" + path_to_preprocess[i]
-                resize_image(load_image(path_to_rotation, -1), 1000, 1000);
+            char input_path[256] = "";
+
+            strcat(input_path, "data_test/");
+            strcat(input_path, path_to_rotation);
+
+            iImage *original_img = load_image(input_path, -1);
+            if (original_img == NULL) {
+                printf("original_img is NULL \n");
+                free(original_img);
+                IMG_Quit();
+                SDL_Quit();
+                return EXIT_FAILURE;
+            }
+            iImage *img = resize_image(original_img, 1000, 1000);
 
             if (img == NULL) {
                 printf("An error occured while loading the image");
                 free(img);
+                free(original_img);
                 IMG_Quit();
                 SDL_Quit();
                 return EXIT_FAILURE;
@@ -115,15 +142,26 @@ int main() {
 
             double angle;
 
-            printf("Please select an angle :\n");
+            printf("Please select an angle : ");
             scanf("%lf", &angle);
 
-            rotate_image(img, angle);
+            iImage *rotated_image = rotate_image(img, angle);
 
-            save_image(img, "outputs/rotated_2_2.png");
+            if (rotated_image == NULL)
+            {
+                free(img);
+                free(original_img);
+                free(rotated_image);
+                printf("An error occured while rotating the image.\n");
+                return  EXIT_FAILURE;
+            }
+
+            save_image(rotated_image, "./outputs/rotated_2_2.png");
             printf("Rotated image saved at outputs/rotation_2_2.png");
 
             free(img);
+            free(original_img);
+            free(rotated_image);
             break;
         }
         case 3: // not working rn
@@ -144,9 +182,11 @@ int main() {
         case 6: // not working rn
                 // arrays containing each words of a specific word list and
                 // grids function to extract letters
-        case 7: // done, works fine
+        case 7: {// done, works fine
+            printf("\nYou chose XNOR.\n");
             XNOR();
             break;
+        }
         case 8: {
             // to be tested; not sure if it works atm
             char word[256];
