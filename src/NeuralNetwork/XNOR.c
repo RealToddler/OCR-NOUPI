@@ -2,8 +2,8 @@
 #include <stdio.h>
 #include <stdlib.h>
 
-// neural network that can learn XOR function
-
+// neural network that can learn XNOR function
+// largely inspired from https://youtu.be/LA4I3cWkp1E?si=ysvdwESGe3dV8m0U
 void softmax(double *input, double *output, int length) {
     double max = input[0];
     for (int i = 1; i < length; i++) {
@@ -22,10 +22,16 @@ void softmax(double *input, double *output, int length) {
     }
 }
 
+/*
+    This function inits weights of our NeuralNetwork
+*/
 double init_weights() {
     return ((double)rand()) / ((double)RAND_MAX);
 }
 
+/*
+    This function shuffles the data of the dataset of our NeuralNetwork
+*/
 void shuffle(int *array, size_t n) {
     if (n > 1) {
         size_t i;
@@ -43,6 +49,9 @@ void shuffle(int *array, size_t n) {
 #define OUTPUTS_NUMBER 2
 #define TRAINING_SETS_NUMBER 4
 
+/*
+    Main function in which the NeuralNetwork is initialized, trained and tested.
+*/
 void XNOR(void) {
     const double lr = 0.1f;
 

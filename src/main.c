@@ -138,6 +138,13 @@ int main() {
                 return EXIT_FAILURE;
             }
 
+            grayscale(img);
+            apply_gaussian_blur(img);
+            increase_contrast(img, 10, 8);
+            binary(img);
+            otsu_threshold(img, 32);
+            invert_colors(img);
+
             double angle;
 
             printf("Please select an angle : ");
