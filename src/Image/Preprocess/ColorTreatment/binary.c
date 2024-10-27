@@ -3,6 +3,7 @@
 
 /*
     This function converts a given image which has already been grayscaled in black and white image.
+    Not used but still there because it can be usefull
 */
 void binary(iImage *img) {
     unsigned int width = img->width;

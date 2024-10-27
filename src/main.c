@@ -76,7 +76,7 @@ int main() {
 
                 iImage *original_img = load_image(input_path, -1);
                 if (original_img == NULL) {
-                    printf("original_img is NULL \n");
+                    printf("original_img is NULL\n");
                     free(original_img);
                     IMG_Quit();
                     SDL_Quit();
@@ -92,12 +92,11 @@ int main() {
                     SDL_Quit();
                     return EXIT_FAILURE;
                 }
-
                 grayscale(img);
                 apply_gaussian_blur(img);
-                increase_contrast(img, 10, 8);
-                binary(img);
+                increase_contrast(img, 2.0, 10);
                 otsu_threshold(img, 32);
+                // binary(img);
                 invert_colors(img);
 
                 strcat(output_path, "outputs/");
