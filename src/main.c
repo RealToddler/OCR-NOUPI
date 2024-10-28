@@ -16,6 +16,7 @@
 
 #include "Image/Detection/canny.h"
 #include "Image/Detection/extract.h"
+#include "Image/Detection/cannyParameters.h"
 
 #include "Image/Preprocess/Rotation/manualRotation.h"
 
@@ -47,6 +48,11 @@ int main() {
 
     const char *path_to_rotation = "rotation_2_2.png";
 
+    const char *path_to_words_lists[8] = {
+        "1_1.png", "1_2.png", "2_1.png", "2_2.png",
+        "3_1.png", "3_2.png", "4_1.png", "4_2.png",
+    };
+
     int choice;
 
     do {
@@ -71,7 +77,7 @@ int main() {
                 char input_path[256] = "";
                 char output_path[256] = "";
 
-                strcat(input_path, "data_test/");
+                strcat(input_path, "data_test/preprocess/");
                 strcat(input_path, path_to_preprocess[i]);
 
                 iImage *original_img = load_image(input_path, -1);
@@ -115,7 +121,7 @@ int main() {
 
             char input_path[256] = "";
 
-            strcat(input_path, "data_test/");
+            strcat(input_path, "data_test/preprocess/");
             strcat(input_path, path_to_rotation);
 
             iImage *original_img = load_image(input_path, -1);
@@ -171,9 +177,92 @@ int main() {
             break;
         case 4: // not working rn
             break;
-        case 5: // not working rn
+        case 5: { // done, detection doesnt work perfectly
+            printf("\nYou chose Words Detection.\n");
+
+            for (int i = 0; i < 8; i++) {
+                char input_path[256] = "";
+                char output_path[256] = "";
+
+                strcat(input_path, "data_test/detections/words_lists/");
+                strcat(input_path, path_to_words_lists[i]);
+
+                iImage *original_img = load_image(input_path, -1);
+                if (original_img == NULL) {
+                    printf("original_img is NULL\n");
+                    free(original_img);
+                    IMG_Quit();
+                    SDL_Quit();
+                    return EXIT_FAILURE;
+                }
+                iImage *img = resize_image(original_img, 300, 200);
+
+                if (img == NULL) {
+                    printf("An error occured while loading the image");
+                    free(img);
+                    free(original_img);
+                    IMG_Quit();
+                    SDL_Quit();
+                    return EXIT_FAILURE;
+                }
+
+                apply_canny(find_words_in_words_lists, img);
+
+                    strcat(output_path, "outputs/detections/words_lists/");
+                strcat(output_path, path_to_words_lists[i]);
+
+                save_image(img, output_path);
+
+                free(original_img);
+                free(img);
+            }
+
+            printf("Words detection is done.\n");
             break;
-        case 6:   // not working rn
+        }
+        case 6: {
+            printf("\nYou chose Letters Extraction.\n");
+
+            for (int i = 0; i < 8; i++) {
+                char input_path[256] = "";
+                char output_path[256] = "";
+
+                strcat(input_path, "data_test/detections/letters_words/");
+                strcat(input_path, path_to_words_lists[i]);
+
+                iImage *original_img = load_image(input_path, -1);
+                if (original_img == NULL) {
+                    printf("original_img is NULL\n");
+                    free(original_img);
+                    IMG_Quit();
+                    SDL_Quit();
+                    return EXIT_FAILURE;
+                }
+                iImage *img = resize_image(original_img, 200, 100);
+
+                if (img == NULL) {
+                    printf("An error occured while loading the image");
+                    free(img);
+                    free(original_img);
+                    IMG_Quit();
+                    SDL_Quit();
+                    return EXIT_FAILURE;
+                }
+
+                apply_canny(find_letters_in_word, img);
+
+                strcat(output_path, "outputs/detections/letters_words/");
+                strcat(output_path, path_to_words_lists[i]);
+
+                save_image(img, output_path);
+
+                free(original_img);
+                free(img);
+            }
+
+            printf("Letters extraction is done.\n");
+            break;
+        }
         case 7: { // done, works fine
             printf("\nYou chose XNOR.\n");
             XNOR();

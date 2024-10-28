@@ -105,7 +105,7 @@ void dilate(unsigned char **input, unsigned char **output, int height,
     }
 }
 
-void apply_canny(iImage *img) {
+void apply_canny(void (*func)(BoundingBox *, int , iImage *), iImage *img) {
     float **gradient_magnitude =
         (float **)malloc(img->height * sizeof(float *));
     float **gradient_direction =
@@ -145,45 +145,9 @@ void apply_canny(iImage *img) {
     find_bounding_boxes(dilated_edge_map, img->height, img->width, &boxes,
                         &num_boxes);
 
-    // merge_bounding_boxes(boxes, &num_boxes);
-    Color red = {255, 0, 0};
+    // function with parameters
+    func(boxes, num_boxes, img);
 
-    BoundingBox *sorted_by_height_boxes = sort(boxes, 1, num_boxes);
-    // int *histogram_by_height = compute_histogram(sorted_by_height_boxes, 1,
-    // num_boxes);
-    double height_average =
-        compute_average(sorted_by_height_boxes, 1, num_boxes);
-
-    // BoundingBox *sorted_by_width_boxes = sort(boxes, 2, num_boxes);
-    // int *histogram_by_width = compute_histogram(sorted_by_width_boxes, 2,
-    // num_boxes);
-    double width_average =
-        compute_average(sorted_by_height_boxes, 1, num_boxes);
-
-    // BoundingBox *sorted_by_surface_boxes = sort(boxes, 3, num_boxes);
-    // int *histogram_by_surface = compute_histogram(sorted_by_surface_boxes, 3,
-    // num_boxes); double surface_average =
-    // compute_average(sorted_by_height_boxes, 1, num_boxes);
-
-    // printf("%lf\n", compute_average(boxes, 1, num_boxes));
-    for (int i = 0; i < num_boxes; i++) {
-        if ((is_in_interval(height_average - 15, height_average + 15,
-                            boxes[i].height) ||
-             is_in_interval(width_average - 15, width_average + 15,
-                            boxes[i].width)) &&
-            boxes[i].height + 15 >= boxes[i].width) {
-            draw_rectangle(img, boxes[i].min_x, boxes[i].min_y, boxes[i].max_x,
-                           boxes[i].max_y, red);
-        }
-
-        // printf("%d\n", boxes[i].surface);
-        if (boxes[i].height < 5 || boxes[i].width < 5) {
-            erase(img, boxes[i]);
-        } else {
-            // draw_rectangle(img, boxes[i].min_x, boxes[i].min_y,
-            // boxes[i].max_x, boxes[i].max_y, red);
-        }
-    }
     for (int i = 0; i < img->height; i++) {
         free(gradient_magnitude[i]);
         free(gradient_direction[i]);

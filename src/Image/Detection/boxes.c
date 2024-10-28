@@ -133,16 +133,16 @@ void find_bounding_boxes(unsigned char **edge_map, unsigned int height,
     free(label_map);
 }
 
-void merge_bounding_boxes(BoundingBox *boxes, int *num_boxes) {
+void merge_bounding_boxes(BoundingBox *boxes, int *num_boxes, int xmargin, int ymargin) {
     int merged = 1;
     while (merged) {
         merged = 0;
         for (int i = 0; i < *num_boxes; i++) {
             for (int j = i + 1; j < *num_boxes; j++) {
-                int overlap_x = (boxes[i].min_x <= boxes[j].max_x + 5) &&
-                                (boxes[j].min_x <= boxes[i].max_x + 5);
-                int overlap_y = (boxes[i].min_y <= boxes[j].max_y + 5) &&
-                                (boxes[j].min_y <= boxes[i].max_y + 5);
+                int overlap_x = (boxes[i].min_x <= boxes[j].max_x + xmargin) &&
+                                (boxes[j].min_x <= boxes[i].max_x + xmargin);
+                int overlap_y = (boxes[i].min_y <= boxes[j].max_y + ymargin) &&
+                                (boxes[j].min_y <= boxes[i].max_y + ymargin);
 
                 if (overlap_x && overlap_y) {
                     boxes[i].min_x = (boxes[i].min_x < boxes[j].min_x)

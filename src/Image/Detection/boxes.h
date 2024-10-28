@@ -26,6 +26,7 @@ void draw_rectangle(iImage *img, int min_x, int min_y, int max_x, int max_y,
 void find_bounding_boxes(unsigned char **edge_map, unsigned int height,
                          unsigned int width, BoundingBox **boxes,
                          int *num_boxes);
-void merge_bounding_boxes(BoundingBox *boxes, int *num_boxes);
+void merge_bounding_boxes(BoundingBox *boxes, int *num_boxes, int xmargin,
+                          int ymargin);
 
 #endif // BOXES_H

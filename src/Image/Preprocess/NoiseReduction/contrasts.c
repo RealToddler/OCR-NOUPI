@@ -2,7 +2,7 @@
 
 /*
     This function increases constrasts on a given image, according to
-    specific parameters : 
+    specifics parameters : 
         - alpha, which is the adjustment factor
         - treshold which is the constrast sensitivity
 */
