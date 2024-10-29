@@ -6,7 +6,6 @@
 #include "checks.h"
 #include "loadGrid.h"
 
-
 /*
     This function checks if the word is in the grid.
 */

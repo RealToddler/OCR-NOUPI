@@ -1,6 +1,6 @@
+#include "image.h"
 #include <math.h>
 #include <stdlib.h>
-#include "image.h"
 
 #define PI 3.14159265
 
@@ -15,7 +15,6 @@ void rotation_matrix(double theta_deg, double R[2][2]) {
     R[1][1] = cos(theta);
 }
 
-
 /*
     This function rotates a point in a 2D matrix using the 2D rotation matrix.
 */
@@ -27,7 +26,6 @@ void rotate_point(double x, double y, double center_x, double center_y,
     *new_x = R[0][0] * x_centered + R[0][1] * y_centered + center_x;
     *new_y = R[1][0] * x_centered + R[1][1] * y_centered + center_x;
 }
-
 
 /*
     This function applies the previous ones to rotate the image and return it.

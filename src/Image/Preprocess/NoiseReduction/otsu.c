@@ -41,7 +41,6 @@ unsigned int compute_otsu_threshold(unsigned int *histogram,
     return threshold;
 }
 
-
 /*
     This function applies the Otsu Method on sub-blocks of the image.
 */

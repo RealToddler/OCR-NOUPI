@@ -133,7 +133,8 @@ void find_bounding_boxes(unsigned char **edge_map, unsigned int height,
     free(label_map);
 }
 
-void merge_bounding_boxes(BoundingBox *boxes, int *num_boxes, int xmargin, int ymargin) {
+void merge_bounding_boxes(BoundingBox *boxes, int *num_boxes, int xmargin,
+                          int ymargin) {
     int merged = 1;
     while (merged) {
         merged = 0;

@@ -17,7 +17,7 @@ BoundingBox *sort(BoundingBox *boxes, int mod, int numBoxes);
 int *compute_histogram(BoundingBox *sortedBoxes, int mod, int numBoxes);
 
 // in order to know the median and average sizes
-double compute_median(int *histogram);
+int compute_median(int *histogram, int size);
 double compute_average(BoundingBox *boxes, int mod, int numBoxes);
 
 #endif // REFINEIMAGE_H

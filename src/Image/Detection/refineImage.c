@@ -108,10 +108,34 @@ int *compute_histogram(BoundingBox *sortedBoxes, int mod, int numBoxes) {
     return histogram;
 }
 
-// double compute_median(int *histogram) {
-// to be made
-//  return 1.00;
-// }
+int compute_median(int *histogram, int size) {
+    int total_count = 0;
+    for (int i = 0; i < size; i++) {
+        total_count += histogram[i];
+    }
+
+    int midpoint = total_count / 2;
+    int cumulative_count = 0;
+    int median_value = 0;
+    for (int i = 0; i < size; i++) {
+        cumulative_count += histogram[i];
+        if (cumulative_count > midpoint) {
+            if (total_count % 2 == 0 &&
+                cumulative_count - histogram[i] == midpoint) {
+                int next_value = i + 1;
+                while (next_value < size && histogram[next_value] == 0) {
+                    next_value++;
+                }
+                median_value = (i + next_value) / 2.0;
+            } else {
+                median_value = i;
+            }
+            break;
+        }
+    }
+
+    return median_value;
+}
 
 double compute_average(BoundingBox *boxes, int mod, int numBoxes) {
 

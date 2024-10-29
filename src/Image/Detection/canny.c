@@ -105,7 +105,7 @@ void dilate(unsigned char **input, unsigned char **output, int height,
     }
 }
 
-void apply_canny(void (*func)(BoundingBox *, int , iImage *), iImage *img) {
+void apply_canny(void (*func)(BoundingBox *, int, iImage *), iImage *img) {
     float **gradient_magnitude =
         (float **)malloc(img->height * sizeof(float *));
     float **gradient_direction =

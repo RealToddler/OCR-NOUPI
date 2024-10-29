@@ -49,7 +49,6 @@ cCoords check_horizontal(int cols, char **grid, char *word, tTuple first_coords,
     return result;
 }
 
-
 /*
     This function checks vertically if the word is around.
 */
@@ -96,7 +95,6 @@ cCoords check_vertical(int rows, char **grid, char *word, tTuple first_coords,
 
     return result;
 }
-
 
 /*
     This function checks diagonally if the word is around.

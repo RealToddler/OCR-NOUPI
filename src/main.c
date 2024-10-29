@@ -15,8 +15,8 @@
 #include "Image/resize.h"
 
 #include "Image/Detection/canny.h"
-#include "Image/Detection/extract.h"
 #include "Image/Detection/cannyParameters.h"
+#include "Image/Detection/extract.h"
 
 #include "Image/Preprocess/Rotation/manualRotation.h"
 
@@ -177,7 +177,7 @@ int main() {
             break;
         case 4: // not working rn
             break;
-        case 5: { // done, detection doesnt work perfectly
+        case 5: { // done but not working well (4.5/8)
             printf("\nYou chose Words Detection.\n");
 
             for (int i = 0; i < 8; i++) {
@@ -195,7 +195,7 @@ int main() {
                     SDL_Quit();
                     return EXIT_FAILURE;
                 }
-                iImage *img = resize_image(original_img, 300, 200);
+                iImage *img = resize_image(original_img, 600, 400);
 
                 if (img == NULL) {
                     printf("An error occured while loading the image");
@@ -206,9 +206,11 @@ int main() {
                     return EXIT_FAILURE;
                 }
 
+                binary(img);
+
                 apply_canny(find_words_in_words_lists, img);
 
-                    strcat(output_path, "outputs/detections/words_lists/");
+                strcat(output_path, "outputs/detections/words_lists/");
                 strcat(output_path, path_to_words_lists[i]);
 
                 save_image(img, output_path);
@@ -220,7 +222,7 @@ int main() {
             printf("Words detection is done.\n");
             break;
         }
-        case 6: {
+        case 6: { // done, good enough (6/8)
             printf("\nYou chose Letters Extraction.\n");
 
             for (int i = 0; i < 8; i++) {
@@ -230,7 +232,7 @@ int main() {
                 strcat(input_path, "data_test/detections/letters_words/");
                 strcat(input_path, path_to_words_lists[i]);
 
-                iImage *original_img = load_image(input_path, -1);
+                iImage *original_img = load_image(input_path, -5);
                 if (original_img == NULL) {
                     printf("original_img is NULL\n");
                     free(original_img);
@@ -238,7 +240,7 @@ int main() {
                     SDL_Quit();
                     return EXIT_FAILURE;
                 }
-                iImage *img = resize_image(original_img, 200, 100);
+                iImage *img = resize_image(original_img, 1200, 300);
 
                 if (img == NULL) {
                     printf("An error occured while loading the image");
@@ -248,6 +250,8 @@ int main() {
                     SDL_Quit();
                     return EXIT_FAILURE;
                 }
+
+                binary(img);
 
                 apply_canny(find_letters_in_word, img);
 
