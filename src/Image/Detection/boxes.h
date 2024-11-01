@@ -14,6 +14,11 @@ typedef struct {
 } bBoundingBox;
 
 typedef struct {
+    bBoundingBox *boxes;
+    int nb_boxes;
+} bBoxSize;
+
+typedef struct {
     unsigned char r;
     unsigned char g;
     unsigned char b;

@@ -152,3 +152,19 @@ double compute_average(bBoundingBox *boxes, int mod, int numBoxes) {
 
     return average / numBoxes;
 }
+
+double compute_median2(bBoundingBox *boxes, int mod, int numBoxes) {
+
+    double average = 0;
+    for (int i = 15; i < numBoxes - 25; i++) {
+        if (mod == 1) {
+            average += boxes[i].height;
+        } else if (mod == 2) {
+            average += boxes[i].width;
+        } else {
+            average += boxes[i].surface;
+        }
+    }
+
+    return average / numBoxes;
+}

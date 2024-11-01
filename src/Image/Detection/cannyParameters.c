@@ -4,6 +4,90 @@
 #include "refineImage.h"
 
 void find_grid(bBoundingBox *boxes, int num_boxes, iImage *img) {
+    double wavrage = compute_median2(boxes, 1, num_boxes);
+    double wavrage2 = compute_median2(boxes, 2, num_boxes);
+    bBoundingBox *boxes_inter = sort(boxes, 1, num_boxes);
+
+    int x_min = img->width;
+    int x_max = 0;
+    int y_min = img->height;
+    int y_max = 0;
+
+    for (int i = 0; i < num_boxes - 1; i++) {
+        if (boxes_inter[i].height > (wavrage - (wavrage / 2)) &&
+            boxes_inter[i].height < (wavrage + (wavrage / 2)) &&
+            boxes_inter[i].width < (2 * (wavrage)) &&
+            boxes_inter[i].width < (wavrage2 + (wavrage2 / 2))) {
+            if (boxes_inter[i].max_x > x_max)
+                x_max = boxes_inter[i].max_x;
+            if (boxes_inter[i].max_y > y_max)
+                y_max = boxes_inter[i].max_y;
+            if (boxes_inter[i].min_x < x_min)
+                x_min = boxes_inter[i].min_x;
+            if (boxes_inter[i].min_y < y_min)
+                y_min = boxes_inter[i].min_y;
+        }
+    }
+    cColor red = {255, 0, 0};
+
+    // int h = (y_max - (y_min));
+    // int w = (x_max - (x_min));
+    // int surface = w * h;
+    // bBoundingBox res = {x_min, x_max, y_min, y_max, h, w, surface};
+
+    draw_rectangle(img, x_min, y_min, x_max, y_max, red);
+}
+
+void find_word_lists(bBoundingBox *boxes, int num_boxes, iImage *img) {
+    double wavrage = compute_median2(boxes, 1, num_boxes);
+    double wavrage2 = compute_median2(boxes, 2, num_boxes);
+    bBoundingBox *boxes_inter = sort(boxes, 1, num_boxes);
+
+    int x_min = img->width;
+    int x_max = 0;
+    int y_min = img->height;
+    int y_max = 0;
+
+    for (int i = 0; i < num_boxes - 1; i++) {
+        if (boxes_inter[i].height > (wavrage - (wavrage / 2)) &&
+            boxes_inter[i].height < (wavrage + (wavrage / 2)) &&
+            boxes_inter[i].width < (2 * (wavrage)) &&
+            boxes_inter[i].width < (wavrage2 + (wavrage2 / 2))) {
+            if (boxes_inter[i].max_x > x_max)
+                x_max = boxes_inter[i].max_x;
+            if (boxes_inter[i].max_y > y_max)
+                y_max = boxes_inter[i].max_y;
+            if (boxes_inter[i].min_x < x_min)
+                x_min = boxes_inter[i].min_x;
+            if (boxes_inter[i].min_y < y_min)
+                y_min = boxes_inter[i].min_y;
+        }
+    }
+
+    int h = (y_max - (y_min));
+    int w = (x_max - (x_min));
+    int surface = w * h;
+    bBoundingBox array = {x_min, x_max, y_min, y_max, h, w, surface};
+    bBoundingBox *res = malloc(num_boxes * sizeof(bBoundingBox));
+    int index = 0;
+
+    for (int i = 0; i < num_boxes - 1; i++) {
+        if ((array.max_x < boxes[i].min_x || boxes[i].max_x < array.min_x ||
+             array.max_y < boxes[i].min_y || boxes[i].max_y < array.min_y) &&
+            boxes[i].height < boxes[i].width && boxes[i].surface < 30000) {
+            res[index] = boxes[i];
+            index++;
+        }
+    }
+    res = realloc(res, index * sizeof(bBoundingBox));
+    bBoxSize res2 = {res, index};
+
+    cColor green = {0, 255, 0};
+
+    for (int i = 0; i < index; i++) {
+        draw_rectangle(img, res2.boxes[i].min_x, res2.boxes[i].min_y, res2.boxes[i].max_x,
+                       res2.boxes[i].max_y, green);
+    }
 }
 
 void find_letters_in_word(bBoundingBox *boxes, int num_boxes, iImage *img) {
@@ -11,8 +95,8 @@ void find_letters_in_word(bBoundingBox *boxes, int num_boxes, iImage *img) {
     merge_bounding_boxes(boxes, &num_boxes, -5, 0);
     cColor red = {255, 0, 0};
     for (int i = 0; i < num_boxes; i++) {
-        if (boxes[i].surface < avg_surface && boxes[i].height < compute_average(boxes, 1, num_boxes))
-        {
+        if (boxes[i].surface < avg_surface &&
+            boxes[i].height < compute_average(boxes, 1, num_boxes)) {
             erase(img, boxes[i]);
         } else {
             draw_rectangle(img, boxes[i].min_x, boxes[i].min_y, boxes[i].max_x,
@@ -21,7 +105,8 @@ void find_letters_in_word(bBoundingBox *boxes, int num_boxes, iImage *img) {
     }
 }
 
-void find_words_in_words_lists(bBoundingBox *boxes, int num_boxes, iImage *img) {
+void find_words_in_words_lists(bBoundingBox *boxes, int num_boxes,
+                               iImage *img) {
     merge_bounding_boxes(boxes, &num_boxes, 20, 0);
 
     cColor red = {255, 0, 0};
@@ -29,9 +114,10 @@ void find_words_in_words_lists(bBoundingBox *boxes, int num_boxes, iImage *img) 
     for (int i = 0; i < num_boxes; i++) {
         if (boxes[i].height < 5 || boxes[i].width < 5) {
             erase(img, boxes[i]);
-        } else if (boxes[i].height < compute_average(boxes, 1, num_boxes) * 0.2) {
+        } else if (boxes[i].height <
+                   compute_average(boxes, 1, num_boxes) * 0.2) {
             erase(img, boxes[i]);
-         } else {
+        } else {
             draw_rectangle(img, boxes[i].min_x, boxes[i].min_y, boxes[i].max_x,
                            boxes[i].max_y, red);
         }

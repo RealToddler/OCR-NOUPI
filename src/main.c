@@ -9,6 +9,7 @@
 #include "Image/Preprocess/NoiseReduction/contrasts.h"
 #include "Image/Preprocess/NoiseReduction/gaussianBlur.h"
 #include "Image/Preprocess/NoiseReduction/otsu.h"
+#include "Image/Preprocess/NoiseReduction/smallGroupReduction.h"
 
 #include "Image/crop.h"
 #include "Image/image.h"
@@ -54,12 +55,11 @@ int main() {
         printf("[ 1 ] Image Preprocessing.\n");
         printf("[ 2 ] Manual Rotation.\n");
         printf("[ 3 ] Grid Detection.\n");
-        printf("[ 4 ] Words List Detection.\n");
-        printf("[ 5 ] Words Detection.\n");
-        printf("[ 6 ] Letters Extraction.\n");
-        printf("[ 7 ] NeuralNetwork - Proof of Concept (XNOR).\n");
-        printf("[ 8 ] Solver.\n");
-        printf("[ 9 ] Quit.\n");
+        printf("[ 4 ] Words Detection.\n");
+        printf("[ 5 ] Letters Extraction.\n");
+        printf("[ 6 ] NeuralNetwork - Proof of Concept (XNOR).\n");
+        printf("[ 7 ] Solver.\n");
+        printf("[ 8 ] Quit.\n");
         printf("\nMake your choice : ");
         scanf("%d", &choice);
 
@@ -82,7 +82,7 @@ int main() {
                     SDL_Quit();
                     return EXIT_FAILURE;
                 }
-                iImage *img = resize_image(original_img, original_img->width * 2, original_img->height * 2);
+                iImage *img = resize_image(original_img, 1000, 1000);
                 if (img == NULL) {
                     printf("An error occured while loading the image");
                     free(img);
@@ -93,10 +93,11 @@ int main() {
                 }
                 grayscale(img);
                 apply_gaussian_blur(img);
-                increase_contrast(img, 2.0, 15);
-                otsu_threshold(img, 64);
+                increase_contrast(img, 10, 8);
+                otsu_threshold(img, 32);
                 // binary(img);
-                invert_colors(img);
+                apply_groups_reduction(img);
+                // invert_colors(img);
 
                 strcat(output_path, "outputs/preprocess/");
                 strcat(output_path, path_to_images[i]);
@@ -139,9 +140,10 @@ int main() {
             grayscale(img);
             apply_gaussian_blur(img);
             increase_contrast(img, 10, 8);
-            binary(img);
             otsu_threshold(img, 32);
-            invert_colors(img);
+            // binary(img);
+            apply_groups_reduction(img);
+            // invert_colors(img);
 
             double angle;
 
@@ -158,64 +160,83 @@ int main() {
                 return EXIT_FAILURE;
             }
 
-            save_image(rotated_image, "./outputs/rotated_2_2.png");
-            printf("Rotated image saved at outputs/rotation_2_2.png");
+            apply_groups_reduction(rotated_image);
+
+            save_image(rotated_image, "./outputs/rotated.png");
+            printf("Rotated image saved at outputs/rotation.png");
 
             free(img);
             free(original_img);
             free(rotated_image);
             break;
         }
-        case 3: // not working rn
+        case 3: { // 4/8
+            printf("\nYou chose Grid Detection.\n");
+
+            for (int i = 0; i < 8; i++) {
+                char input_path[256] = "";
+                char output_path[256] = "";
+
+                strcat(input_path, "data_test/detections/grid/");
+                strcat(input_path, path_to_images[i]);
+
+                iImage *img = load_image(input_path, -1);
+                if (img == NULL) {
+                    printf("img is NULL\n");
+                    free(img);
+                    IMG_Quit();
+                    SDL_Quit();
+                    return EXIT_FAILURE;
+                }
+
+                // binary(img);
+
+                apply_canny(find_grid, img);
+
+                strcat(output_path, "outputs/detections/grid/");
+                strcat(output_path, path_to_images[i]);
+
+                save_image(img, output_path);
+                free(img);
+            }
+
+            printf("Grid detection is done.\n");
             break;
-        case 4: // not working rn
-            break;
-        case 5: { // done but not working well (4.5/8)
+        }
+        case 4: { // 4/8
             printf("\nYou chose Words Detection.\n");
 
             for (int i = 0; i < 8; i++) {
                 char input_path[256] = "";
                 char output_path[256] = "";
 
-                strcat(input_path, "data_test/detections/words_lists/");
+                strcat(input_path, "data_test/detections/words/");
                 strcat(input_path, path_to_images[i]);
 
-                iImage *original_img = load_image(input_path, -1);
-                if (original_img == NULL) {
-                    printf("original_img is NULL\n");
-                    free(original_img);
-                    IMG_Quit();
-                    SDL_Quit();
-                    return EXIT_FAILURE;
-                }
-                iImage *img = resize_image(original_img, 600, 400);
-
+                iImage *img = load_image(input_path, -1);
                 if (img == NULL) {
-                    printf("An error occured while loading the image");
+                    printf("img is NULL\n");
                     free(img);
-                    free(original_img);
                     IMG_Quit();
                     SDL_Quit();
                     return EXIT_FAILURE;
                 }
 
-                binary(img);
+                // binary(img);
 
-                apply_canny(find_words_in_words_lists, img);
+                apply_canny(find_word_lists, img);
 
-                strcat(output_path, "outputs/detections/words_lists/");
+                strcat(output_path, "outputs/detections/words/");
                 strcat(output_path, path_to_images[i]);
 
                 save_image(img, output_path);
-
-                free(original_img);
                 free(img);
             }
 
-            printf("Words detection is done.\n");
+            printf("Words List detection is done.\n");
             break;
         }
-        case 6: { // done, good enough (6/8)
+        case 5: { // done, good enough (6/8)
             printf("\nYou chose Letters Extraction.\n");
 
             for (int i = 0; i < 8; i++) {
@@ -260,12 +281,12 @@ int main() {
             printf("Letters extraction is done.\n");
             break;
         }
-        case 7: { // done, works fine
+        case 6: { // done, works fine
             printf("\nYou chose XNOR.\n");
             XNOR();
             break;
         }
-        case 8: { // done, works fine
+        case 7: { // done, works fine
             char word[256];
 
             printf("\nPlease enter the word you want to find in the grid: ");
@@ -274,11 +295,11 @@ int main() {
             solver(word, "data_test/grid.txt");
             break;
         }
-        case 9: break;
+        case 8: break;
         default: printf("Choice is not valid. Please try again.\n"); break;
         }
         printf("\n");
-    } while (choice != 9);
+    } while (choice != 8);
 
     IMG_Quit();
     SDL_Quit();

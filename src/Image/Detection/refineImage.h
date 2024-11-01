@@ -20,4 +20,6 @@ int *compute_histogram(bBoundingBox *sortedBoxes, int mod, int numBoxes);
 int compute_median(int *histogram, int size);
 double compute_average(bBoundingBox *boxes, int mod, int numBoxes);
 
+double compute_median2(bBoundingBox *boxes, int mod, int numBoxes);
+
 #endif // REFINEIMAGE_H
