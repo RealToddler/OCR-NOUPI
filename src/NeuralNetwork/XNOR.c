@@ -5,15 +5,9 @@
 // neural network that can learn XNOR function
 // largely inspired from https://youtu.be/LA4I3cWkp1E?si=ysvdwESGe3dV8m0U
 void softmax(double *input, double *output, int length) {
-    double max = input[0];
-    for (int i = 1; i < length; i++) {
-        if (input[i] > max)
-            max = input[i];
-    }
-
     double sum = 0.0;
     for (int i = 0; i < length; i++) {
-        output[i] = exp(input[i] - max);
+        output[i] = exp(input[i]);
         sum += output[i];
     }
 
@@ -89,7 +83,7 @@ void XNOR(void) {
 
     int training_set_order[] = {0, 1, 2, 3};
 
-    int number_of_epochs = 1000000;
+    int number_of_epochs = 100000;
 
     // train the neural network for a number of epochs
     for (int epoch = 0; epoch < number_of_epochs; epoch++) {
@@ -160,7 +154,7 @@ void XNOR(void) {
             }
         }
 
-        if ((epoch + 1) % 100000 == 0) {
+        if ((epoch + 1) % 10000 == 0) {
             printf("Epoch %d/%d completed\n", epoch + 1, number_of_epochs);
         }
     }
@@ -192,7 +186,7 @@ void XNOR(void) {
         }
 
         softmax(output_layer_input, output_layer, OUTPUTS_NUMBER);
-
-        printf("Output : %d\n", output_layer[1] > output_layer[0] ? 1 : 0);
+        printf("Predicted Output : %d\n",
+               output_layer[1] > output_layer[0] ? 0 : 1);
     }
 }

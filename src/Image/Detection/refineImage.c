@@ -7,7 +7,7 @@ int is_in_interval(long x, long y, long val) {
     return val >= x && val <= y;
 }
 
-void erase(iImage *img, BoundingBox boxe) {
+void erase(iImage *img, bBoundingBox boxe) {
     for (int y = boxe.min_y; y < boxe.max_y; y++) {
         for (int x = boxe.min_x; x < boxe.max_x; x++) {
             pPixel *pixel = &img->pixels[y][x];
@@ -18,9 +18,9 @@ void erase(iImage *img, BoundingBox boxe) {
     }
 }
 
-BoundingBox *sort(BoundingBox *boxes, int mod, int numBoxes) {
-    BoundingBox *res = boxes;
-    BoundingBox swap;
+bBoundingBox *sort(bBoundingBox *boxes, int mod, int numBoxes) {
+    bBoundingBox *res = boxes;
+    bBoundingBox swap;
 
     if (mod == 1) // height
     {
@@ -64,7 +64,7 @@ BoundingBox *sort(BoundingBox *boxes, int mod, int numBoxes) {
     return res;
 }
 
-int *compute_histogram(BoundingBox *sortedBoxes, int mod, int numBoxes) {
+int *compute_histogram(bBoundingBox *sortedBoxes, int mod, int numBoxes) {
     int max;
 
     if (mod == 1) {
@@ -137,7 +137,7 @@ int compute_median(int *histogram, int size) {
     return median_value;
 }
 
-double compute_average(BoundingBox *boxes, int mod, int numBoxes) {
+double compute_average(bBoundingBox *boxes, int mod, int numBoxes) {
 
     double average = 0;
     for (int i = 0; i < numBoxes - 1; i++) {

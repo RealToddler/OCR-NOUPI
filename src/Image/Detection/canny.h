@@ -11,6 +11,6 @@ void non_max_suppression(iImage *img, float **gradient_magnitude,
 void dilate(unsigned char **input, unsigned char **output, int height,
             int width);
 
-void apply_canny(void (*func)(BoundingBox *, int, iImage *), iImage *img);
+void apply_canny(void (*func)(bBoundingBox *, int, iImage *), iImage *img);
 
 #endif // CANNY_H

@@ -11,22 +11,22 @@ typedef struct {
     int height;
     int width;
     int surface;
-} BoundingBox;
+} bBoundingBox;
 
 typedef struct {
     unsigned char r;
     unsigned char g;
     unsigned char b;
-} Color;
+} cColor;
 
 void flood_fill(unsigned char **edge_map, int **label_map, int x, int y,
-                int height, int width, int label, BoundingBox *box);
+                int height, int width, int label, bBoundingBox *box);
 void draw_rectangle(iImage *img, int min_x, int min_y, int max_x, int max_y,
-                    Color color);
+                    cColor color);
 void find_bounding_boxes(unsigned char **edge_map, unsigned int height,
-                         unsigned int width, BoundingBox **boxes,
+                         unsigned int width, bBoundingBox **boxes,
                          int *num_boxes);
-void merge_bounding_boxes(BoundingBox *boxes, int *num_boxes, int xmargin,
+void merge_bounding_boxes(bBoundingBox *boxes, int *num_boxes, int xmargin,
                           int ymargin);
 
 #endif // BOXES_H

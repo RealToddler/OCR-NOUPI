@@ -13,6 +13,7 @@
 // highest y and lowest y then draw a rectangle
 
 // we may also implement hough transformation to get the grid when its draw
+// https://support.ptc.com/help/mathcad/r10.0/fr/index.html#page/PTC_Mathcad_Help/canny_edge_finder.html
 
 void calculate_gradients(iImage *img, float **gradient_magnitude,
                          float **gradient_direction) {
@@ -105,7 +106,7 @@ void dilate(unsigned char **input, unsigned char **output, int height,
     }
 }
 
-void apply_canny(void (*func)(BoundingBox *, int, iImage *), iImage *img) {
+void apply_canny(void (*func)(bBoundingBox *, int, iImage *), iImage *img) {
     float **gradient_magnitude =
         (float **)malloc(img->height * sizeof(float *));
     float **gradient_direction =
@@ -140,7 +141,7 @@ void apply_canny(void (*func)(BoundingBox *, int, iImage *), iImage *img) {
     }
     dilate(edge_map, dilated_edge_map, img->height, img->width);
 
-    BoundingBox *boxes;
+    bBoundingBox *boxes;
     int num_boxes;
     find_bounding_boxes(dilated_edge_map, img->height, img->width, &boxes,
                         &num_boxes);

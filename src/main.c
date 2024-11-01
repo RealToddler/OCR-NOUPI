@@ -40,15 +40,9 @@ int main() {
         return -1;
     }
 
-    const char *path_to_preprocess[8] = {
-        "preprocess_1_1.png", "preprocess_1_2.png", "preprocess_2_1.png",
-        "preprocess_2_2.png", "preprocess_3_1.png", "preprocess_3_2.png",
-        "preprocess_4_1.png", "preprocess_4_2.png",
-    };
+    const char *path_to_rotation = "rotation.png";
 
-    const char *path_to_rotation = "rotation_2_2.png";
-
-    const char *path_to_words_lists[8] = {
+    const char *path_to_images[8] = {
         "1_1.png", "1_2.png", "2_1.png", "2_2.png",
         "3_1.png", "3_2.png", "4_1.png", "4_2.png",
     };
@@ -78,7 +72,7 @@ int main() {
                 char output_path[256] = "";
 
                 strcat(input_path, "data_test/preprocess/");
-                strcat(input_path, path_to_preprocess[i]);
+                strcat(input_path, path_to_images[i]);
 
                 iImage *original_img = load_image(input_path, -1);
                 if (original_img == NULL) {
@@ -88,8 +82,7 @@ int main() {
                     SDL_Quit();
                     return EXIT_FAILURE;
                 }
-                iImage *img = resize_image(original_img, 1000, 1000);
-
+                iImage *img = resize_image(original_img, original_img->width * 2, original_img->height * 2);
                 if (img == NULL) {
                     printf("An error occured while loading the image");
                     free(img);
@@ -100,13 +93,13 @@ int main() {
                 }
                 grayscale(img);
                 apply_gaussian_blur(img);
-                increase_contrast(img, 2.0, 10);
-                otsu_threshold(img, 32);
+                increase_contrast(img, 2.0, 15);
+                otsu_threshold(img, 64);
                 // binary(img);
                 invert_colors(img);
 
-                strcat(output_path, "outputs/");
-                strcat(output_path, path_to_preprocess[i]);
+                strcat(output_path, "outputs/preprocess/");
+                strcat(output_path, path_to_images[i]);
 
                 save_image(img, output_path);
                 printf("Preprocessed image saved at %s\n", output_path);
@@ -185,7 +178,7 @@ int main() {
                 char output_path[256] = "";
 
                 strcat(input_path, "data_test/detections/words_lists/");
-                strcat(input_path, path_to_words_lists[i]);
+                strcat(input_path, path_to_images[i]);
 
                 iImage *original_img = load_image(input_path, -1);
                 if (original_img == NULL) {
@@ -211,7 +204,7 @@ int main() {
                 apply_canny(find_words_in_words_lists, img);
 
                 strcat(output_path, "outputs/detections/words_lists/");
-                strcat(output_path, path_to_words_lists[i]);
+                strcat(output_path, path_to_images[i]);
 
                 save_image(img, output_path);
 
@@ -230,7 +223,7 @@ int main() {
                 char output_path[256] = "";
 
                 strcat(input_path, "data_test/detections/letters_words/");
-                strcat(input_path, path_to_words_lists[i]);
+                strcat(input_path, path_to_images[i]);
 
                 iImage *original_img = load_image(input_path, -5);
                 if (original_img == NULL) {
@@ -256,7 +249,7 @@ int main() {
                 apply_canny(find_letters_in_word, img);
 
                 strcat(output_path, "outputs/detections/letters_words/");
-                strcat(output_path, path_to_words_lists[i]);
+                strcat(output_path, path_to_images[i]);
 
                 save_image(img, output_path);
 

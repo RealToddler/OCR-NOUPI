@@ -2,13 +2,13 @@
 #include "../image.h"
 
 void flood_fill(unsigned char **edge_map, int **label_map, int x, int y,
-                int height, int width, int label, BoundingBox *box) {
+                int height, int width, int label, bBoundingBox *box) {
     typedef struct {
         int x;
         int y;
-    } Point;
+    } pPoint;
 
-    Point *stack = (Point *)malloc(height * width * sizeof(Point));
+    pPoint *stack = (pPoint *)malloc(height * width * sizeof(pPoint));
     int stack_size = 0;
     stack[stack_size].x = x;
     stack[stack_size].y = y;
@@ -52,7 +52,7 @@ void flood_fill(unsigned char **edge_map, int **label_map, int x, int y,
 }
 
 void draw_rectangle(iImage *img, int min_x, int min_y, int max_x, int max_y,
-                    Color color) {
+                    cColor color) {
 
     for (int x = min_x; x <= max_x; x++) {
         if (min_y >= 0 && min_y < img->height) {
@@ -82,7 +82,7 @@ void draw_rectangle(iImage *img, int min_x, int min_y, int max_x, int max_y,
 }
 
 void find_bounding_boxes(unsigned char **edge_map, unsigned int height,
-                         unsigned int width, BoundingBox **boxes,
+                         unsigned int width, bBoundingBox **boxes,
                          int *num_boxes) {
     int **label_map = (int **)malloc(height * sizeof(int *));
     for (unsigned int i = 0; i < height; i++) {
@@ -94,13 +94,13 @@ void find_bounding_boxes(unsigned char **edge_map, unsigned int height,
 
     int label = 1;
     *num_boxes = 0;
-    BoundingBox *temp_boxes =
-        (BoundingBox *)malloc(sizeof(BoundingBox) * height * width / 10);
+    bBoundingBox *temp_boxes =
+        (bBoundingBox *)malloc(sizeof(bBoundingBox) * height * width / 10);
 
     for (unsigned int y = 0; y < height; y++) {
         for (unsigned int x = 0; x < width; x++) {
             if (edge_map[y][x] == 1 && label_map[y][x] == 0) {
-                BoundingBox box;
+                bBoundingBox box;
                 box.min_x = x;
                 box.max_x = x;
                 box.min_y = y;
@@ -120,7 +120,7 @@ void find_bounding_boxes(unsigned char **edge_map, unsigned int height,
         }
     }
 
-    *boxes = (BoundingBox *)malloc(sizeof(BoundingBox) * (*num_boxes));
+    *boxes = (bBoundingBox *)malloc(sizeof(bBoundingBox) * (*num_boxes));
     for (int i = 0; i < *num_boxes; i++) {
         (*boxes)[i] = temp_boxes[i];
     }
@@ -133,7 +133,7 @@ void find_bounding_boxes(unsigned char **edge_map, unsigned int height,
     free(label_map);
 }
 
-void merge_bounding_boxes(BoundingBox *boxes, int *num_boxes, int xmargin,
+void merge_bounding_boxes(bBoundingBox *boxes, int *num_boxes, int xmargin,
                           int ymargin) {
     int merged = 1;
     while (merged) {
