@@ -4,17 +4,10 @@
 #include <string.h>
 
 void extract_image(iImage *img) {
-    int rect_counter = 0;
     for (int y = 0; y < img->height; y++) {
         for (int x = 0; x < img->width; x++) {
-
-            // Vérifier si le pixel est rouge
             pPixel *pixel = &img->pixels[y][x];
             if (pixel->r == 255 && pixel->g == 0 && pixel->b == 0) {
-
-                // Commencer à traiter le rectangle à partir de (x, y)
-
-                // Trouver la largeur du rectangle
                 int w = 1;
                 while ((x + w) < img->width) {
                     pPixel *p = &img->pixels[y][x + w];
@@ -23,8 +16,6 @@ void extract_image(iImage *img) {
                     else
                         break;
                 }
-
-                // Trouver la hauteur du rectangle
                 int h = 1;
                 while ((y + h) < img->height) {
                     pPixel *p = &img->pixels[y + h][x];
@@ -33,8 +24,6 @@ void extract_image(iImage *img) {
                     else
                         break;
                 }
-
-                // Vérifier le bord droit
                 int right_edge_valid = 1;
                 int xi = x + w - 1;
                 if (xi >= img->width) {
@@ -53,8 +42,6 @@ void extract_image(iImage *img) {
                         }
                     }
                 }
-
-                // Vérifier le bord inférieur
                 int bottom_edge_valid = 1;
                 int yi = y + h - 1;
                 if (yi >= img->height) {
@@ -75,13 +62,12 @@ void extract_image(iImage *img) {
                 }
 
                 if (right_edge_valid && bottom_edge_valid) {
-                    // Extraire la zone à l'intérieur du rectangle
                     int inner_width = w - 2;
                     int inner_height = h - 2;
 
                     char output_path[256];
                     snprintf(output_path, sizeof(output_path),
-                             "temp/zrectangle_%d.png", ++rect_counter);
+                             "outputs/detections/letters_words/x%d_y%d.png", x, y);
 
                     if (inner_width > 0 && inner_height > 0) {
                         iImage *new_img = create_image(
@@ -90,16 +76,12 @@ void extract_image(iImage *img) {
                             fprintf(stderr, "Could not create new image\n");
                             continue;
                         }
-
-                        // Copier les pixels intérieurs
                         for (int yi_inner = 0; yi_inner < inner_height;
                              yi_inner++) {
                             for (int xi_inner = 0; xi_inner < inner_width;
                                  xi_inner++) {
                                 int src_x = x + 1 + xi_inner;
                                 int src_y = y + 1 + yi_inner;
-
-                                // Vérification des limites
                                 if (src_x >= img->width ||
                                     src_y >= img->height) {
                                     fprintf(stderr, "Index out of bounds when "
@@ -116,19 +98,11 @@ void extract_image(iImage *img) {
                             }
                         }
 
-                        // Enregistrer la nouvelle image
                         save_image(new_img, output_path);
-
-                        // Libérer la nouvelle image
                         free_image(new_img);
                     }
 
-                    // Transformer les bordures rouges en vert dans l'image
-                    // originale
-
-                    // Changer les bords supérieur et inférieur
                     for (int xi_border = x; xi_border < x + w; xi_border++) {
-                        // Bord supérieur
                         if (xi_border < img->width && y < img->height) {
                             pPixel *p = &img->pixels[y][xi_border];
                             if (p->r == 255 && p->g == 0 && p->b == 0) {
@@ -137,7 +111,6 @@ void extract_image(iImage *img) {
                                 p->b = 0;
                             }
                         }
-                        // Bord inférieur
                         if (xi_border < img->width && y + h - 1 < img->height) {
                             pPixel *p = &img->pixels[y + h - 1][xi_border];
                             if (p->r == 255 && p->g == 0 && p->b == 0) {
@@ -148,9 +121,7 @@ void extract_image(iImage *img) {
                         }
                     }
 
-                    // Changer les bords gauche et droit
                     for (int yi_border = y; yi_border < y + h; yi_border++) {
-                        // Bord gauche
                         if (x < img->width && yi_border < img->height) {
                             pPixel *p = &img->pixels[yi_border][x];
                             if (p->r == 255 && p->g == 0 && p->b == 0) {
@@ -159,7 +130,6 @@ void extract_image(iImage *img) {
                                 p->b = 0;
                             }
                         }
-                        // Bord droit
                         if (x + w - 1 < img->width && yi_border < img->height) {
                             pPixel *p = &img->pixels[yi_border][x + w - 1];
                             if (p->r == 255 && p->g == 0 && p->b == 0) {
@@ -169,8 +139,6 @@ void extract_image(iImage *img) {
                             }
                         }
                     }
-
-                    // Sauter le rectangle traité
                     x += w - 1;
                 }
             }
