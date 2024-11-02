@@ -1,4 +1,4 @@
-EXEC = test
+EXEC = noupi
 
 CFLAGS = -Wall -Wextra -std=c99 -IImage `pkg-config --cflags sdl2 SDL2_image` -g
 LDFLAGS = `pkg-config --libs sdl2 SDL2_image` -lm -fsanitize=address
