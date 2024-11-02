@@ -3,7 +3,7 @@
 #include <stdlib.h>
 #include <string.h>
 
-void extract_image(iImage *img) {
+void extract_image(iImage *img, int index) {
     for (int y = 0; y < img->height; y++) {
         for (int x = 0; x < img->width; x++) {
             pPixel *pixel = &img->pixels[y][x];
@@ -67,7 +67,8 @@ void extract_image(iImage *img) {
 
                     char output_path[256];
                     snprintf(output_path, sizeof(output_path),
-                             "outputs/detections/letters_words/x%d_y%d.png", x, y);
+                             "../outputs/detections/letters/img%d__x%d_y%d.png",
+                             index, x, y);
 
                     if (inner_width > 0 && inner_height > 0) {
                         iImage *new_img = create_image(
@@ -107,16 +108,16 @@ void extract_image(iImage *img) {
                             pPixel *p = &img->pixels[y][xi_border];
                             if (p->r == 255 && p->g == 0 && p->b == 0) {
                                 p->r = 0;
-                                p->g = 255;
-                                p->b = 0;
+                                p->g = 0;
+                                p->b = 255;
                             }
                         }
                         if (xi_border < img->width && y + h - 1 < img->height) {
                             pPixel *p = &img->pixels[y + h - 1][xi_border];
                             if (p->r == 255 && p->g == 0 && p->b == 0) {
                                 p->r = 0;
-                                p->g = 255;
-                                p->b = 0;
+                                p->g = 0;
+                                p->b = 255;
                             }
                         }
                     }
@@ -126,16 +127,16 @@ void extract_image(iImage *img) {
                             pPixel *p = &img->pixels[yi_border][x];
                             if (p->r == 255 && p->g == 0 && p->b == 0) {
                                 p->r = 0;
-                                p->g = 255;
-                                p->b = 0;
+                                p->g = 0;
+                                p->b = 255;
                             }
                         }
                         if (x + w - 1 < img->width && yi_border < img->height) {
                             pPixel *p = &img->pixels[yi_border][x + w - 1];
                             if (p->r == 255 && p->g == 0 && p->b == 0) {
                                 p->r = 0;
-                                p->g = 255;
-                                p->b = 0;
+                                p->g = 0;
+                                p->b = 255;
                             }
                         }
                     }

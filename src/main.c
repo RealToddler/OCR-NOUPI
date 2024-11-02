@@ -71,7 +71,7 @@ int main() {
                 char input_path[256] = "";
                 char output_path[256] = "";
 
-                strcat(input_path, "data_test/preprocess/");
+                strcat(input_path, "../data_test/preprocess/");
                 strcat(input_path, path_to_images[i]);
 
                 iImage *original_img = load_image(input_path, -1);
@@ -99,7 +99,7 @@ int main() {
                 apply_groups_reduction(img);
                 // invert_colors(img);
 
-                strcat(output_path, "outputs/preprocess/");
+                strcat(output_path, "../outputs/preprocess/");
                 strcat(output_path, path_to_images[i]);
 
                 save_image(img, output_path);
@@ -115,7 +115,7 @@ int main() {
 
             char input_path[256] = "";
 
-            strcat(input_path, "data_test/preprocess/");
+            strcat(input_path, "../data_test/preprocess/");
             strcat(input_path, path_to_rotation);
 
             iImage *original_img = load_image(input_path, -1);
@@ -162,8 +162,8 @@ int main() {
 
             apply_groups_reduction(rotated_image);
 
-            save_image(rotated_image, "./outputs/rotated.png");
-            printf("Rotated image saved at outputs/rotation.png");
+            save_image(rotated_image, "../outputs/rotated.png");
+            printf("Rotated image saved at ../outputs/rotated.png");
 
             free(img);
             free(original_img);
@@ -177,7 +177,7 @@ int main() {
                 char input_path[256] = "";
                 char output_path[256] = "";
 
-                strcat(input_path, "data_test/detections/grid/");
+                strcat(input_path, "../data_test/detections/grid/");
                 strcat(input_path, path_to_images[i]);
 
                 iImage *img = load_image(input_path, -1);
@@ -193,7 +193,7 @@ int main() {
 
                 apply_canny(find_grid, img);
 
-                strcat(output_path, "outputs/detections/grid/");
+                strcat(output_path, "../outputs/detections/grid/");
                 strcat(output_path, path_to_images[i]);
 
                 save_image(img, output_path);
@@ -210,7 +210,7 @@ int main() {
                 char input_path[256] = "";
                 char output_path[256] = "";
 
-                strcat(input_path, "data_test/detections/words/");
+                strcat(input_path, "../data_test/detections/words/");
                 strcat(input_path, path_to_images[i]);
 
                 iImage *img = load_image(input_path, -1);
@@ -226,7 +226,7 @@ int main() {
 
                 apply_canny(find_word_lists, img);
 
-                strcat(output_path, "outputs/detections/words/");
+                strcat(output_path, "../outputs/detections/words/");
                 strcat(output_path, path_to_images[i]);
 
                 save_image(img, output_path);
@@ -243,10 +243,10 @@ int main() {
                 char input_path[256] = "";
                 char output_path[256] = "";
 
-                strcat(input_path, "data_test/detections/letters_words/");
+                strcat(input_path, "../data_test/detections/letters/");
                 strcat(input_path, path_to_images[i]);
 
-                iImage *original_img = load_image(input_path, -5);
+                iImage *original_img = load_image(input_path, -1);
                 if (original_img == NULL) {
                     printf("original_img is NULL\n");
                     free(original_img);
@@ -254,7 +254,7 @@ int main() {
                     SDL_Quit();
                     return EXIT_FAILURE;
                 }
-                iImage *img = resize_image(original_img, 1200, 300);
+                iImage *img = resize_image(original_img, 2000, 400);
 
                 if (img == NULL) {
                     printf("An error occured while loading the image");
@@ -269,9 +269,9 @@ int main() {
 
                 apply_canny(find_letters_in_word, img);
 
-                extract_image(img);
+                extract_image(img, i);
 
-                strcat(output_path, "outputs/detections/letters_words/");
+                strcat(output_path, "../outputs/detections/letters/");
                 strcat(output_path, path_to_images[i]);
 
                 save_image(img, output_path);
@@ -288,13 +288,19 @@ int main() {
             XNOR();
             break;
         }
-        case 7: { // done, works fine
+        case 7: { // done, allows continuous word checking
             char word[256];
 
-            printf("\nPlease enter the word you want to find in the grid: ");
-            scanf("%255s", word);
+            while (1) {
+                printf("\nPlease enter the word you want to find in the grid "
+                       "(or type 'exit' to stop): ");
+                scanf("%255s", word);
+                if (strcmp(word, "exit") == 0) {
+                    break;
+                }
+                solver(word, "../data_test/grid.txt");
+            };
 
-            solver(word, "data_test/grid.txt");
             break;
         }
         case 8: break;

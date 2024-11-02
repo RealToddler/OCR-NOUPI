@@ -6,6 +6,6 @@
 #include <stdlib.h>
 #include <string.h>
 
-void extract_image(iImage *img);
+void extract_image(iImage *img, int index);
 
 #endif // EXTRACT_H

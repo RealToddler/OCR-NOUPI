@@ -56,7 +56,7 @@ void solver(char *word, char *filename) {
     }
 
     if (!found) {
-        printf("Couldn't find the word.\n");
+        printf("Not Found\n");
     }
 
     // free the memory
