@@ -3,9 +3,66 @@
 #include "boxes.h"
 #include "refineImage.h"
 
+
+
+int is_from_grid(bBoundingBox *boxes, int numBoxes, bBoundingBox box, int mod)
+{
+    
+    if(mod == 1) //width
+    {
+        sort(boxes, 1, numBoxes);
+        for(int i = 0; i < numBoxes; i++)
+        {
+            if(boxes[i].height<10 || boxes[i].width<5)
+            continue;
+            if(
+                boxes[i].height > (box.height - (box.height / 4)) &&
+                boxes[i].height < (box.height + (box.height / 4)) &&
+                boxes[i].min_y < (box.min_y + (box.height / 3))&&
+                boxes[i].min_y > (box.min_y - (box.height / 3))&&
+
+                ((boxes[i].min_x != box.min_x) ||
+                (boxes[i].min_y != box.min_y)) &&
+                (boxes[i].min_x < ((2 * (box.width))+box.max_x) || 
+                boxes[i].max_x > (box.min_x-(2 * (box.width)))))
+                return 1;
+        }
+    }
+    else if(mod == 2)//height
+    {
+        
+        sort(boxes, 2, numBoxes);
+        for(int i = 0; i < numBoxes; i++)
+        {
+            if(boxes[i].height<10 || boxes[i].width<5)
+            continue;
+            if(boxes[i].width > (box.width - (box.width / 2)) &&
+               boxes[i].width < (box.width + (box.width / 3)) &&
+               boxes[i].min_x > (box.min_x - (box.width / 2)) &&
+               boxes[i].min_x < (box.min_x + (box.width / 3)) &&
+               
+
+               ((boxes[i].min_x != box.min_x) ||
+                (boxes[i].min_y != box.min_y)) &&
+                (boxes[i].max_y > (box.min_y-( 2* (box.height))) || 
+                boxes[i].min_y < (box.max_y+( 2 * (box.height)))))
+                return 1;
+            
+        }
+    }
+    return 0;
+}
+
+
+
+
+
+
+
 void find_grid(bBoundingBox *boxes, int num_boxes, iImage *img) {
     double wavrage = compute_median2(boxes, 1, num_boxes);
     double wavrage2 = compute_median2(boxes, 2, num_boxes);
+    double savrage = compute_median2(boxes, 3, num_boxes);
     bBoundingBox *boxes_inter = sort(boxes, 1, num_boxes);
 
     int x_min = img->width;
@@ -14,10 +71,16 @@ void find_grid(bBoundingBox *boxes, int num_boxes, iImage *img) {
     int y_max = 0;
 
     for (int i = 0; i < num_boxes - 1; i++) {
-        if (boxes_inter[i].height > (wavrage - (wavrage / 2)) &&
+        if(boxes_inter[i].height<10 || boxes_inter[i].width<5)
+            continue;
+        if (boxes_inter[i].surface > (savrage - (savrage / 3)) &&
+            boxes_inter[i].surface < (savrage + (savrage / 3)) &&
+            boxes_inter[i].height > (wavrage - (wavrage / 2)) &&
             boxes_inter[i].height < (wavrage + (wavrage / 2)) &&
             boxes_inter[i].width < (2 * (wavrage)) &&
-            boxes_inter[i].width < (wavrage2 + (wavrage2 / 2))) {
+            boxes_inter[i].width < (wavrage2 + (wavrage2 / 2)) &&
+            (is_from_grid(boxes_inter, num_boxes, boxes_inter[i], 1) &&
+            is_from_grid(boxes_inter, num_boxes, boxes_inter[i], 2))){
             if (boxes_inter[i].max_x > x_max)
                 x_max = boxes_inter[i].max_x;
             if (boxes_inter[i].max_y > y_max)
@@ -27,6 +90,7 @@ void find_grid(bBoundingBox *boxes, int num_boxes, iImage *img) {
             if (boxes_inter[i].min_y < y_min)
                 y_min = boxes_inter[i].min_y;
         }
+        
     }
     cColor red = {255, 0, 0};
 
@@ -62,6 +126,7 @@ void find_word_lists(bBoundingBox *boxes, int num_boxes, iImage *img) {
             if (boxes_inter[i].min_y < y_min)
                 y_min = boxes_inter[i].min_y;
         }
+        
     }
 
     int h = (y_max - (y_min));

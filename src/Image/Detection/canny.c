@@ -145,8 +145,12 @@ void apply_canny(void (*func)(bBoundingBox *, int, iImage *), iImage *img) {
     int num_boxes;
     find_bounding_boxes(dilated_edge_map, img->height, img->width, &boxes,
                         &num_boxes);
+    merge_bounding_boxes(boxes, &num_boxes, 5, 5);
 
     // function with parameters
+    for(int i = 0; i < num_boxes; i++) {
+        draw_rectangle(img, boxes[i].min_x, boxes[i].min_y, boxes[i].max_x, boxes[i].max_y, (cColor){45, 65, 35});
+    }
     func(boxes, num_boxes, img);
 
     for (int i = 0; i < img->height; i++) {

@@ -6,6 +6,9 @@
 
 #include <stdio.h>
 
+
+
+
 bBoundingBox compute_array(bBoundingBox *boxes, int numBoxes) {
 
     double wavrage = compute_median2(boxes, 1, numBoxes);
@@ -59,3 +62,5 @@ bBoxSize compute_word_list(bBoundingBox *boxes, int numBoxes) {
     bBoxSize res2 = {res, index};
     return res2;
 }
+
+
