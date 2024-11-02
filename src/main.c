@@ -269,6 +269,8 @@ int main() {
 
                 apply_canny(find_letters_in_word, img);
 
+                extract_image(img);
+
                 strcat(output_path, "outputs/detections/letters_words/");
                 strcat(output_path, path_to_images[i]);
 
