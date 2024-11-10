@@ -1,6 +1,8 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
+#include <sys/stat.h>
+#include <sys/types.h>
 
 #include "Image/Preprocess/ColorTreatment/binary.h"
 #include "Image/Preprocess/ColorTreatment/grayscale.h"
@@ -27,7 +29,31 @@
 #include "Solver/loadGrid.h"
 #include "Solver/solver.h"
 
+/*
+    Its name talks for itself
+*/
+int create_directory(const char *path) {
+    char cmd[512];
+
+    snprintf(cmd, sizeof(cmd), "mkdir -p '%s'", path);
+
+    int ret = system(cmd);
+
+    if (ret != 0) {
+        fprintf(stderr, "Error creating directory: %s\n", path);
+        return -1;
+    }
+
+    return 0;
+}
+
 int main() {
+    create_directory("../outputs");
+    create_directory("../outputs/detections/letters");
+    create_directory("../outputs/detections/words");
+    create_directory("../outputs/detections/grid");
+    create_directory("../outputs/preprocess");
+
     if (SDL_Init(SDL_INIT_VIDEO) != 0) {
         printf("An error occured while initializing SDL : %s\n",
                SDL_GetError());
