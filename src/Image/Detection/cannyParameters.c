@@ -130,11 +130,11 @@ void find_word_lists(bBoundingBox *boxes, int num_boxes, iImage *img) {
     res = realloc(res, index * sizeof(bBoundingBox));
     bBoxSize res2 = {res, index};
 
-    cColor pink = {255, 0, 255};
+    cColor blue = {0, 0, 255};
 
     for (int i = 0; i < index; i++) {
         draw_rectangle(img, res2.boxes[i].min_x, res2.boxes[i].min_y,
-                       res2.boxes[i].max_x, res2.boxes[i].max_y, pink);
+                       res2.boxes[i].max_x, res2.boxes[i].max_y, blue);
     }
 }
 
@@ -163,5 +163,15 @@ void find_words_in_words_lists(bBoundingBox *boxes, int num_boxes,
             draw_rectangle(img, boxes[i].min_x, boxes[i].min_y, boxes[i].max_x,
                            boxes[i].max_y, red);
         }
+    }
+}
+
+void all(bBoundingBox *boxes, int num_boxes, iImage *img) {
+
+    cColor cyan = {43, 255, 255};
+
+    for (int i = 0; i < num_boxes; i++) {
+        draw_rectangle(img, boxes[i].min_x, boxes[i].min_y, boxes[i].max_x,
+                       boxes[i].max_y, cyan);
     }
 }

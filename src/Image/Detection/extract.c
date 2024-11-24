@@ -1,17 +1,24 @@
 #include "../image.h"
+#include "boxes.h"
+#include "../resize.h"
+#include "../crop.h"
+
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
 
-void extract_image(iImage *img, int index) {
+void extract_image(iImage *img, int index, cColor color) {
+
+    int word_count = 0;
     for (int y = 0; y < img->height; y++) {
         for (int x = 0; x < img->width; x++) {
             pPixel *pixel = &img->pixels[y][x];
-            if (pixel->r == 255 && pixel->g == 0 && pixel->b == 0) {
+            if (pixel->r == color.r && pixel->g == color.g && pixel->b == color.b) {
                 int w = 1;
                 while ((x + w) < img->width) {
                     pPixel *p = &img->pixels[y][x + w];
-                    if (p->r == 255 && p->g == 0 && p->b == 0)
+                    if (p->r == color.r && p->g == color.g &&
+                        p->b == color.b)
                         w++;
                     else
                         break;
@@ -19,7 +26,8 @@ void extract_image(iImage *img, int index) {
                 int h = 1;
                 while ((y + h) < img->height) {
                     pPixel *p = &img->pixels[y + h][x];
-                    if (p->r == 255 && p->g == 0 && p->b == 0)
+                    if (p->r == color.r && p->g == color.g &&
+                        p->b == color.b)
                         h++;
                     else
                         break;
@@ -36,7 +44,8 @@ void extract_image(iImage *img, int index) {
                             break;
                         }
                         pPixel *p = &img->pixels[yi][xi];
-                        if (!(p->r == 255 && p->g == 0 && p->b == 0)) {
+                        if (!(p->r == color.r && p->g == color.g &&
+                              p->b == color.b)) {
                             right_edge_valid = 0;
                             break;
                         }
@@ -54,7 +63,8 @@ void extract_image(iImage *img, int index) {
                             break;
                         }
                         pPixel *p = &img->pixels[yi][xi];
-                        if (!(p->r == 255 && p->g == 0 && p->b == 0)) {
+                        if (!(p->r == color.r && p->g == color.g &&
+                              p->b == color.b)) {
                             bottom_edge_valid = 0;
                             break;
                         }
@@ -66,13 +76,37 @@ void extract_image(iImage *img, int index) {
                     int inner_height = h - 2;
 
                     char output_path[256];
-                    snprintf(output_path, sizeof(output_path),
-                             "../outputs/detections/letters/img%d__x%d_y%d.png",
-                             index, x, y);
+
+
+                    // red == grid
+                    if (color.r == 255 && color.g == 0 && color.b == 0)
+                    {
+                        snprintf(output_path, sizeof(output_path),
+                                 "extracted/grid.png", NULL);
+                    }
+
+                    // blue == words
+                    else if (color.r == 0 && color.g == 0 && color.b == 255) {
+                        snprintf(output_path, sizeof(output_path), "extracted/words/word%d.png",
+                                 word_count++);
+                    }
+
+                    // cyan = letters from grid
+                    else if (color.r == 43 && color.g == 255 && color.b == 255) {
+                        snprintf(output_path, sizeof(output_path),
+                                 "extracted/grid_letters/%d_%d.png", x, y);
+                    }
+
+                    else {
+
+                        snprintf(output_path, sizeof(output_path),
+                                 "img%d__x%d_y%d.png", index, y, x);
+                    }
 
                     if (inner_width > 0 && inner_height > 0) {
                         iImage *new_img = create_image(
                             inner_width, inner_height, output_path);
+
                         if (!new_img) {
                             fprintf(stderr, "Could not create new image\n");
                             continue;
@@ -99,25 +133,37 @@ void extract_image(iImage *img, int index) {
                             }
                         }
 
-                        save_image(new_img, output_path);
+                        if (color.r == 43 && color.g == 255 && color.b == 255) {
+                            iImage *resized_img =
+                                resize_image(crop_image(new_img), 32, 32);
+                            if (resized_img) {
+                                save_image(resized_img, output_path);
+                                free_image(resized_img);
+                            }
+                        } else {
+                            save_image(new_img, output_path);
+                        }
+
                         free_image(new_img);
                     }
 
                     for (int xi_border = x; xi_border < x + w; xi_border++) {
                         if (xi_border < img->width && y < img->height) {
                             pPixel *p = &img->pixels[y][xi_border];
-                            if (p->r == 255 && p->g == 0 && p->b == 0) {
+                            if (p->r == color.r && p->g == color.g &&
+                                p->b == color.b) {
                                 p->r = 0;
-                                p->g = 0;
-                                p->b = 255;
+                                p->g = 255;
+                                p->b = 0;
                             }
                         }
                         if (xi_border < img->width && y + h - 1 < img->height) {
                             pPixel *p = &img->pixels[y + h - 1][xi_border];
-                            if (p->r == 255 && p->g == 0 && p->b == 0) {
+                            if (p->r == color.r && p->g == color.g &&
+                                p->b == color.b) {
                                 p->r = 0;
-                                p->g = 0;
-                                p->b = 255;
+                                p->g = 255;
+                                p->b = 0;
                             }
                         }
                     }
@@ -125,18 +171,20 @@ void extract_image(iImage *img, int index) {
                     for (int yi_border = y; yi_border < y + h; yi_border++) {
                         if (x < img->width && yi_border < img->height) {
                             pPixel *p = &img->pixels[yi_border][x];
-                            if (p->r == 255 && p->g == 0 && p->b == 0) {
+                            if (p->r == color.r && p->g == color.g &&
+                                p->b == color.b) {
                                 p->r = 0;
-                                p->g = 0;
-                                p->b = 255;
+                                p->g = 255;
+                                p->b = 0;
                             }
                         }
                         if (x + w - 1 < img->width && yi_border < img->height) {
                             pPixel *p = &img->pixels[yi_border][x + w - 1];
-                            if (p->r == 255 && p->g == 0 && p->b == 0) {
+                            if (p->r == color.r && p->g == color.g &&
+                                p->b == color.b) {
                                 p->r = 0;
-                                p->g = 0;
-                                p->b = 255;
+                                p->g = 255;
+                                p->b = 0;
                             }
                         }
                     }

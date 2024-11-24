@@ -54,6 +54,11 @@ void flood_fill(unsigned char **edge_map, int **label_map, int x, int y,
 void draw_rectangle(iImage *img, int min_x, int min_y, int max_x, int max_y,
                     cColor color) {
 
+    if ((max_x - min_x) * 2 < (max_y - min_y)) {
+        min_x = min_x - (max_y - min_y) * 1 / 5;
+        max_x = max_x + (max_y - min_y) * 1 / 5;
+    }
+
     for (int x = min_x; x <= max_x; x++) {
         if (min_y >= 0 && min_y < img->height) {
             img->pixels[min_y][x].r = color.r;

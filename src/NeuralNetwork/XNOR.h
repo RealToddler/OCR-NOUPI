@@ -1,3 +1,4 @@
+/*
 #ifndef XNOR_H
 #define XNOR_H
 
@@ -14,3 +15,4 @@ void XNOR();
 #define TRAINING_SETS_NUMBER 4
 
 #endif
+*/
