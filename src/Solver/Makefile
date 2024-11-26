@@ -3,7 +3,7 @@ EXEC = gridbuilder
 CFLAGS = -Wall -Wextra -std=c99 -IImage `pkg-config --cflags sdl2 SDL2_image` -g
 LDFLAGS = `pkg-config --libs sdl2 SDL2_image` -lm -fsanitize=address
 
-SRC = $(wildcard ../Image/*.c ../NeuralNetwork/*.c  *.c)
+SRC = $(wildcard ../Image/*.c ../NeuralNetwork/*.c  *.c ../SysCommand/*.c)
 OBJ = $(SRC:.c=.o)
 
 all: $(EXEC)
@@ -15,7 +15,7 @@ $(EXEC): $(OBJ)
 	$(CC) -c $< -o $@ $(CFLAGS)
 
 format:
-	clang-format -i $(SRC) $(wildcard ../Image.h ../NeuralNetwork/*.h *.h)
+	clang-format -i $(SRC) $(wildcard ../Image.h ../NeuralNetwork/*.h *.h ../SysCommand/*.h)
 
 clean:
 	rm -f $(OBJ) $(EXEC)

@@ -2,9 +2,6 @@
 #include "../Image/image.h"
 #include <math.h>
 
-/*
-    Cette fonction applique la méthode de Sauvola sur des sous-blocs de l'image.
-*/
 void sauvola_threshold(iImage *img, const unsigned int block_size) {
     unsigned int width = img->width;
     unsigned int height = img->height;
@@ -17,13 +14,11 @@ void sauvola_threshold(iImage *img, const unsigned int block_size) {
             unsigned int sum_sq = 0;
             unsigned int count = 0;
 
-            // Calcul de la moyenne et de l'écart type dans le bloc
             for (unsigned int y = by; y < by + block_size && y < height; y++) {
                 for (unsigned int x = bx; x < bx + block_size && x < width;
                      x++) {
                     pPixel *pixel = &img->pixels[y][x];
-                    unsigned int intensity =
-                        pixel->r; // Supposons une image en niveaux de gris
+                    unsigned int intensity = pixel->r;
                     sum += intensity;
                     sum_sq += intensity * intensity;
                     count++;
@@ -34,13 +29,11 @@ void sauvola_threshold(iImage *img, const unsigned int block_size) {
             double variance =
                 (sum_sq - (sum * sum) / (double)count) / (double)count;
             if (variance < 0)
-                variance = 0; // S'assurer que la variance n'est pas négative
+                variance = 0;
             double std_dev = sqrt(variance);
 
-            // Calcul du seuil de Sauvola
             double threshold = mean * (1 + k * ((std_dev / R) - 1));
 
-            // Application du seuil aux pixels du bloc
             for (unsigned int y = by; y < by + block_size && y < height; y++) {
                 for (unsigned int x = bx; x < bx + block_size && x < width;
                      x++) {
@@ -59,32 +52,22 @@ void sauvola_threshold(iImage *img, const unsigned int block_size) {
         }
     }
 }
-/*
-    Cette fonction applique une dilatation morphologique sur une image binaire.
-    La dilatation permet d'élargir les zones blanches pour combler les petits
-   trous et reconnecter les parties déconnectées des lettres. Le paramètre
-   'kernel_size' définit la taille de l'élément structurant (doit être un entier
-   impair, comme 3, 5, etc.).
-*/
-void dilate_image(iImage *img, const unsigned int kernel_size) {
-    unsigned int width = img->width;
-    unsigned int height = img->height;
 
-    // Création d'une copie de l'image originale pour stocker le résultat
+void dilate_image(iImage *img, const unsigned int kernel_size) {
+    int width = img->width;
+    int height = img->height;
+
     iImage *output_img = create_image(width, height, "ras.png");
 
-    // Définition de l'offset pour l'élément structurant
     int offset = kernel_size / 2;
 
-    for (unsigned int y = 0; y < height; y++) {
-        for (unsigned int x = 0; x < width; x++) {
+    for (int y = 0; y < height; y++) {
+        for (int x = 0; x < width; x++) {
             int dilate = 0;
-            // Parcours de l'élément structurant
             for (int ky = -offset; ky <= offset; ky++) {
                 for (int kx = -offset; kx <= offset; kx++) {
                     int ny = y + ky;
                     int nx = x + kx;
-                    // Vérification si le voisin est dans les limites de l'image
                     if (ny >= 0 && ny < height && nx >= 0 && nx < width) {
                         if (img->pixels[ny][nx].r == 255) {
                             dilate = 1;
@@ -107,13 +90,11 @@ void dilate_image(iImage *img, const unsigned int kernel_size) {
         }
     }
 
-    // Copie de l'image résultante dans l'image originale
-    for (unsigned int y = 0; y < height; y++) {
-        for (unsigned int x = 0; x < width; x++) {
+    for (int y = 0; y < height; y++) {
+        for (int x = 0; x < width; x++) {
             img->pixels[y][x] = output_img->pixels[y][x];
         }
     }
 
-    // Libération de l'image temporaire
     free_image(output_img);
 }

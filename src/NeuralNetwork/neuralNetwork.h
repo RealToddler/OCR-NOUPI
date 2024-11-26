@@ -30,6 +30,6 @@ void backpropagation(NeuralNetwork *nn, double *input_layer,
                      double *expected_output, double lr);
 void save_neural_network(NeuralNetwork *nn, const char *filename);
 void load_neural_network(NeuralNetwork *nn, const char *filename);
-char neural_predict(NeuralNetwork *nn, char *image_path);
+int training();
 
 #endif // NEURALNETWORK_H

@@ -16,7 +16,7 @@ typedef struct iImage {
     int label;
 } iImage;
 
-int init_sdl();
+int init_SDL();
 
 SDL_Surface *load_surface(const char *image_path);
 

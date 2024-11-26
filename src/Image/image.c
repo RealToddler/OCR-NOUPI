@@ -7,6 +7,23 @@
 
 #include "../Image/image.h"
 
+int init_SDL() {
+    if (SDL_Init(SDL_INIT_VIDEO) != 0) {
+        fprintf(stderr, "Erreur lors de l'initialisation de SDL: %s\n",
+                SDL_GetError());
+        return EXIT_FAILURE;
+    }
+
+    if (!(IMG_Init(IMG_INIT_PNG) & IMG_INIT_PNG)) {
+        fprintf(stderr, "Erreur lors de l'initialisation de SDL_Image: %s\n",
+                IMG_GetError());
+        SDL_Quit();
+        return EXIT_FAILURE;
+    }
+
+    return EXIT_SUCCESS;
+}
+
 /*
     Loads a surface from a path using SDL2
 */

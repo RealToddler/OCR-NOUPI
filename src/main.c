@@ -1,3 +1,6 @@
+#include <SDL2/SDL.h>
+#include <SDL2/SDL_image.h>
+#include <err.h>
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
@@ -18,10 +21,10 @@
 #include "Image/image.h"
 #include "Image/resize.h"
 
+#include "Image/Detection/boxes.h"
 #include "Image/Detection/canny.h"
 #include "Image/Detection/cannyParameters.h"
 #include "Image/Detection/extract.h"
-#include "Image/Detection/boxes.h"
 
 #include "Image/Preprocess/Rotation/automaticRotation.h"
 #include "Image/Preprocess/Rotation/manualRotation.h"
@@ -29,86 +32,136 @@
 #include "NeuralNetwork/XNOR.h"
 
 #include "Solver/checks.h"
+#include "Solver/gridBuilder.h"
 #include "Solver/loadGrid.h"
 #include "Solver/solver.h"
 
-/*
-    Its name talks for itself
-*/
-int create_directory(const char *path) {
-    char cmd[512];
-
-    snprintf(cmd, sizeof(cmd), "mkdir -p '%s'", path);
-
-    int ret = system(cmd);
-
-    if (ret != 0) {
-        fprintf(stderr, "Error creating directory: %s\n", path);
-        return -1;
-    }
-
-    return 0;
-}
+#include "Files/findGrid.h"
 
 int main() {
-    /*
-    create_directory("../outputs");
-    create_directory("../outputs/detections/letters");
-    create_directory("../outputs/detections/words");
-    create_directory("../outputs/detections/grid");
-    create_directory("../outputs/preprocess");
-    */
-
-    // 1 Init whatever needs to be instantiate :
-
-    if (SDL_Init(SDL_INIT_VIDEO) != 0) {
-        printf("An error occured while initializing SDL : %s\n",
-               SDL_GetError());
-        return -1;
+    if (init_SDL() == 1) {
+        err(EXIT_FAILURE, "an error occured while initialising SDL");
     }
-
-    if (!(IMG_Init(IMG_INIT_PNG) & IMG_INIT_PNG)) {
-        printf("An error occured while initializing SDL_Image : %s\n",
-               IMG_GetError());
-        SDL_Quit();
-        return -1;
-    }
-
-    // 2 : Apply preprocess to the image
 
     iImage *img =
         load_image("/Users/emilien/Downloads/level_1_image_1.png", -1);
 
+    iImage *res =
+        load_image("/Users/emilien/Downloads/level_1_image_1.png", -1);
+
+    if (img == NULL || res == NULL) {
+        fprintf(stderr, "Impossible de charger l'image d'entrée.\n");
+        IMG_Quit();
+        SDL_Quit();
+        free(img);
+        free(res);
+        return EXIT_FAILURE;
+    }
+
+    // preprocess step
     grayscale(img);
     sauvola_threshold(img, 16);
-    // dilate_image(img, 1);
 
-    // 3 : Detections
-
-
+    // detections
+    // functions to extract everything properly
     cColor red = {255, 0, 0};
     cColor blue = {0, 0, 255};
     cColor cyan = {43, 255, 255};
+    cColor orange = {255, 165, 0};
 
     // detect and extract grid
     apply_canny(find_grid, img);
-    extract_image(img, 0, red);
+    extract_image(img, red);
 
-    // detect and extracts letters from grid
-    iImage *grid = load_image("extracted/grid.png", -1);
-    apply_canny(all, grid);
-    save_image(grid, "gridimg.png");
-    extract_image(grid, 0, cyan);
-
-    // detect and extracts words
+    // detect and extract words
     apply_canny(find_word_lists, img);
-    extract_image(img, 0, blue);
+    extract_image(img, blue);
 
-    // ?? : Save results and free memories
-    save_image(img, "output.png");
+    const char *directory = "extracted/";
+    char *grid_filename = find_grid_file(directory);
+
+    if (grid_filename == NULL) {
+        fprintf(stderr, "Aucun fichier de grille trouvé dans le répertoire.\n");
+        free_image(img);
+        IMG_Quit();
+        SDL_Quit();
+        return EXIT_FAILURE;
+    }
+
+    char grid_path[1024];
+    snprintf(grid_path, sizeof(grid_path), "%s%s", directory, grid_filename);
+
+    iImage *grid = load_image(grid_path, -1);
+    if (grid == NULL) {
+        fprintf(stderr, "Cant load the grid : %s\n", grid_path);
+        free_image(img);
+        free(grid_filename);
+        IMG_Quit();
+        SDL_Quit();
+        return EXIT_FAILURE;
+    }
+
+    // detect and extract letters from grid
+    apply_canny(all, grid);
+    extract_image(grid, cyan);
+
+    // build txt data files
+    if (grid_builder() == 1) {
+        err(EXIT_FAILURE, "an error occurend while building out the grid");
+    }
+
+    gGrid *coords = load_grid("extracted/txt_data/coordinates.txt");
+    gGrid *letters = load_grid("extracted/txt_data/letters.txt");
+    if (coords == NULL || letters == NULL) {
+        fprintf(stderr, "Cant load txt files\n");
+        free_image(img);
+        free_image(grid);
+        free(grid_filename);
+        IMG_Quit();
+        SDL_Quit();
+        return EXIT_FAILURE;
+    }
+
+    // temp
+    const char *word = strdup("BANANA");
+    cCoords wordCoords = solver((char *)word, "extracted/txt_data/letters.txt");
+
+    int x_grid = 0, y_grid = 0;
+    sscanf(grid_filename, "grid_%d_%d", &x_grid, &y_grid);
+
+    tTuple t1 = wordCoords.t1;
+    tTuple t2 = wordCoords.t2;
+
+    int t1_x = 0, t1_y = 0, t2_x = 0, t2_y = 0;
+
+    // need to know the direction (horizontal, vertical diagonal)
+    // in order to know to know to which coords we should apply the correction
+
+    if (t1.x != -1 && t2.x != -1 && t1.y != -1 && t2.y != -1) {
+        sscanf(get_val(coords, t1.y, t1.x), "(%d,%d)", &t1_x, &t1_y);
+        sscanf(get_val(coords, t2.y, t2.x), "(%d,%d)", &t2_x, &t2_y);
+        if (t1.y == t2.y) // horizontal
+        {
+            draw_rectangle(res, t1_x + x_grid, t1_y + y_grid,
+                           t2_x + x_grid + (t2_x - t1_x) * 0.05,
+                           t2_y + y_grid + 25, orange);
+        } else if (t1.x == t2.x) { // vertical
+            draw_rectangle(res, t1_x + 2 * x_grid, t1_y + y_grid, t2_x + x_grid,
+                           t2_y + y_grid + (t2_y - t1_y) * 0.1, orange);
+        } else if (t1.x != t2.x && t1.y != t2.y) {
+            // to be made
+        }
+    }
+    save_image(res, "output.png");
+    save_image(grid, "2nd.png");
+
+    free_image(img);
+    free_image(grid);
+    free(grid_filename);
+    free_grid(coords);
+    free_grid(letters);
 
     IMG_Quit();
     SDL_Quit();
-
-    return 0;
+    return EXIT_SUCCESS;
 }

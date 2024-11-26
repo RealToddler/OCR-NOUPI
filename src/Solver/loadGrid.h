@@ -11,6 +11,10 @@ typedef struct {
     int cols;
 } gGrid;
 
+void free_grid(gGrid *grid);
+
+char *get_val(gGrid *coords, int row, int col);
+
 gGrid *load_grid(char *filename);
 
 #endif // LOADGRID_H

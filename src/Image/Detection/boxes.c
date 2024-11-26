@@ -1,5 +1,44 @@
 #include "boxes.h"
 #include "../image.h"
+#include <math.h>
+
+void draw_line(iImage *img, int x0, int y0, int x1, int y1, cColor color) {
+    int dx = abs(x1 - x0);
+    int dy = -abs(y1 - y0);
+    int sx = x0 < x1 ? 1 : -1;
+    int sy = y0 < y1 ? 1 : -1;
+    int err = dx + dy;
+    int e2;
+
+    while (1) {
+        if (x0 >= 0 && x0 < img->width && y0 >= 0 && y0 < img->height) {
+            img->pixels[y0][x0].r = color.r;
+            img->pixels[y0][x0].g = color.g;
+            img->pixels[y0][x0].b = color.b;
+        }
+
+        if (x0 == x1 && y0 == y1)
+            break;
+
+        e2 = 2 * err;
+        if (e2 >= dy) {
+            err += dy;
+            x0 += sx;
+        }
+        if (e2 <= dx) {
+            err += dx;
+            y0 += sy;
+        }
+    }
+}
+
+void draw_quadrilateral(iImage *img, int x0, int y0, int x1, int y1, int x2,
+                        int y2, int x3, int y3, cColor color) {
+    draw_line(img, x0, y0, x1, y1, color);
+    draw_line(img, x1, y1, x2, y2, color);
+    draw_line(img, x2, y2, x3, y3, color);
+    draw_line(img, x3, y3, x0, y0, color);
+}
 
 void flood_fill(unsigned char **edge_map, int **label_map, int x, int y,
                 int height, int width, int label, bBoundingBox *box) {

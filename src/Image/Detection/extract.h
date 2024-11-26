@@ -7,6 +7,6 @@
 #include <stdlib.h>
 #include <string.h>
 
-void extract_image(iImage *img, int index, cColor color);
+void extract_image(iImage *img, cColor color);
 
 #endif // EXTRACT_H
