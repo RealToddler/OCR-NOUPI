@@ -1,5 +1,5 @@
 #include "grayscale.h"
-#include "../Image/image.h"
+#include "Image/image.h"
 
 /*
     This function converts a colorful image in gray levels.

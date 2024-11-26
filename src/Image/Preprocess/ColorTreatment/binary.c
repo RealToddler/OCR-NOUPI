@@ -1,5 +1,5 @@
 #include "binary.h"
-#include "../Image/image.h"
+#include "Image/image.h"
 
 /*
     This function converts a given image which has already been grayscaled in

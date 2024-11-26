@@ -1,7 +1,7 @@
 #ifndef SMALLGROUPREDUCTION_H
 #define SMALLGROUPREDUCTION_H
 
-#include "../Image/image.h"
+#include "Image/image.h"
 #include <SDL2/SDL.h>
 
 void apply_groups_reduction(iImage *image);

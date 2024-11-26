@@ -1,5 +1,5 @@
 #include "sauvola.h"
-#include "../Image/image.h"
+#include "Image/image.h"
 #include <math.h>
 
 void sauvola_threshold(iImage *img, const unsigned int block_size) {
@@ -66,9 +66,11 @@ void dilate_image(iImage *img, const unsigned int kernel_size) {
             int dilate = 0;
             for (int ky = -offset; ky <= offset; ky++) {
                 for (int kx = -offset; kx <= offset; kx++) {
-                    int ny = y + ky;
-                    int nx = x + kx;
-                    if (ny >= 0 && ny < height && nx >= 0 && nx < width) {
+                    if (y + ky < 0 || x + kx < 0) continue;
+                    unsigned int ny = y + ky;
+                    unsigned int nx = x + kx;
+                    // Vérification si le voisin est dans les limites de l'image
+                    if (ny < height && nx < width) {
                         if (img->pixels[ny][nx].r == 255) {
                             dilate = 1;
                             break;

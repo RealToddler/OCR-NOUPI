@@ -1,4 +1,4 @@
-#include "../Image/image.h"
+#include "Image/image.h"
 
 /*
     This function increases constrasts on a given image, according to

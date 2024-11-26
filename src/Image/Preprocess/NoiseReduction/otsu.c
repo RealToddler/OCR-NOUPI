@@ -1,4 +1,4 @@
-#include "../Image/image.h"
+#include "Image/image.h"
 
 /*
     This function implements the Otsu Method :

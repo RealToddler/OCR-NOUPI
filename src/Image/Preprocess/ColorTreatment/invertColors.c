@@ -1,5 +1,5 @@
 #include "invertColors.h"
-#include "../Image/image.h"
+#include "Image/image.h"
 
 /*
     This function inverts the color of an image assuming its already binarized.
