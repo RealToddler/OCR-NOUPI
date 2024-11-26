@@ -20,3 +20,24 @@ separator {
     margin-top: 5px; /* Espacement au-dessus */
     margin-bottom: 10px; /* Espacement en dessous */
 }
+
+/* Zone centrale */
+.central-box {
+    background-color: #363940;/* Couleur de fond pour différencier la zone */
+    border: 2px transparent; /* Bordure en pointillés */
+    border-radius: 10px; /* Coins arrondis */
+    padding: 20px; /* Espacement interne */
+}
+
+/* Zone de drag-and-drop */
+.drag-drop-zone {
+    background-color: transparent; /* Fond transparent */
+}
+
+/* Texte dans la zone de drag-and-drop */
+.drag-drop-label {
+    font-family: "Roboto", sans-serif;
+    font-size: 16px;
+    font-weight: bold;
+    color: #555555;
+}
