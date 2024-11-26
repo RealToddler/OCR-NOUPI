@@ -44,10 +44,10 @@ int main() {
     }
 
     iImage *img =
-        load_image("/Users/emilien/Downloads/level_1_image_1.png", -1);
+        load_image("/Users/lucasbigot/Documents/EPITA/spe/OCR/OCR-NOUPI/src/level_1_image_1.png", -1);
 
     iImage *res =
-        load_image("/Users/emilien/Downloads/level_1_image_1.png", -1);
+        load_image("/Users/lucasbigot/Documents/EPITA/spe/OCR/OCR-NOUPI/src/level_1_image_1.png", -1);
 
     if (img == NULL || res == NULL) {
         fprintf(stderr, "Impossible de charger l'image d'entrée.\n");
@@ -123,8 +123,9 @@ int main() {
     }
 
     // temp
-    const char *word = strdup("BANANA");
+    const char *word = strdup("WARA");
     cCoords wordCoords = solver((char *)word, "extracted/txt_data/letters.txt");
+    
 
     int x_grid = 0, y_grid = 0;
     sscanf(grid_filename, "grid_%d_%d", &x_grid, &y_grid);
@@ -134,12 +135,18 @@ int main() {
 
     int t1_x = 0, t1_y = 0, t2_x = 0, t2_y = 0;
 
+    printf("t1: (%d, %d), t2: (%d, %d)\n", t1.x, t1.y, t2.x, t2.y);
+
     // need to know the direction (horizontal, vertical diagonal)
     // in order to know to know to which coords we should apply the correction
 
-    if (t1.x != -1 && t2.x != -1 && t1.y != -1 && t2.y != -1) {
+    if ((t1.x != -1 && t2.x != -1) && (t1.y != -1 && t2.y != -1)) {
+        
+        printf("in func\n");
         sscanf(get_val(coords, t1.y, t1.x), "(%d,%d)", &t1_x, &t1_y);
         sscanf(get_val(coords, t2.y, t2.x), "(%d,%d)", &t2_x, &t2_y);
+        
+
         if (t1.y == t2.y) // horizontal
         {
             draw_rectangle(res, t1_x + x_grid, t1_y + y_grid,
@@ -148,8 +155,15 @@ int main() {
         } else if (t1.x == t2.x) { // vertical
             draw_rectangle(res, t1_x + 2 * x_grid, t1_y + y_grid, t2_x + x_grid,
                            t2_y + y_grid + (t2_y - t1_y) * 0.1, orange);
-        } else if (t1.x != t2.x && t1.y != t2.y) {
-            // to be made
+        } else  {
+            printf("in else");
+            if (t2_x<t1_x)
+            {
+                draw_quadrilateral(res, t1_x+ x_grid, t1_y+ y_grid, t2_x+ x_grid, t2_y+ y_grid, orange, strlen(word),2);
+            }
+            else{
+            
+            draw_quadrilateral(res, t1_x+ x_grid, t1_y+ y_grid, t2_x+ x_grid, t2_y+ y_grid, orange, strlen(word),1);}
         }
     }
     save_image(res, "output.png");
