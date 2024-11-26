@@ -1,0 +1,22 @@
+window {
+    background-color: #282c34;
+    color: #ffffff;
+    font-family: "Roboto", sans-serif;
+}
+
+/* Style pour le texte en haut */
+.header {
+    font-family: "Roboto", sans-serif;
+    font-size: 40px;
+    font-weight: bold;
+    color: #e1e1e1;
+    margin-top: 10px;
+}
+
+separator {
+  color: #4a4a4a; /* Couleur de la ligne */
+    background-color: #4a4a4a;
+    min-height: 2px; /* Épaisseur de la ligne */
+    margin-top: 5px; /* Espacement au-dessus */
+    margin-bottom: 10px; /* Espacement en dessous */
+}
