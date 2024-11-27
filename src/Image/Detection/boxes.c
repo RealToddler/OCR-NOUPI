@@ -32,25 +32,25 @@ void draw_line(iImage *img, int x0, int y0, int x1, int y1, cColor color) {
     }
 }
 
-void draw_quadrilateral(iImage *img, int xi, int yi, int xf, int yf, cColor color, int nb, int mod) {
-    if(mod == 1){
-    int size= (yf-yi)/((nb-1));
-    draw_line(img, xi, yi, xi+size, yi, color);
-    draw_line(img, xi, yi, xi, yi+size, color);
-    draw_line(img, xi+size, yi, xf+size, yf, color);
-    draw_line(img, xi, yi+size, xf, yf+size, color);
-    draw_line(img, xf, yf+size, xf+size, yf+size, color);
-    draw_line(img, xf+size, yf, xf+size, yf+size, color);}
-    else{
-        int size= (yf-yi)/(2*(nb-1));
-        draw_line(img, xi, yi, xi+size, yi, color);
-        draw_line(img, xi+size, yi, xi+size, yi+size, color);
-        draw_line(img, xi+size, yi+size, xf+size, yf+size, color);
+void draw_diagonal(iImage *img, int xi, int yi, int xf, int yf, cColor color,
+                   int nb, int mod) {
+    if (mod == 1) {
+        int size = (yf - yi) / ((nb - 1));
+        draw_line(img, xi, yi, xi + size, yi, color);
+        draw_line(img, xi, yi, xi, yi + size, color);
+        draw_line(img, xi + size, yi, xf + size, yf, color);
+        draw_line(img, xi, yi + size, xf, yf + size, color);
+        draw_line(img, xf, yf + size, xf + size, yf + size, color);
+        draw_line(img, xf + size, yf, xf + size, yf + size, color);
+    } else {
+        int size = (yf - yi) / (2 * (nb - 1));
+        draw_line(img, xi, yi, xi + size, yi, color);
+        draw_line(img, xi + size, yi, xi + size, yi + size, color);
+        draw_line(img, xi + size, yi + size, xf + size, yf + size, color);
         draw_line(img, xi, yi, xf, yf, color);
-        draw_line(img, xf, yf+size, xf+size, yf+size, color);
-        draw_line(img, xf, yf, xf, yf+size, color);
+        draw_line(img, xf, yf + size, xf + size, yf + size, color);
+        draw_line(img, xf, yf, xf, yf + size, color);
     }
-
 }
 
 void flood_fill(unsigned char **edge_map, int **label_map, int x, int y,

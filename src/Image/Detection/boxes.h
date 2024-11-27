@@ -26,7 +26,8 @@ typedef struct {
 
 void draw_line(iImage *img, int x0, int y0, int x1, int y1, cColor color);
 
-void draw_quadrilateral(iImage *img, int xi, int yi, int xf, int yf, cColor color, int nb, int mod);
+void draw_diagonal(iImage *img, int xi, int yi, int xf, int yf, cColor color,
+                   int nb, int mod);
 
     void flood_fill(unsigned char **edge_map, int **label_map, int x, int y,
                     int height, int width, int label, bBoundingBox *box);

@@ -140,7 +140,7 @@ void find_word_lists(bBoundingBox *boxes, int num_boxes, iImage *img) {
 
 void find_letters_in_word(bBoundingBox *boxes, int num_boxes, iImage *img) {
     merge_bounding_boxes(boxes, &num_boxes, 0, 0);
-    cColor red = {255, 0, 0};
+    cColor red = {255, 192, 203};
     for (int i = 0; i < num_boxes; i++) {
         draw_rectangle(img, boxes[i].min_x, boxes[i].min_y, boxes[i].max_x,
                        boxes[i].max_y, red);
