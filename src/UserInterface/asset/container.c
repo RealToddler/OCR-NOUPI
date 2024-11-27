@@ -2,9 +2,11 @@
 #include "widget.h"
 #include <gdk-pixbuf/gdk-pixbuf.h>
 
+static GtkWidget *image_container = NULL;
+
 static int is_image_file(const char *filename) {
     const char *extensions[] = {".png"};
-    for (int i = 0; i < sizeof(extensions) / sizeof(extensions[0]); i++) {
+    for (unsigned long i = 0; i < sizeof(extensions) / sizeof(extensions[0]); i++) {
         if (g_str_has_suffix(filename, extensions[i])) {
             return TRUE;
         }
@@ -29,6 +31,8 @@ void container_init(GtkWidget *container, GtkWidget *label) {
 
 // Charge et affiche une image redimensionnée dans la zone centrale
 void container_set_image(GtkWidget *container, const char *image_path) {
+    image_container = container;
+
     GtkWidget *image;
     GdkPixbuf *pixbuf, *scaled_pixbuf;
     GError *error = NULL;
@@ -87,11 +91,40 @@ void container_set_image(GtkWidget *container, const char *image_path) {
 
     // Afficher les modifications
     gtk_widget_show_all(container);
+    show_control_box();
 }
 
-void on_drag_data_received(GtkWidget *widget, GdkDragContext *context, gint x,
-                           gint y, GtkSelectionData *data, guint info,
-                           guint time, gpointer user_data) {
+// Fonction pour clear l'image
+void container_clear_image() {
+    if (image_container == NULL)
+        return;
+    // Supprimer tout contenu précédent du conteneur
+    GList *children =
+        gtk_container_get_children(GTK_CONTAINER(image_container));
+    for (GList *iter = children; iter != NULL; iter = g_list_next(iter)) {
+        gtk_widget_destroy(GTK_WIDGET(iter->data));
+    }
+    g_list_free(children);
+
+    // Ajouter un texte par défaut pour le drag-and-drop
+    GtkWidget *label =
+        gtk_label_new("Cliquez ou glissez-déposez un fichier ici");
+    gtk_widget_set_name(
+        label, "drag-drop-label"); // Assurez-vous que le style correspond
+    gtk_widget_set_halign(label, GTK_ALIGN_CENTER);
+    gtk_widget_set_valign(label, GTK_ALIGN_CENTER);
+
+    // Ajouter le texte au conteneur
+    gtk_container_add(GTK_CONTAINER(image_container), label);
+    gtk_widget_show_all(image_container);
+
+    hide_control_box();
+    image_container = NULL;
+}
+
+void on_drag_data_received(GtkWidget *widget, GdkDragContext *context, __attribute__((unused)) gint x,
+                           __attribute__((unused))gint y, GtkSelectionData *data, __attribute__((unused)) guint info,
+                           guint time, __attribute__((unused)) gpointer user_data) {
     if (gtk_selection_data_get_length(data) > 0) {
         // Récupérer les URI des fichiers déposés
         gchar **uris = gtk_selection_data_get_uris(data);
@@ -120,7 +153,7 @@ void on_drag_data_received(GtkWidget *widget, GdkDragContext *context, gint x,
     gtk_drag_finish(context, TRUE, FALSE, time);
 }
 
-void on_drag_drop_zone_clicked(GtkWidget *widget, GdkEventButton *event,
+void on_drag_drop_zone_clicked(GtkWidget *widget, __attribute__((unused)) GdkEventButton *event,
                                gpointer user_data) {
     GtkWidget *dialog;
     GtkFileChooser *chooser;

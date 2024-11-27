@@ -55,32 +55,15 @@
           </object>
         </child>
         <child>
-          <object class="GtkBox" id="ControlBox">
+          <object class="GtkBox" id="control-box">
             <property name="orientation">horizontal</property>
-            <property name="name">ControlBox</property>
+            <property name="name">control-box</property>
             <property name="visible">True</property>
             <property name="margin-top">10</property>
             <property name="margin-bottom">10</property>
             <property name="halign">center</property>
             <property name="valign">center</property>
             <property name="spacing">4</property>
-            <child>
-              <object class="GtkButton" id="clear-button">
-                <property name="name">clear-button</property>
-                <property name="label">⨉</property>
-                <property name="halign">center</property>
-                <property name="valign">center</property>
-              </object>
-            </child>
-            <child>
-              <object class="GtkButton" id="solve-button">
-                <property name="name">solve-button</property>
-                <property name="label">Solve</property>
-                <property name="halign">center</property>
-                <property name="valign">center</property>
-                <property name="margin-end">40</property>
-              </object>
-            </child>
           </object>
         </child>
         <child>

@@ -1,6 +1,6 @@
 #include "application.h"
-#include "widget.h"
-#include "container.h"
+#include "asset/widget.h"
+#include "asset/container.h"
 #include <gtk/gtk.h>
 
 static void load_css() {
@@ -21,9 +21,9 @@ static void load_css() {
 int open_app() {
     GtkBuilder *builder;
     GObject *window;
-    GObject *central_box;
     GObject *drag_drop_zone;
     GObject *drag_drop_label;
+    GObject *control_box;
 
     GError *error = NULL;
 
@@ -46,10 +46,10 @@ int open_app() {
     window = gtk_builder_get_object(builder, "window");
     drag_drop_zone = gtk_builder_get_object(builder, "drag-drop-zone");
     drag_drop_label = gtk_builder_get_object(builder, "drag-drop-label");
-    central_box = gtk_builder_get_object(builder, "central-box");
+    control_box = gtk_builder_get_object(builder, "control-box");
 
-    if (!window || !drag_drop_zone || !drag_drop_label) {
-        g_printerr("Error: 'window' object not found in UI file.\n");
+    if (!window || !drag_drop_zone || !drag_drop_label || !control_box) {
+        g_printerr("Error: one of defined object not found in UI file.\n");
         return 1;
     }
 
@@ -99,6 +99,8 @@ int open_app() {
 
     // Afficher la fenêtre
     gtk_widget_show_all(window_widget);
+    add_control_box(GTK_WIDGET(control_box));
+    hide_control_box();
 
     gtk_main();
 
