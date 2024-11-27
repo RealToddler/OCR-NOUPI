@@ -3,6 +3,6 @@
 
 #include <gtk/gtk.h>
 
-int menu_init(GtkBuilder *builder);
+GObject *menu_init(GtkBuilder *builder);
 
 #endif

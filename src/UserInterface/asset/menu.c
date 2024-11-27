@@ -9,12 +9,18 @@ static void on_menu_toggle_button_clicked(GtkWidget *button,
     gtk_revealer_set_reveal_child(menu_revealer, !is_revealed);
 }
 
-int menu_init(GtkBuilder *builder) {
+GObject *menu_init(GtkBuilder *builder) {
     GObject *menu_toggle_button =
         gtk_builder_get_object(builder, "menu-toggle-button");
     GObject *menu_revealer = gtk_builder_get_object(builder, "menu-revealer");
 
+    if (!menu_toggle_button || !menu_revealer) {
+        g_printerr("Erreur : problème d'initialisation du menu.\n");
+        return FALSE;
+    }
+
     g_signal_connect(GTK_WIDGET(menu_toggle_button), "clicked",
                      G_CALLBACK(on_menu_toggle_button_clicked),
                      GTK_WIDGET(menu_revealer));
+    return menu_revealer;
 }

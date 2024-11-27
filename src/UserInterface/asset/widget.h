@@ -3,7 +3,7 @@
 
 #include <gtk/gtk.h>
 
-int *init_control_box(GtkBuilder *builder);
+GObject *init_control_box(GtkBuilder *builder);
 
 void show_control_box();
 

@@ -129,15 +129,23 @@
               </object>
             </child>
             <child>
-              <object class="GtkBox" id="control-box">
-                <property name="orientation">horizontal</property>
-                <property name="name">control-box</property>
-                <property name="visible">True</property>
-                <property name="margin-top">10</property>
-                <property name="margin-bottom">10</property>
-                <property name="halign">center</property>
-                <property name="valign">center</property>
-                <property name="spacing">4</property>
+              <object class="GtkRevealer" id="control-revealer">
+                <property name="transition-type">slide-up</property>
+                <property name="reveal-child">False</property>
+                <property name="height-request">55</property>
+                <property name="name">control-revealer</property>
+                <child>
+                  <object class="GtkBox" id="control-box">
+                    <property name="orientation">horizontal</property>
+                    <property name="name">control-box</property>
+                    <property name="visible">True</property>
+                    <property name="margin-top">10</property>
+                    <property name="margin-bottom">10</property>
+                    <property name="halign">center</property>
+                    <property name="valign">center</property>
+                    <property name="spacing">4</property>
+                  </object>
+                </child>
               </object>
             </child>
             <child>

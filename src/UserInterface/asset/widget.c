@@ -1,8 +1,9 @@
 #include "widget.h"
 #include "container.h"
+#include "window.h"
 #include <gtk/gtk.h>
 
-static GtkWidget *control_box;
+static GtkRevealer *control_revealer;
 
 static void on_clear_button_clicked(GtkWidget *widget, gpointer user_data) {
     container_clear_image();
@@ -15,14 +16,23 @@ static void on_solve_button_clicked(GtkWidget *widget, gpointer user_data) {
 }
 
 // Fonction pour ajouter la boîte de contrôle à la fenêtre
-int *init_control_box(GtkBuilder *builder) {
-    GObject *box = gtk_builder_get_object(builder, "control-box");
-    if (!box) {
-        g_printerr("Erreur : problème d'initialisation de la boîte de contrôle.\n");
+GObject *init_control_box(GtkBuilder *builder) {
+    GObject *revealer = gtk_builder_get_object(builder, "control-revealer");
+    if (!revealer) {
+        g_printerr(
+            "Erreur : problème d'initialisation du révélateur de contrôle.\n");
         return FALSE;
     }
-  
-    control_box = GTK_WIDGET(box);
+    control_revealer = GTK_REVEALER(revealer);
+
+    GObject *box = gtk_builder_get_object(builder, "control-box");
+    if (!box) {
+        g_printerr(
+            "Erreur : problème d'initialisation de la boîte de contrôle.\n");
+        return FALSE;
+    }
+
+    GtkWidget *control_box = GTK_WIDGET(box);
 
     // Création du bouton "Clear"
     GtkWidget *clear_button = gtk_button_new_with_label("⨉");
@@ -48,15 +58,15 @@ int *init_control_box(GtkBuilder *builder) {
     gtk_box_pack_start(GTK_BOX(control_box), solve_button, FALSE, FALSE, 0);
 
     // Retourner la boîte pour un contrôle ultérieur
-    return control_box;
+    return revealer;
 }
 
 // Fonction pour afficher la boîte de contrôle
 void show_control_box() {
-    gtk_widget_show_all(control_box);
+    gtk_revealer_set_reveal_child(control_revealer, TRUE);
 }
 
 // Fonction pour masquer la boîte de contrôle
 void hide_control_box() {
-    gtk_widget_hide(control_box);
+    gtk_revealer_set_reveal_child(control_revealer, FALSE);
 }

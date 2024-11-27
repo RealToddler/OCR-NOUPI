@@ -4,6 +4,7 @@
 
 static GtkWidget *image_container = NULL;
 
+// Vérifie si le fichier est une image
 static int is_image_file(const char *filename) {
     const char *extensions[] = {".png"};
     for (unsigned long i = 0; i < sizeof(extensions) / sizeof(extensions[0]);
@@ -15,8 +16,45 @@ static int is_image_file(const char *filename) {
     return FALSE;
 }
 
+// Fonction pour redimensionner l'image lors du redimensionnement du conteneur
+void container_resize_image(GtkWidget *container, GdkRectangle *allocation, gpointer user_data) {
+    GtkWidget *image = GTK_WIDGET(user_data);
+
+    // Obtenir les dimensions actuelles du conteneur
+    int container_width = allocation->width;
+    int container_height = allocation->height;
+
+    // Charger le pixbuf d'origine stocké dans les données de l'image
+    GdkPixbuf *original_pixbuf = g_object_get_data(G_OBJECT(image), "original-pixbuf");
+    if (!original_pixbuf) {
+        g_printerr("Erreur : Pixbuf d'origine introuvable.\n");
+        return;
+    }
+
+    // Calculer les nouvelles dimensions proportionnelles
+    int original_width = gdk_pixbuf_get_width(original_pixbuf);
+    int original_height = gdk_pixbuf_get_height(original_pixbuf);
+    double aspect_ratio = (double)original_width / (double)original_height;
+
+    int new_width, new_height;
+    if (container_width / (double)container_height > aspect_ratio) {
+        new_height = container_height;
+        new_width = (int)(new_height * aspect_ratio);
+    } else {
+        new_width = container_width;
+        new_height = (int)(new_width / aspect_ratio);
+    }
+
+    // Redimensionner l'image
+    GdkPixbuf *scaled_pixbuf = gdk_pixbuf_scale_simple(original_pixbuf, new_width, new_height, GDK_INTERP_BILINEAR);
+    gtk_image_set_from_pixbuf(GTK_IMAGE(image), scaled_pixbuf);
+
+    // Libérer le pixbuf redimensionné
+    g_object_unref(scaled_pixbuf);
+}
+
 // Configure le conteneur pour accepter le drag-and-drop
-int container_init(GtkBuilder *builder, GtkWidget *window) {
+GObject *container_init(GtkBuilder *builder, GtkWidget *window) {
     GObject *drag_drop_zone;
     GObject *drag_drop_label;
 
@@ -26,7 +64,7 @@ int container_init(GtkBuilder *builder, GtkWidget *window) {
     if (!drag_drop_zone || !drag_drop_label) {
         g_printerr(
             "Erreur : problème d'initialisation du conteneur d'image.\n");
-        return FALSE;
+        return NULL;
     }
 
     GtkWidget *container = GTK_WIDGET(drag_drop_zone);
@@ -49,7 +87,7 @@ int container_init(GtkBuilder *builder, GtkWidget *window) {
     g_signal_connect(container, "drag-data-received",
                      G_CALLBACK(on_drag_data_received), label);
 
-    return TRUE;
+    return container;
 }
 
 // Charge et affiche une image redimensionnée dans la zone centrale
@@ -57,8 +95,10 @@ void container_set_image(GtkWidget *container, const char *image_path) {
     image_container = container;
 
     GtkWidget *image;
-    GdkPixbuf *pixbuf, *scaled_pixbuf;
+    GdkPixbuf *pixbuf;
     GError *error = NULL;
+
+    show_control_box();
 
     // Charger l'image depuis le fichier
     pixbuf = gdk_pixbuf_new_from_file(image_path, &error);
@@ -69,38 +109,9 @@ void container_set_image(GtkWidget *container, const char *image_path) {
         return;
     }
 
-    // Obtenir les dimensions actuelles de la zone centrale
-    int container_width = gtk_widget_get_allocated_width(container);
-    int container_height = gtk_widget_get_allocated_height(container);
-
-    // Si les dimensions sont invalides, utiliser des valeurs par défaut
-    if (container_width == 0 || container_height == 0) {
-        container_width = 400;  // Largeur par défaut
-        container_height = 300; // Hauteur par défaut
-    }
-
-    // Calculer les dimensions proportionnelles pour l'image
-    int original_width = gdk_pixbuf_get_width(pixbuf);
-    int original_height = gdk_pixbuf_get_height(pixbuf);
-    double aspect_ratio = (double)original_width / (double)original_height;
-
-    int new_width, new_height;
-    if (container_width / (double)container_height > aspect_ratio) {
-        new_height = container_height;
-        new_width = (int)(new_height * aspect_ratio);
-    } else {
-        new_width = container_width;
-        new_height = (int)(new_width / aspect_ratio);
-    }
-
-    // Redimensionner l'image proportionnellement
-    scaled_pixbuf = gdk_pixbuf_scale_simple(pixbuf, new_width, new_height,
-                                            GDK_INTERP_BILINEAR);
-    g_object_unref(pixbuf); // Libérer le pixbuf d'origine
-
-    // Créer un GtkImage à partir du pixbuf redimensionné
-    image = gtk_image_new_from_pixbuf(scaled_pixbuf);
-    g_object_unref(scaled_pixbuf); // Libérer le pixbuf redimensionné
+    // Créer un GtkImage et stocker le pixbuf original
+    image = gtk_image_new();
+    g_object_set_data(G_OBJECT(image), "original-pixbuf", pixbuf);
 
     // Supprimer tout contenu précédent du conteneur
     GList *children = gtk_container_get_children(GTK_CONTAINER(container));
@@ -112,9 +123,11 @@ void container_set_image(GtkWidget *container, const char *image_path) {
     // Ajouter l'image au conteneur
     gtk_container_add(GTK_CONTAINER(container), image);
 
+    // Connecter le signal "size-allocate" pour redimensionner l'image dynamiquement
+    g_signal_connect(container, "size-allocate", G_CALLBACK(container_resize_image), image);
+
     // Afficher les modifications
     gtk_widget_show_all(container);
-    show_control_box();
 }
 
 // Fonction pour clear l'image
@@ -144,6 +157,7 @@ void container_clear_image() {
     hide_control_box();
     image_container = NULL;
 }
+
 
 void on_drag_data_received(GtkWidget *widget, GdkDragContext *context,
                            __attribute__((unused)) gint x,
