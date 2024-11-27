@@ -9,6 +9,16 @@
 #include "../SysCommand/syscmd.h"
 #include "gridBuilder.h"
 
+int compare_file_entries(const void *a, const void *b) {
+    FileEntry *entryA = (FileEntry *)a;
+    FileEntry *entryB = (FileEntry *)b;
+
+    if (entryA->ycoords != entryB->ycoords)
+        return entryA->ycoords - entryB->ycoords;
+    else
+        return entryA->xcoords - entryB->xcoords;
+}
+
 int is_empty_line(const char *line) {
     for (int i = 0; line[i] != '\0'; i++) {
         if (!isspace(line[i])) {
@@ -105,112 +115,141 @@ FileEntry *process_files(const char *directory, int *file_count) {
 
 void reconstruct_grid(const char *directory, FileEntry *file_list,
                       int file_count, NeuralNetwork *nn) {
-    int max_y = 0;
-    for (int i = 0; i < file_count; i++) {
-        if (file_list[i].ycoords > max_y) {
-            max_y = file_list[i].ycoords;
-        }
-    }
+    // Sort the file_list based on ycoords and then xcoords to ensure proper order
+    qsort(file_list, file_count, sizeof(FileEntry), compare_file_entries);
 
     FILE *letters_file = fopen("extracted/txt_data/temp_letters.txt", "w");
     if (!letters_file) {
-        err(EXIT_FAILURE, "couldnt open temp_letters.txt");
+        err(EXIT_FAILURE, "Couldn't open temp_letters.txt");
     }
 
     FILE *coordinates_file =
         fopen("extracted/txt_data/temp_coordinates.txt", "w");
     if (!coordinates_file) {
         fclose(letters_file);
-        err(EXIT_FAILURE, "couldnt open temp_coordinates.txt");
+        err(EXIT_FAILURE, "Couldn't open temp_coordinates.txt");
     }
 
     int *processed = calloc(file_count, sizeof(int));
     if (!processed) {
         fclose(letters_file);
         fclose(coordinates_file);
-        err(EXIT_FAILURE, "calloc error");
+        err(EXIT_FAILURE, "Calloc error");
     }
 
-    for (int y = 0; y <= max_y; y++) {
+    int line_start_idx = 0;
+    while (line_start_idx < file_count) {
         int first_in_line = 1;
-        for (int file_idx = 0; file_idx < file_count; file_idx++) {
-            if (!processed[file_idx] && file_list[file_idx].ycoords - 10 <= y &&
-                file_list[file_idx].ycoords + 10 >= y) {
-                size_t path_length = strlen(directory) +
-                                     strlen(file_list[file_idx].filename) + 2;
-                char *full_path = malloc(path_length);
-                if (!full_path) {
-                    free(processed);
-                    fclose(letters_file);
-                    fclose(coordinates_file);
-                    err(EXIT_FAILURE, "malloc error");
-                }
+        int line_end_idx = line_start_idx;
 
-                snprintf(full_path, path_length, "%s/%s", directory,
-                         file_list[file_idx].filename);
+        // Group files with similar ycoords (same line)
+        while (line_end_idx < file_count &&
+               abs(file_list[line_end_idx].ycoords -
+                   file_list[line_start_idx].ycoords) <= 10) {
+            line_end_idx++;
+        }
 
-                iImage *image = load_image(full_path, -1);
-                if (image == NULL) {
-                    free(full_path);
-                    continue;
-                }
+        for (int idx = line_start_idx; idx < line_end_idx; idx++) {
+            if (processed[idx]) {
+                continue;
+            }
 
-                double input[INPUTS_NUMBER];
-                int idx = 0;
-                for (int i = 0; i < image->height; i++) {
-                    for (int j = 0; j < image->width; j++) {
-                        Uint8 pixel_value = image->pixels[i][j].r;
-                        input[idx++] = pixel_value > 0 ? 1.0 : 0.0;
-                    }
-                }
+            size_t path_length = strlen(directory) +
+                                 strlen(file_list[idx].filename) + 2;
+            char *full_path = malloc(path_length);
+            if (!full_path) {
+                free(processed);
+                fclose(letters_file);
+                fclose(coordinates_file);
+                err(EXIT_FAILURE, "Malloc error");
+            }
 
-                forward_pass(nn, input);
+            snprintf(full_path, path_length, "%s/%s", directory,
+                     file_list[idx].filename);
 
-                int predicted_label = 0;
-                double max_output = nn->output_layer[0];
-                for (int i = 1; i < OUTPUTS_NUMBER; i++) {
-                    if (nn->output_layer[i] > max_output) {
-                        max_output = nn->output_layer[i];
-                        predicted_label = i;
-                    }
-                }
+            iImage *image = load_image(full_path, -1);
+            if (image == NULL) {
+                free(full_path);
+                continue;
+            }
 
-                //  -32 to convert into uppercase
-                char letter = (predicted_label < 26)
-                                  ? ('A' + predicted_label)
-                                  : ('a' + (predicted_label - 26) - 32);
-
-                fputc(letter, letters_file);
-
-                if (!first_in_line) {
-                    fputc(' ', coordinates_file);
-                }
-
-                fprintf(coordinates_file, "(%d,%d)",
-                        file_list[file_idx].xcoords,
-                        file_list[file_idx].ycoords);
-                first_in_line = 0;
-
+            int input_size = image->height * image->width;
+            double *input = malloc(input_size * sizeof(double));
+            if (!input) {
+                free(full_path);
+                // Free image resources
                 for (int t = 0; t < image->height; t++) {
                     free(image->pixels[t]);
                 }
                 free(image->pixels);
                 free(image->path);
                 free(image);
-                free(full_path);
-
-                processed[file_idx] = 1;
+                err(EXIT_FAILURE, "Malloc error for input");
             }
+
+            int idx_input = 0;
+            for (int i = 0; i < image->height; i++) {
+                for (int j = 0; j < image->width; j++) {
+                    Uint8 pixel_value = image->pixels[i][j].r;
+                    input[idx_input++] = pixel_value > 0 ? 1.0 : 0.0;
+                }
+            }
+
+            forward_pass(nn, input);
+
+            int predicted_label = 0;
+            double max_output = nn->output_layer[0];
+            for (int i = 1; i < OUTPUTS_NUMBER; i++) {
+                if (nn->output_layer[i] > max_output) {
+                    max_output = nn->output_layer[i];
+                    predicted_label = i;
+                }
+            }
+
+            // Corrected mapping from predicted_label to character
+            char letter;
+            if (predicted_label >= 0 && predicted_label < 26) {
+                letter = 'A' + predicted_label;
+            } else if (predicted_label >= 26 && predicted_label < 52) {
+                letter = 'a' + (predicted_label - 26);
+            } else {
+                letter = '?'; // Unknown label
+            }
+
+            fputc(letter, letters_file);
+
+            if (!first_in_line) {
+                fputc(' ', coordinates_file);
+            }
+
+            fprintf(coordinates_file, "(%d,%d)", file_list[idx].xcoords,
+                    file_list[idx].ycoords);
+            first_in_line = 0;
+
+            // Free resources
+            for (int t = 0; t < image->height; t++) {
+                free(image->pixels[t]);
+            }
+            free(image->pixels);
+            free(image->path);
+            free(image);
+            free(full_path);
+            free(input);
+
+            processed[idx] = 1;
         }
 
         fputc('\n', letters_file);
         fputc('\n', coordinates_file);
+
+        line_start_idx = line_end_idx;
     }
 
     fclose(letters_file);
     fclose(coordinates_file);
     free(processed);
 }
+
 
 int grid_builder() {
     srand((unsigned int)time(NULL));

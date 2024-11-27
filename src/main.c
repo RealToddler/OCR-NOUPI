@@ -43,12 +43,14 @@ int main() {
     if (init_SDL() == 1) {
         err(EXIT_FAILURE, "an error occured while initialising SDL");
     }
+    char* word2="HTA";
+    char* path = "/Users/lucasbigot/Documents/EPITA/spe/OCR/OCR-NOUPI/src/inputs/level_3_image_1.png";
 
     iImage *img =
-        load_image("/Users/lucasbigot/Documents/EPITA/spe/OCR/OCR-NOUPI/src/level_1_image_1.png", -1);
+        load_image(path, -1);
 
     iImage *res =
-        load_image("/Users/lucasbigot/Documents/EPITA/spe/OCR/OCR-NOUPI/src/level_1_image_1.png", -1);
+        load_image(path, -1);
 
     if (img == NULL || res == NULL) {
         fprintf(stderr, "Impossible de charger l'image d'entrée.\n");
@@ -131,7 +133,7 @@ int main() {
     }
 
     // temp
-    const char *word = strdup("ARAW");
+    const char *word = strdup(word2);
     cCoords wordCoords = solver((char *)word, "extracted/txt_data/letters.txt");
     
 
