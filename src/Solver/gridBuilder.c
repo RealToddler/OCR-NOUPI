@@ -124,14 +124,25 @@ void reconstruct_grid(const char *directory, FileEntry *file_list,
         err(EXIT_FAILURE, "couldnt open temp_coordinates.txt");
     }
 
+    int *processed = calloc(file_count, sizeof(int));
+    if (!processed) {
+        fclose(letters_file);
+        fclose(coordinates_file);
+        err(EXIT_FAILURE, "calloc error");
+    }
+
     for (int y = 0; y <= max_y; y++) {
         int first_in_line = 1;
         for (int file_idx = 0; file_idx < file_count; file_idx++) {
-            if (file_list[file_idx].ycoords == y) {
+            if (!processed[file_idx] && file_list[file_idx].ycoords - 10 <= y &&
+                file_list[file_idx].ycoords + 10 >= y) {
                 size_t path_length = strlen(directory) +
                                      strlen(file_list[file_idx].filename) + 2;
                 char *full_path = malloc(path_length);
                 if (!full_path) {
+                    free(processed);
+                    fclose(letters_file);
+                    fclose(coordinates_file);
                     err(EXIT_FAILURE, "malloc error");
                 }
 
@@ -141,7 +152,6 @@ void reconstruct_grid(const char *directory, FileEntry *file_list,
                 iImage *image = load_image(full_path, -1);
                 if (image == NULL) {
                     free(full_path);
-                    err(EXIT_FAILURE, "error while loading the image");
                     continue;
                 }
 
@@ -188,6 +198,8 @@ void reconstruct_grid(const char *directory, FileEntry *file_list,
                 free(image->path);
                 free(image);
                 free(full_path);
+
+                processed[file_idx] = 1;
             }
         }
 
@@ -197,6 +209,7 @@ void reconstruct_grid(const char *directory, FileEntry *file_list,
 
     fclose(letters_file);
     fclose(coordinates_file);
+    free(processed);
 }
 
 int grid_builder() {

@@ -10,6 +10,7 @@
 void extract_image(iImage *img, cColor color) {
 
     int word_count = 0;
+    int letter_count = 0;
     for (int y = 0; y < img->height; y++) {
         for (int x = 0; x < img->width; x++) {
             pPixel *pixel = &img->pixels[y][x];
@@ -95,6 +96,15 @@ void extract_image(iImage *img, cColor color) {
                                  "extracted/grid_letters/%d_%d.png", x, y);
                     }
 
+                    // pink = letters from word
+
+                    else if (color.r == 255 && color.g == 192 &&
+                             color.b == 203) {
+                        snprintf(output_path, sizeof(output_path),
+                                 "extracted/word_letters/%d.png",
+                                 letter_count++);
+                    }
+
                     else {
 
                         snprintf(output_path, sizeof(output_path),
@@ -131,7 +141,10 @@ void extract_image(iImage *img, cColor color) {
                             }
                         }
 
-                        if (color.r == 43 && color.g == 255 && color.b == 255) {
+                        if ((color.r == 43 && color.g == 255 &&
+                             color.b == 255) ||
+                            (color.r == 255 && color.g == 192 &&
+                             color.b == 203)) {
                             iImage *resized_img =
                                 resize_image(crop_image(new_img), 32, 32);
                             if (resized_img) {

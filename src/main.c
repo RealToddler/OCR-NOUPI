@@ -35,6 +35,7 @@
 #include "Solver/gridBuilder.h"
 #include "Solver/loadGrid.h"
 #include "Solver/solver.h"
+#include "Solver/wordsBuilder.h"
 
 #include "Files/findGrid.h"
 
@@ -44,10 +45,10 @@ int main() {
     }
 
     iImage *img =
-        load_image("/Users/emilien/Downloads/level_1_image_1.png", -1);
+        load_image("/Users/emilien/Downloads/level_1_image_2.png", -1);
 
     iImage *res =
-        load_image("/Users/emilien/Downloads/level_1_image_1.png", -1);
+        load_image("/Users/emilien/Downloads/level_1_image_2.png", -1);
 
     if (img == NULL || res == NULL) {
         fprintf(stderr, "Impossible de charger l'image d'entrée.\n");
@@ -61,6 +62,8 @@ int main() {
     // preprocess step
     grayscale(img);
     sauvola_threshold(img, 16);
+
+    save_image(img, "temp.png");
 
     // detections
     // functions to extract everything properly
@@ -110,6 +113,11 @@ int main() {
         err(EXIT_FAILURE, "an error occurend while building out the grid");
     }
 
+    if (words_builder() == 1) {
+        err(EXIT_FAILURE,
+            "an error occurend while building out the words list");
+    }
+
     gGrid *coords = load_grid("extracted/txt_data/coordinates.txt");
     gGrid *letters = load_grid("extracted/txt_data/letters.txt");
     if (coords == NULL || letters == NULL) {
@@ -148,8 +156,25 @@ int main() {
         } else if (t1.x == t2.x) { // vertical
             draw_rectangle(res, t1_x + 2 * x_grid, t1_y + y_grid, t2_x + x_grid,
                            t2_y + y_grid + (t2_y - t1_y) * 0.1, orange);
-        } else if (t1.x != t2.x && t1.y != t2.y) {
-            // to be made
+        } else {
+            if (t2_y < t1_y) {
+                int temp1 = t1_x;
+                int temp2 = t1_y;
+                t1_x = t2_x;
+                t1_y = t2_y;
+                t2_x = temp1;
+                t2_y = temp2;
+            }
+            printf("in else");
+            if (t2_x < t1_x) {
+                draw_diagonal(res, t1_x + x_grid, t1_y + y_grid,
+                                   t2_x + x_grid, t2_y + y_grid, orange,
+                                   strlen(word), 2);
+            } else {
+
+                draw_diagonal(res, t1_x + x_grid, t1_y + y_grid, t2_x + x_grid,
+                              t2_y + y_grid, orange, strlen(word), 1);
+            }
         }
     }
     save_image(res, "output.png");
