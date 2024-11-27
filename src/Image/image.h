@@ -9,12 +9,14 @@ typedef struct pPixel {
     struct pPixel *matrix;
 } pPixel;
 
+
 typedef struct iImage {
     int height, width;
     char *path;
     pPixel **pixels;
     int label;
 } iImage;
+
 
 int init_SDL();
 
@@ -30,5 +32,8 @@ iImage *load_image(const char *image_path, int label);
 void free_image(iImage *image_path);
 
 void save_image(iImage *img, const char *image_path);
+
+iImage *crop_image_cord(iImage *original_img, int x, int y,
+                        int width, int height);
 
 #endif // IMAGE_H

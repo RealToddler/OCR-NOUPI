@@ -209,3 +209,34 @@ void free_image(iImage *img) {
         free(img);
     }
 }
+
+/*
+    Crops a region from the original image and creates a new image
+*/
+iImage *crop_image_cord(iImage *original_img, int x, int y, int width, int height) {
+    // Check if the coordinates are within the bounds of the original image
+    if (x < 0 || y < 0 || x + width > original_img->width ||
+        y + height > original_img->height) {
+        fprintf(stderr, "Crop coordinates are out of bounds.\n");
+        return NULL;
+    }
+
+    // Create a new image with the specified width and height
+    iImage *cropped_img = create_image(width, height, original_img->path);
+    if (cropped_img == NULL) {
+        fprintf(stderr, "Failed to create a new image.\n");
+        return NULL;
+    }
+
+    // Copy the pixels from the original image to the new image
+    for (int i = 0; i < height; ++i) {
+        for (int j = 0; j < width; ++j) {
+            cropped_img->pixels[i][j] = original_img->pixels[y + i][x + j];
+        }
+    }
+
+    // Assign the label from the original image (optional)
+    cropped_img->label = original_img->label;
+
+    return cropped_img;
+}

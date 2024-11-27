@@ -150,7 +150,7 @@ void extract_image(iImage *img, cColor color) {
                             if (resized_img) {
                                 save_image(resized_img, output_path);
                                 free_image(resized_img);
-                            }
+                            }cd
                         } else {
                             save_image(new_img, output_path);
                         }

@@ -80,6 +80,7 @@ int main() {
 
     // detect and extract words
     apply_canny(find_word_lists, img);
+    
     extract_image(img, blue);
 
     const char *directory = "extracted/";
