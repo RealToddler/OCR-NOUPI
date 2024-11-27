@@ -19,8 +19,6 @@ static void load_css() {
     g_object_unref(provider);
 }
 
-
-
 int open_app() {
     GtkBuilder *builder;
     GObject *window;
@@ -62,18 +60,15 @@ int open_app() {
     GtkWidget *window_widget = GTK_WIDGET(window);
     gtk_widget_set_size_request(window_widget, window_width, window_height);
 
-    // Redimensionner et forcer le centrage
+    // Redimensionner et centrer la fenêtre
     gtk_window_resize(GTK_WINDOW(window_widget), window_width, window_height);
-
-    // Calculer la position centrale
     gint center_x = (screen_width - window_width) / 2;
     gint center_y = (screen_height - window_height) / 2;
-
-    // Déplacer la fenêtre au centre
     gtk_window_move(GTK_WINDOW(window_widget), center_x, center_y);
 
     // Afficher la fenêtre
     gtk_widget_show_all(window_widget);
+
 
     gtk_main();
 
