@@ -37,14 +37,37 @@
                     <child>
                       <!-- Exemple d'élément de menu -->
                       <object class="GtkButton" id="menu-item-1">
-                        <property name="label">Menu Item 1</property>
+                        <property name="label">Save Image</property>
+                        <property name="name">save-image-button</property>
                         <property name="halign">fill</property>
                         <property name="xalign">0.0</property>
                       </object>
                     </child>
                     <child>
+                      <!-- Ligne séparatrice -->
+                      <object class="GtkSeparator">
+                        <property name="orientation">horizontal</property>
+                        <property name="margin-start">10</property>
+                        <property name="margin-end">10</property>
+                      </object>
+                    </child>
+                    <child>
                       <object class="GtkButton" id="menu-item-2">
-                        <property name="label">Menu Item 2</property>
+                        <property name="label">Pretreatment</property>
+                        <property name="halign">fill</property>
+                        <property name="xalign">0.0</property>
+                      </object>
+                    </child>
+                    <child>
+                      <object class="GtkButton" id="menu-item-3">
+                        <property name="label">Rotation</property>
+                        <property name="halign">fill</property>
+                        <property name="xalign">0.0</property>
+                      </object>
+                    </child>
+                    <child>
+                      <object class="GtkButton" id="menu-item-4">
+                        <property name="label">Train Neural Network</property>
                         <property name="halign">fill</property>
                         <property name="xalign">0.0</property>
                       </object>

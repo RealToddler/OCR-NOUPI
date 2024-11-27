@@ -108,7 +108,7 @@ button {
 
 #menu-toggle-button {
   background-color: transparent; /* Pas de fond */
-  color: #ffffff; /* Texte blanc */
+  color: #e1e1e1; /* Texte blanc */
   border: none; /* Pas de bordure */
   font-size: 20px; /* Taille du texte */
   padding: 5px; /* Un peu de padding pour un clic confortable */
@@ -120,16 +120,23 @@ button {
 
 #menu-revealer button {
   background-color: transparent; /* Pas de fond */
-  color: #ffffff; /* Texte blanc */
+  color: #e1e1e1; /* Texte blanc */
   border: none; /* Pas de bordure */
   font-size: 15px; /* Taille du texte */
   font-weight: normal;
   font-family: system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, 'Open Sans', 'Helvetica Neue', sans-serif;
-  padding-right: 150px;
+  padding-right: 100px;
   margin-bottom: 5px;
 }
 
+#menu-revealer #save-image-button {
+  margin-bottom: 0px;
+}
+
+#menu-revealer #save-image-button:hover {
+  background-color: #003d4e; 
+}
+
 #menu-revealer button:hover {
-  background-color: #2e323c; /* Pas de fond */
-  color: #ffffff; /* Texte blanc */
+  background-color: #2e323c;
 }
