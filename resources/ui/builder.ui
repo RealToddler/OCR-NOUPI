@@ -9,13 +9,11 @@
         <property name="orientation">vertical</property>
         <child>
           <!-- Ajout du texte centré -->
-          <object class="GtkLabel" id="header_label">
+          <object class="GtkLabel" id="header-label">
+            <property name="name">header-label</property>
             <property name="label">OCR - Solver</property>
             <property name="halign">center</property>
             <property name="valign">start</property>
-            <style>
-              <class name="header" />
-            </style>
           </object>
         </child>
         <child>
@@ -28,7 +26,8 @@
         </child>
         <child>
           <!-- Zone centrale -->
-          <object class="GtkBox" id="central_box">
+          <object class="GtkBox" id="central-box">
+            <property name="name">central-box</property>
             <property name="orientation">vertical</property>
             <property name="margin-start">20</property>
             <property name="margin-end">20</property>
@@ -38,28 +37,21 @@
             <property name="vexpand">True</property>
             <child>
               <!-- Zone de drag-and-drop -->
-              <object class="GtkEventBox" id="drag_drop_zone">
+              <object class="GtkEventBox" id="drag-drop-zone">
+                <property name="name">drag-drop-zone</property>
                 <property name="visible">True</property>
                 <property name="hexpand">True</property>
                 <property name="vexpand">True</property>
                 <child>
-                  <object class="GtkLabel" id="drag_drop_label">
+                  <object class="GtkLabel" id="drag-drop-label">
+                    <property name="name">drag-drop-label</property>
                     <property name="label">Cliquez ou glissez-déposez un fichier</property>
                     <property name="halign">center</property>
                     <property name="valign">center</property>
-                    <style>
-                      <class name="drag_drop_header"/>
-                    </style>
                   </object>
                 </child>
-                <style>
-                  <class name="drag_drop_zone"/>
-                </style>
               </object>
             </child>
-            <style>
-              <class name="central-box"/>
-            </style>
           </object>
         </child>
       </object>
