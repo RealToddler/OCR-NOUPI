@@ -43,8 +43,8 @@ int main() {
     if (init_SDL() == 1) {
         err(EXIT_FAILURE, "an error occured while initialising SDL");
     }
-    char* word2="HTA";
-    char* path = "/Users/lucasbigot/Documents/EPITA/spe/OCR/OCR-NOUPI/src/inputs/level_3_image_1.png";
+    char* word2="LTM";
+    char* path = "/Users/lucasbigot/Documents/EPITA/spe/OCR/OCR-NOUPI/src/inputs/level_1_image_1.png";
 
     iImage *img =
         load_image(path, -1);
@@ -138,7 +138,7 @@ int main() {
     
 
     int x_grid = 0, y_grid = 0;
-    sscanf(grid_filename, "grid_%d_%d", &x_grid, &y_grid);
+    sscanf(grid_filename, "grid_%d_%d", &y_grid, &x_grid);
 
     tTuple t1 = wordCoords.t1;
     tTuple t2 = wordCoords.t2;
@@ -159,14 +159,33 @@ int main() {
 
         if (t1.y == t2.y) // horizontal
         {
+            printf("horizontal");
+            if (t2_x - t1_x<0) {
+                int temp1 = t1_x;
+                int temp2 = t1_y;
+                t1_x = t2_x;
+                t1_y = t2_y;
+                t2_x = temp1;
+                t2_y = temp2;
+            }
+            int last_l = (t2_x - t1_x) / ((strlen(word) - 1));
             draw_rectangle(res, t1_x + x_grid, t1_y + y_grid,
-                           t2_x + x_grid + (t2_x - t1_x) * 0.05,
+                           t2_x +last_l+ x_grid ,
                            t2_y + y_grid + 25, orange);
         } else if (t1.x == t2.x) { // vertical
-            draw_rectangle(res, t1_x + 2 * x_grid, t1_y + y_grid, t2_x + x_grid,
-                           t2_y + y_grid + (t2_y - t1_y) * 0.1, orange);
+            if (t2_y - t1_y<0) {
+                int temp1 = t1_x;
+                int temp2 = t1_y;
+                t1_x = t2_x;
+                t1_y = t2_y;
+                t2_x = temp1;
+                t2_y = temp2;
+            }
+            int last_l = (t2_y - t1_y) / ((strlen(word) - 1));
+            draw_rectangle(res, t1_x + x_grid, t1_y + y_grid, t2_x + x_grid ,
+                           t2_y + y_grid +last_l, orange);
         } else {
-            if (t2_y < t1_y) {
+            if (t2_y - t1_y<0) {
                 int temp1 = t1_x;
                 int temp2 = t1_y;
                 t1_x = t2_x;
