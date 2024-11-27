@@ -32,7 +32,7 @@
             <property name="margin-start">20</property>
             <property name="margin-end">20</property>
             <property name="margin-top">20</property>
-            <property name="margin-bottom">20</property>
+            <property name="margin-bottom">5</property>
             <property name="hexpand">True</property>
             <property name="vexpand">True</property>
             <child>
@@ -54,8 +54,44 @@
             </child>
           </object>
         </child>
+        <child>
+          <object class="GtkBox" id="ControlBox">
+            <property name="orientation">horizontal</property>
+            <property name="name">ControlBox</property>
+            <property name="visible">True</property>
+            <property name="margin-top">10</property>
+            <property name="margin-bottom">10</property>
+            <property name="halign">center</property>
+            <property name="valign">center</property>
+            <property name="spacing">4</property>
+            <child>
+              <object class="GtkButton" id="clear-button">
+                <property name="name">clear-button</property>
+                <property name="label">⨉</property>
+                <property name="halign">center</property>
+                <property name="valign">center</property>
+              </object>
+            </child>
+            <child>
+              <object class="GtkButton" id="solve-button">
+                <property name="name">solve-button</property>
+                <property name="label">Solve</property>
+                <property name="halign">center</property>
+                <property name="valign">center</property>
+                <property name="margin-end">40</property>
+              </object>
+            </child>
+          </object>
+        </child>
+        <child>
+          <!-- Ligne séparatrice -->
+          <object class="GtkSeparator">
+            <property name="orientation">horizontal</property>
+            <property name="margin-start">10</property>
+            <property name="margin-end">10</property>
+          </object>
+        </child>
       </object>
     </child>
   </object>
 </interface>
-

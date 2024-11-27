@@ -21,6 +21,7 @@ static void load_css() {
 int open_app() {
     GtkBuilder *builder;
     GObject *window;
+    GObject *central_box;
     GObject *drag_drop_zone;
     GObject *drag_drop_label;
 
@@ -45,6 +46,7 @@ int open_app() {
     window = gtk_builder_get_object(builder, "window");
     drag_drop_zone = gtk_builder_get_object(builder, "drag-drop-zone");
     drag_drop_label = gtk_builder_get_object(builder, "drag-drop-label");
+    central_box = gtk_builder_get_object(builder, "central-box");
 
     if (!window || !drag_drop_zone || !drag_drop_label) {
         g_printerr("Error: 'window' object not found in UI file.\n");
@@ -52,9 +54,6 @@ int open_app() {
     }
 
     container_init(GTK_WIDGET(drag_drop_zone), GTK_WIDGET(drag_drop_label));
-
-    setup_drag_and_drop(GTK_WIDGET(drag_drop_zone),
-                        GTK_WIDGET(drag_drop_label));
 
     g_signal_connect(GTK_WIDGET(drag_drop_zone), "button-press-event",
                      G_CALLBACK(on_drag_drop_zone_clicked), window);

@@ -46,6 +46,8 @@ separator {
 #drag-drop-zone:hover {
   background-color: #3a3f44;
   border-color: #ffffff;
+  font-family: "Roboto", sans-serif;
+  font-weight: bold;
 }
 
 /* Texte dans la zone de drag-and-drop */
@@ -54,4 +56,42 @@ separator {
   font-size: 20px;
   font-weight: bold;
   color: #555555;
+}
+
+button {
+  background-image: none;
+  border: none;
+  border-image: none;
+  text-shadow: none;
+  box-shadow: none;
+  font-weight: bold;
+}
+
+#clear-button {
+  background-image: none;
+  border: none;
+  border-image: none;
+  min-width: 1px;  /* Largeur minimale pour le bouton Clear */
+  font-size: 17px;  /* Taille de police pour le texte */
+  border-radius: 5px; /* Coins arrondis */
+  background-color: #242830; /* Rouge clair pour différencier */
+  color: #e1e1e1;     /* Couleur du texte */
+  border: none;     /* Supprimer la bordure par défaut */
+}
+
+#clear-button:hover {
+  background-color: #ff4c4c; /* Rouge plus sombre au survol */
+}
+
+#solve-button {
+  min-width: 120px; /* Largeur minimale pour le bouton Solve */
+  font-size: 14px;  /* Taille de police pour le texte */
+  border-radius: 5px; /* Coins arrondis */
+  background-color: #242830; /* Vert pour différencier */
+  color: #e1e1e1;     /* Couleur du texte */
+  border: none;     /* Supprimer la bordure par défaut */
+}
+
+#solve-button:hover {
+  background-color: #3e8e41; /* Vert plus sombre au survol */
 }
