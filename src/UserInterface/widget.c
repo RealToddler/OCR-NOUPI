@@ -1,4 +1,5 @@
 #include "widget.h"
+#include "container.h"
 #include <gtk/gtk.h>
 
 void on_drag_data_received(GtkWidget *widget, GdkDragContext *context,
@@ -13,8 +14,10 @@ void on_drag_data_received(GtkWidget *widget, GdkDragContext *context,
                 g_print("Fichier déposé : %s\n", filename);
 
                 // Mettre à jour le label avec le chemin du fichier
-                GtkLabel *label = GTK_LABEL(user_data);
-                gtk_label_set_text(label, filename);
+                //GtkLabel *label = GTK_LABEL(user_data);
+                //gtk_label_set_text(label, filename);
+
+                container_set_image(widget, filename);
 
                 g_free(filename);
             }
@@ -62,11 +65,13 @@ void on_drag_drop_zone_clicked(GtkWidget *widget, GdkEventButton *event,
         filename = gtk_file_chooser_get_filename(chooser);
 
         // Mettre à jour le label avec le fichier sélectionné
-        GtkLabel *label =
-            GTK_LABEL(g_object_get_data(G_OBJECT(widget), "drag-drop-label"));
-        gtk_label_set_text(label, filename);
+        //GtkLabel *label =
+        //    GTK_LABEL(g_object_get_data(G_OBJECT(widget), "drag-drop-label"));
+        //gtk_label_set_text(label, filename);
 
         g_print("File selected: %s\n", filename);
+        container_set_image(widget, filename);
+
         g_free(filename);
     }
 

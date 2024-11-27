@@ -1,5 +1,6 @@
 #include "application.h"
 #include "widget.h"
+#include "container.h"
 #include <gtk/gtk.h>
 
 static void load_css() {
@@ -49,6 +50,8 @@ int open_app() {
         g_printerr("Error: 'window' object not found in UI file.\n");
         return 1;
     }
+
+    container_init(GTK_WIDGET(drag_drop_zone), GTK_WIDGET(drag_drop_label));
 
     setup_drag_and_drop(GTK_WIDGET(drag_drop_zone),
                         GTK_WIDGET(drag_drop_label));
