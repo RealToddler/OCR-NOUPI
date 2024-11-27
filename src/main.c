@@ -123,7 +123,7 @@ int main() {
     }
 
     // temp
-    const char *word = strdup("WARA");
+    const char *word = strdup("ARAW");
     cCoords wordCoords = solver((char *)word, "extracted/txt_data/letters.txt");
     
 
@@ -156,6 +156,15 @@ int main() {
             draw_rectangle(res, t1_x + 2 * x_grid, t1_y + y_grid, t2_x + x_grid,
                            t2_y + y_grid + (t2_y - t1_y) * 0.1, orange);
         } else  {
+            if(t2_y<t1_y){
+                int temp1 = t1_x;
+                int temp2=t1_y;
+                t1_x=t2_x;
+                t1_y=t2_y;
+                t2_x=temp1;
+                t2_y=temp2;
+
+            }
             printf("in else");
             if (t2_x<t1_x)
             {
