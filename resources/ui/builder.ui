@@ -5,49 +5,50 @@
     <property name="visible">True</property>
     <property name="border-width">10</property>
     <child>
-      <object class="GtkBox">
-        <property name="orientation">vertical</property>
+      <object class="GtkBox" id="main-container">
         <child>
-          <!-- Ajout du texte centré -->
-          <object class="GtkLabel" id="header-label">
-            <property name="name">header-label</property>
-            <property name="label">OCR - Solver</property>
-            <property name="halign">center</property>
-            <property name="valign">start</property>
-          </object>
-        </child>
-        <child>
-          <!-- Ligne séparatrice -->
-          <object class="GtkSeparator">
-            <property name="orientation">horizontal</property>
-            <property name="margin-start">10</property>
-            <property name="margin-end">10</property>
-          </object>
-        </child>
-        <child>
-          <!-- Zone centrale -->
-          <object class="GtkBox" id="central-box">
-            <property name="name">central-box</property>
+          <object class="GtkBox" id="main-box">
             <property name="orientation">vertical</property>
-            <property name="margin-start">20</property>
-            <property name="margin-end">20</property>
-            <property name="margin-top">20</property>
-            <property name="margin-bottom">5</property>
-            <property name="hexpand">True</property>
-            <property name="vexpand">True</property>
+            <property name="hexpand">False</property>
+            <property name="vexpand">False</property>
             <child>
-              <!-- Zone de drag-and-drop -->
-              <object class="GtkEventBox" id="drag-drop-zone">
-                <property name="name">drag-drop-zone</property>
-                <property name="visible">True</property>
-                <property name="hexpand">True</property>
-                <property name="vexpand">True</property>
+              <!-- Bouton d'ouverture du menu -->
+              <object class="GtkButton" id="menu-toggle-button">
+                <property name="label">☰</property> <!-- Caractère avec 3 traits -->
+                <property name="halign">start</property>
+                <property name="valign">start</property>
+                <property name="margin-top">10</property>
+                <property name="margin-bottom">10</property>
+                <property name="name">menu-toggle-button</property>
+              </object>
+            </child>
+            <child>
+              <!-- Menu coulissant -->
+              <object class="GtkRevealer" id="menu-revealer">
+                <property name="transition-type">slide-right</property>
+                <property name="reveal-child">False</property>
+                <property name="name">menu-revealer</property>
                 <child>
-                  <object class="GtkLabel" id="drag-drop-label">
-                    <property name="name">drag-drop-label</property>
-                    <property name="label">Cliquez ou glissez-déposez un fichier</property>
-                    <property name="halign">center</property>
-                    <property name="valign">center</property>
+                  <object class="GtkBox" id="menu-box">
+                    <property name="orientation">vertical</property>
+                    <property name="hexpand">False</property>
+                    <property name="vexpand">True</property>
+                    <property name="name">menu-box</property>
+                    <child>
+                      <!-- Exemple d'élément de menu -->
+                      <object class="GtkButton" id="menu-item-1">
+                        <property name="label">Menu Item 1</property>
+                        <property name="halign">fill</property>
+                        <property name="xalign">0.0</property>
+                      </object>
+                    </child>
+                    <child>
+                      <object class="GtkButton" id="menu-item-2">
+                        <property name="label">Menu Item 2</property>
+                        <property name="halign">fill</property>
+                        <property name="xalign">0.0</property>
+                      </object>
+                    </child>
                   </object>
                 </child>
               </object>
@@ -55,23 +56,75 @@
           </object>
         </child>
         <child>
-          <object class="GtkBox" id="control-box">
-            <property name="orientation">horizontal</property>
-            <property name="name">control-box</property>
-            <property name="visible">True</property>
-            <property name="margin-top">10</property>
-            <property name="margin-bottom">10</property>
-            <property name="halign">center</property>
-            <property name="valign">center</property>
-            <property name="spacing">4</property>
-          </object>
-        </child>
-        <child>
-          <!-- Ligne séparatrice -->
-          <object class="GtkSeparator">
-            <property name="orientation">horizontal</property>
-            <property name="margin-start">10</property>
-            <property name="margin-end">10</property>
+          <object class="GtkBox">
+            <property name="orientation">vertical</property>
+            <child>
+              <!-- Ajout du texte centré -->
+              <object class="GtkLabel" id="header-label">
+                <property name="name">header-label</property>
+                <property name="label">OCR - Solver</property>
+                <property name="halign">center</property>
+                <property name="valign">start</property>
+              </object>
+            </child>
+            <child>
+              <!-- Ligne séparatrice -->
+              <object class="GtkSeparator">
+                <property name="orientation">horizontal</property>
+                <property name="margin-start">10</property>
+                <property name="margin-end">10</property>
+              </object>
+            </child>
+            <child>
+              <!-- Zone centrale -->
+              <object class="GtkBox" id="central-box">
+                <property name="name">central-box</property>
+                <property name="orientation">vertical</property>
+                <property name="margin-start">20</property>
+                <property name="margin-end">20</property>
+                <property name="margin-top">20</property>
+                <property name="margin-bottom">5</property>
+                <property name="hexpand">True</property>
+                <property name="vexpand">True</property>
+                <child>
+                  <!-- Zone de drag-and-drop -->
+                  <object class="GtkEventBox" id="drag-drop-zone">
+                    <property name="name">drag-drop-zone</property>
+                    <property name="visible">True</property>
+                    <property name="hexpand">True</property>
+                    <property name="vexpand">True</property>
+                    <child>
+                      <object class="GtkLabel" id="drag-drop-label">
+                        <property name="name">drag-drop-label</property>
+                        <property name="label">Cliquez ou glissez-déposez un fichier</property>
+                        <property name="halign">center</property>
+                        <property name="valign">center</property>
+                      </object>
+                    </child>
+                  </object>
+                </child>
+              </object>
+            </child>
+            <child>
+              <object class="GtkBox" id="control-box">
+                <property name="orientation">horizontal</property>
+                <property name="name">control-box</property>
+                <property name="visible">True</property>
+                <property name="margin-top">10</property>
+                <property name="margin-bottom">10</property>
+                <property name="halign">center</property>
+                <property name="valign">center</property>
+                <property name="spacing">4</property>
+              </object>
+            </child>
+            <child>
+              <!-- Ligne séparatrice -->
+              <object class="GtkSeparator">
+                <property name="orientation">horizontal</property>
+                <property name="margin-start">10</property>
+                <property name="margin-end">10</property>
+              </object>
+            </child>
           </object>
         </child>
       </object>

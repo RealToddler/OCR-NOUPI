@@ -1,6 +1,7 @@
 #include "application.h"
-#include "asset/widget.h"
 #include "asset/container.h"
+#include "asset/menu.h"
+#include "asset/widget.h"
 #include <gtk/gtk.h>
 
 static void load_css() {
@@ -21,9 +22,6 @@ static void load_css() {
 int open_app() {
     GtkBuilder *builder;
     GObject *window;
-    GObject *drag_drop_zone;
-    GObject *drag_drop_label;
-    GObject *control_box;
 
     GError *error = NULL;
 
@@ -44,22 +42,12 @@ int open_app() {
 
     // Récupération de la fenêtre
     window = gtk_builder_get_object(builder, "window");
-    drag_drop_zone = gtk_builder_get_object(builder, "drag-drop-zone");
-    drag_drop_label = gtk_builder_get_object(builder, "drag-drop-label");
-    control_box = gtk_builder_get_object(builder, "control-box");
 
-    if (!window || !drag_drop_zone || !drag_drop_label || !control_box) {
+    if (!window || !container_init(builder, GTK_WIDGET(window)) ||
+        !menu_init(builder)) {
         g_printerr("Error: one of defined object not found in UI file.\n");
         return 1;
     }
-
-    container_init(GTK_WIDGET(drag_drop_zone), GTK_WIDGET(drag_drop_label));
-
-    g_signal_connect(GTK_WIDGET(drag_drop_zone), "button-press-event",
-                     G_CALLBACK(on_drag_drop_zone_clicked), window);
-
-    g_object_set_data(G_OBJECT(drag_drop_zone), "drag-drop-label",
-                      drag_drop_label);
 
     g_signal_connect(window, "destroy", G_CALLBACK(gtk_main_quit), NULL);
 
@@ -99,7 +87,8 @@ int open_app() {
 
     // Afficher la fenêtre
     gtk_widget_show_all(window_widget);
-    add_control_box(GTK_WIDGET(control_box));
+    if (!init_control_box(builder))
+        return 1;
     hide_control_box();
 
     gtk_main();

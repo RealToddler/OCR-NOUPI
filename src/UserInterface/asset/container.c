@@ -6,7 +6,8 @@ static GtkWidget *image_container = NULL;
 
 static int is_image_file(const char *filename) {
     const char *extensions[] = {".png"};
-    for (unsigned long i = 0; i < sizeof(extensions) / sizeof(extensions[0]); i++) {
+    for (unsigned long i = 0; i < sizeof(extensions) / sizeof(extensions[0]);
+         i++) {
         if (g_str_has_suffix(filename, extensions[i])) {
             return TRUE;
         }
@@ -15,7 +16,21 @@ static int is_image_file(const char *filename) {
 }
 
 // Configure le conteneur pour accepter le drag-and-drop
-void container_init(GtkWidget *container, GtkWidget *label) {
+int container_init(GtkBuilder *builder, GtkWidget *window) {
+    GObject *drag_drop_zone;
+    GObject *drag_drop_label;
+
+    drag_drop_zone = gtk_builder_get_object(builder, "drag-drop-zone");
+    drag_drop_label = gtk_builder_get_object(builder, "drag-drop-label");
+
+    if (!drag_drop_zone || !drag_drop_label) {
+        g_printerr(
+            "Erreur : problème d'initialisation du conteneur d'image.\n");
+        return FALSE;
+    }
+
+    GtkWidget *container = GTK_WIDGET(drag_drop_zone);
+    GtkWidget *label = GTK_WIDGET(drag_drop_label);
     static const GtkTargetEntry targets[] = {
         {"text/uri-list", 0, 0}, // Accepter uniquement des URI (fichiers)
     };
@@ -24,9 +39,17 @@ void container_init(GtkWidget *container, GtkWidget *label) {
     gtk_drag_dest_set(container, GTK_DEST_DEFAULT_ALL, targets,
                       G_N_ELEMENTS(targets), GDK_ACTION_COPY);
 
+    g_signal_connect(GTK_WIDGET(drag_drop_zone), "button-press-event",
+                     G_CALLBACK(on_drag_drop_zone_clicked), window);
+
+    g_object_set_data(G_OBJECT(drag_drop_zone), "drag-drop-label",
+                      drag_drop_label);
+
     // Connecter le signal pour recevoir des fichiers
     g_signal_connect(container, "drag-data-received",
                      G_CALLBACK(on_drag_data_received), label);
+
+    return TRUE;
 }
 
 // Charge et affiche une image redimensionnée dans la zone centrale
@@ -122,9 +145,12 @@ void container_clear_image() {
     image_container = NULL;
 }
 
-void on_drag_data_received(GtkWidget *widget, GdkDragContext *context, __attribute__((unused)) gint x,
-                           __attribute__((unused))gint y, GtkSelectionData *data, __attribute__((unused)) guint info,
-                           guint time, __attribute__((unused)) gpointer user_data) {
+void on_drag_data_received(GtkWidget *widget, GdkDragContext *context,
+                           __attribute__((unused)) gint x,
+                           __attribute__((unused)) gint y,
+                           GtkSelectionData *data,
+                           __attribute__((unused)) guint info, guint time,
+                           __attribute__((unused)) gpointer user_data) {
     if (gtk_selection_data_get_length(data) > 0) {
         // Récupérer les URI des fichiers déposés
         gchar **uris = gtk_selection_data_get_uris(data);
@@ -153,7 +179,8 @@ void on_drag_data_received(GtkWidget *widget, GdkDragContext *context, __attribu
     gtk_drag_finish(context, TRUE, FALSE, time);
 }
 
-void on_drag_drop_zone_clicked(GtkWidget *widget, __attribute__((unused)) GdkEventButton *event,
+void on_drag_drop_zone_clicked(GtkWidget *widget,
+                               __attribute__((unused)) GdkEventButton *event,
                                gpointer user_data) {
     GtkWidget *dialog;
     GtkFileChooser *chooser;

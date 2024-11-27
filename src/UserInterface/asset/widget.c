@@ -15,8 +15,15 @@ static void on_solve_button_clicked(GtkWidget *widget, gpointer user_data) {
 }
 
 // Fonction pour ajouter la boîte de contrôle à la fenêtre
-GtkWidget *add_control_box(GtkWidget *box) {
-    control_box = box;
+int *init_control_box(GtkBuilder *builder) {
+    GObject *box = gtk_builder_get_object(builder, "control-box");
+    if (!box) {
+        g_printerr("Erreur : problème d'initialisation de la boîte de contrôle.\n");
+        return FALSE;
+    }
+  
+    control_box = GTK_WIDGET(box);
+
     // Création du bouton "Clear"
     GtkWidget *clear_button = gtk_button_new_with_label("⨉");
     gtk_widget_set_name(clear_button, "clear-button");

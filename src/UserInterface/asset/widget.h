@@ -3,7 +3,7 @@
 
 #include <gtk/gtk.h>
 
-GtkWidget *add_control_box(GtkWidget *box);
+int *init_control_box(GtkBuilder *builder);
 
 void show_control_box();
 
