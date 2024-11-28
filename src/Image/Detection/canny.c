@@ -5,9 +5,6 @@
 #include "hysteresis.h"
 #include "refineImage.h"
 
-#define PI 3.14
-#define MAX_SURFACE 1000000 // 1000 * 1000
-
 // for the grid detection, we should stock in a heap every boxes with a surface
 // between  200px et 350/400px then find the boxes with the highest x, lowest x,
 // highest y and lowest y then draw a rectangle

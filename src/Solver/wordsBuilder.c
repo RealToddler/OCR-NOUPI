@@ -119,7 +119,7 @@ void process_word_image(const char *full_path, NeuralNetwork *nn,
         return;
     }
 
-    iImage *resized = resize_image(image, 2000, 150);
+    iImage *resized = resize_image(image, 3000, 180);
 
     apply_canny(find_letters_in_word, resized);
 
@@ -153,7 +153,6 @@ void process_all_word_images(NeuralNetwork *nn) {
             snprintf(full_path, sizeof(full_path), "%s/%s", words_directory,
                      entry->d_name);
 
-            printf("%s\n", full_path);
             process_word_image(full_path, nn, words_file);
         }
     }
@@ -176,7 +175,7 @@ int words_builder() {
     }
 
     process_all_word_images(nn);
-    // free_neural_network(nn);
+    free_neural_network(nn);
 
     return 0;
 }

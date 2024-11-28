@@ -39,19 +39,120 @@
 
 #include "Files/findGrid.h"
 
+char **split_line(const char *line) {
+    if (line == NULL) {
+        return NULL;
+    }
+
+    int max_tokens = 1;
+    for (const char *p = line; *p != '\0'; p++) {
+        if (*p == ' ') {
+            max_tokens++;
+        }
+    }
+
+    char **tokens = malloc((max_tokens + 1) * sizeof(char *));
+    if (tokens == NULL) {
+        perror("malloc failed");
+        return NULL;
+    }
+
+    char *line_copy = strdup(line);
+    if (line_copy == NULL) {
+        perror("strdup failed");
+        free(tokens);
+        return NULL;
+    }
+
+    int token_count = 0;
+    char *token = strtok(line_copy, " ");
+    while (token != NULL) {
+        tokens[token_count++] = strdup(token);
+        token = strtok(NULL, " ");
+    }
+
+    tokens[token_count] = NULL;
+
+    free(line_copy);
+    return tokens;
+}
+
+void free_tokens(char **tokens) {
+    if (tokens == NULL)
+        return;
+
+    for (int i = 0; tokens[i] != NULL; i++) {
+        free(tokens[i]);
+    }
+    free(tokens);
+}
+
+void bubbleSortGrids(char **grid1, char **grid2, int rows, int cols) {
+    for (int i = 0; i < rows; i++) {
+        char **splitted1 = split_line(grid1[i]);
+        char *splitted2 =
+            strdup(grid2[i]);
+
+        for (int pass = 0; pass < cols - 1; pass++) {
+            for (int j = 0; j < cols - pass - 1; j++) {
+                int x1 = 0, y1 = 0;
+                int x2 = 0, y2 = 0;
+                sscanf(splitted1[j], "(%d,%d)", &x1, &y1);
+                sscanf(splitted1[j + 1], "(%d,%d)", &x2, &y2);
+
+                if (x1 > x2) {
+                    char *temp1 = splitted1[j];
+                    splitted1[j] = splitted1[j + 1];
+                    splitted1[j + 1] = temp1;
+
+                    char temp2 = splitted2[j];
+                    splitted2[j] = splitted2[j + 1];
+                    splitted2[j + 1] = temp2;
+                }
+            }
+        }
+
+        size_t size1 = 1;
+        for (int k = 0; k < cols; k++) {
+            size1 += strlen(splitted1[k]) + 1;
+        }
+
+        free(grid1[i]);
+        grid1[i] = malloc(size1);
+        if (!grid1[i]) {
+            perror("malloc failed");
+            exit(EXIT_FAILURE);
+        }
+
+        grid1[i][0] = '\0';
+        for (int k = 0; k < cols; k++) {
+            strcat(grid1[i], splitted1[k]);
+            if (k < cols - 1) {
+                strcat(grid1[i], " ");
+            }
+        }
+
+        free(grid2[i]);
+        grid2[i] = strdup(splitted2);
+
+        free_tokens(splitted1);
+        free(splitted2);
+    }
+}
+
 int main() {
     if (init_SDL() == 1) {
         err(EXIT_FAILURE, "an error occured while initialising SDL");
     }
 
     iImage *img =
-        load_image("/Users/emilien/Downloads/level_1_image_2.png", -1);
+        load_image("/Users/emilien/Downloads/level_1_image_1.png", -1);
 
     iImage *res =
-        load_image("/Users/emilien/Downloads/level_1_image_2.png", -1);
+        load_image("/Users/emilien/Downloads/level_1_image_1.png", -1);
 
     if (img == NULL || res == NULL) {
-        fprintf(stderr, "Impossible de charger l'image d'entrée.\n");
+        fprintf(stderr, "cant charge entry file\n");
         IMG_Quit();
         SDL_Quit();
         free(img);
@@ -62,8 +163,6 @@ int main() {
     // preprocess step
     grayscale(img);
     sauvola_threshold(img, 16);
-
-    save_image(img, "temp.png");
 
     // detections
     // functions to extract everything properly
@@ -84,7 +183,7 @@ int main() {
     char *grid_filename = find_grid_file(directory);
 
     if (grid_filename == NULL) {
-        fprintf(stderr, "Aucun fichier de grille trouvé dans le répertoire.\n");
+        fprintf(stderr, "no grid file found\n");
         free_image(img);
         IMG_Quit();
         SDL_Quit();
@@ -130,55 +229,87 @@ int main() {
         return EXIT_FAILURE;
     }
 
-    // temp
-    const char *word = strdup("BANANA");
-    cCoords wordCoords = solver((char *)word, "extracted/txt_data/letters.txt");
+    // sort grids
+    bubbleSortGrids(coords->grid, letters->grid, coords->rows, coords->cols);
+;    
 
     int x_grid = 0, y_grid = 0;
-    sscanf(grid_filename, "grid_%d_%d", &x_grid, &y_grid);
+    sscanf(grid_filename, "gridfile_%d_%d", &x_grid, &y_grid);
 
-    tTuple t1 = wordCoords.t1;
-    tTuple t2 = wordCoords.t2;
+    FILE *file = fopen("extracted/txt_data/words.txt", "r");
+    char word[1024];
+    if (file != NULL) {
+        while (fgets(word, sizeof(word), file)) {
+            word[strcspn(word, "\n")] = '\0';
 
-    int t1_x = 0, t1_y = 0, t2_x = 0, t2_y = 0;
+            cCoords wordCoords = solver(word, letters);
 
-    // need to know the direction (horizontal, vertical diagonal)
-    // in order to know to know to which coords we should apply the correction
+            tTuple t1 = wordCoords.t1;
+            tTuple t2 = wordCoords.t2;
 
-    if (t1.x != -1 && t2.x != -1 && t1.y != -1 && t2.y != -1) {
-        sscanf(get_val(coords, t1.y, t1.x), "(%d,%d)", &t1_x, &t1_y);
-        sscanf(get_val(coords, t2.y, t2.x), "(%d,%d)", &t2_x, &t2_y);
-        if (t1.y == t2.y) // horizontal
-        {
-            draw_rectangle(res, t1_x + x_grid, t1_y + y_grid,
-                           t2_x + x_grid + (t2_x - t1_x) * 0.05,
-                           t2_y + y_grid + 25, orange);
-        } else if (t1.x == t2.x) { // vertical
-            draw_rectangle(res, t1_x + 2 * x_grid, t1_y + y_grid, t2_x + x_grid,
-                           t2_y + y_grid + (t2_y - t1_y) * 0.1, orange);
-        } else {
-            if (t2_y < t1_y) {
-                int temp1 = t1_x;
-                int temp2 = t1_y;
-                t1_x = t2_x;
-                t1_y = t2_y;
-                t2_x = temp1;
-                t2_y = temp2;
+            int t1_x = 0, t1_y = 0, t2_x = 0, t2_y = 0;
+
+            if ((t1.x != -1 && t2.x != -1) && (t1.y != -1 && t2.y != -1)) {
+
+                sscanf(get_val(coords, t1.y, t1.x), "(%d,%d)", &t1_x, &t1_y);
+                sscanf(get_val(coords, t2.y, t2.x), "(%d,%d)", &t2_x, &t2_y);
+
+                if (t1.y == t2.y)
+                {
+                    if (t2_x - t1_x < 0) {
+                        int temp1 = t1_x;
+                        int temp2 = t1_y;
+                        t1_x = t2_x;
+                        t1_y = t2_y;
+                        t2_x = temp1;
+                        t2_y = temp2;
+                    }
+                    int last_l = (t2_x - t1_x) / ((strlen(word) - 1));
+                    draw_rectangle(res, t1_x + x_grid, t1_y + y_grid,
+                                   t2_x + last_l + x_grid, t2_y + y_grid + 25,
+                                   orange);
+                } else if (t1.x == t2.x) {
+                    if (t2_y - t1_y < 0) {
+                        int temp1 = t1_x;
+                        int temp2 = t1_y;
+                        t1_x = t2_x;
+                        t1_y = t2_y;
+                        t2_x = temp1;
+                        t2_y = temp2;
+                    }
+                    int last_l = (t2_y - t1_y) / ((strlen(word) - 1));
+                    draw_rectangle(res, t1_x + x_grid, t1_y + y_grid,
+                                   t2_x + x_grid, t2_y + y_grid + last_l,
+                                   orange);
+                } else {
+                    if (t2_y - t1_y < 0) {
+                        int temp1 = t1_x;
+                        int temp2 = t1_y;
+                        t1_x = t2_x;
+                        t1_y = t2_y;
+                        t2_x = temp1;
+                        t2_y = temp2;
+                    }
+                    if (t2_x < t1_x) {
+                        draw_diagonal(res, t1_x + x_grid, t1_y + y_grid,
+                                      t2_x + x_grid, t2_y + y_grid, orange,
+                                      strlen(word), 2);
+                    } else {
+
+                        draw_diagonal(res, t1_x + x_grid, t1_y + y_grid,
+                                      t2_x + x_grid, t2_y + y_grid, orange,
+                                      strlen(word), 1);
+                    }
+                }
             }
-            printf("in else");
-            if (t2_x < t1_x) {
-                draw_diagonal(res, t1_x + x_grid, t1_y + y_grid,
-                                   t2_x + x_grid, t2_y + y_grid, orange,
-                                   strlen(word), 2);
-            } else {
 
-                draw_diagonal(res, t1_x + x_grid, t1_y + y_grid, t2_x + x_grid,
-                              t2_y + y_grid, orange, strlen(word), 1);
-            }
+            printf("(%d, %d), (%d, %d)\n", t1_x + x_grid, t1_y + y_grid,
+                   t2_x + x_grid, t2_y + y_grid);
         }
+        fclose(file);
     }
+
     save_image(res, "output.png");
-    save_image(grid, "2nd.png");
 
     free_image(img);
     free_image(grid);

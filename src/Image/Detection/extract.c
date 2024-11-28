@@ -80,7 +80,7 @@ void extract_image(iImage *img, cColor color) {
                     // red == grid
                     if (color.r == 255 && color.g == 0 && color.b == 0) {
                         snprintf(output_path, sizeof(output_path),
-                                 "extracted/grid_%d_%d.png", y, x);
+                                 "extracted/gridfile_%d_%d.png", x, y);
                     }
 
                     // blue == words
