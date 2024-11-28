@@ -154,11 +154,15 @@ void process_word_image(const char *full_path, NeuralNetwork *nn,
 
     char * ten = gfname();
 
-    save_image(resized, ten);
+    
 
     cColor pink = {255, 192, 203};
 
     bBoundingBox_size letterss =  apply_groups_box(image);
+
+
+    save_image(resized, ten);
+    
 
     bBoundingBox *letters = letterss.boxes;
     int size = letterss.size;

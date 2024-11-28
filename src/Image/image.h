@@ -38,4 +38,6 @@ iImage *crop_image_cord(iImage *original_img, int x, int y,
 
 iImage *create_subimage(const iImage *original, unsigned int x, unsigned int y, unsigned int width, unsigned int height);
 
+void to_red_func(iImage *image,  int xi,  int yi, int xf,  int yf);
+
 #endif // IMAGE_H

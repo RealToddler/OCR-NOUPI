@@ -248,7 +248,7 @@ iImage *create_subimage(const iImage *original, unsigned int x, unsigned int y, 
         return NULL;
     }
 
-    if (x + width > original->width || y + height > original->height) {
+    if ((const int)(x + width) > original->width || (const int)(y + height) > original->height) {
         printf("%d + %d > %d || %d + %d > %d", x , width , original->width , y , height , original->height);
         fprintf(stderr, "Erreur : Les coordonnées de découpe dépassent les dimensions de l'image originale.\n");
         return NULL;
@@ -273,3 +273,86 @@ iImage *create_subimage(const iImage *original, unsigned int x, unsigned int y, 
 
     return subimg;
 }
+
+    
+
+
+void to_red(iImage *image, int **visited, int y, int x);
+
+int is_color3(iImage *image, int y, int x) {
+    if (x < 0 || y < 0 || x >= image->width || y >= image->height)
+        return 0;
+    if (!(image->pixels[y][x].r == 255 && image->pixels[y][x].g == 255 &&
+          image->pixels[y][x].b == 255))
+        return 1;
+    else
+        return 0;
+}
+
+
+void to_red_func(iImage *image, int xi, int yi, int xf, int yf) {
+    int **visited = malloc(image->height * sizeof(int *));
+    if (visited == NULL) {
+        fprintf(stderr, "Memory allocation error\n");
+        exit(EXIT_FAILURE);
+    }
+
+    for (int i = 0; i < image->height; i++) {
+        visited[i] = calloc(image->width, sizeof(int));
+        if (visited[i] == NULL) {
+            fprintf(stderr, "Memory allocation error[%d]\n", i);
+            exit(EXIT_FAILURE);
+        }
+    }
+
+    for (int y = yi; y < yf; y++) {
+        for (int x = xi; x < xf; x++) {
+            if (x < 0 || y < 0 || x >= image->width || y >= image->height) {
+                printf("Error: out of bounds in to_red_func\n");
+                exit(EXIT_FAILURE);
+            }
+
+            if (is_color3(image, y, x) && visited[y][x] == 0) {
+                to_red(image, visited, y, x);
+                printf("done\n");
+            }
+        }
+    }
+
+    for (int i = 0; i < image->height; i++) {
+        free(visited[i]);
+    }
+    free(visited);
+}
+
+
+
+
+void to_red(iImage *image, int **visited, int y, int x) {
+    if (y < 0 || x < 0 || y >= image->height || x >= image->width ||
+        visited[y][x] || is_color3(image, y, x) == 1)
+        return;
+
+    image->pixels[y][x].r=255;
+    image->pixels[y][x].g=0;
+    image->pixels[y][x].b=0;
+
+    visited[y][x] = 1;
+
+    for (int i = -1; i <= 1; i++) {
+        for (int j = -1; j <= 1; j++) {
+            if (i != 0 || j != 0) {
+                int t = y + i;
+                int u = x + j;
+
+                if (t >= 0 && t < image->height && u >= 0 && u < image->width) {
+                    if (visited[t][u] == 0 && is_color3(image, t, u) != 1) {
+                        to_red(image, visited, t, u);
+                    }
+                }
+            }
+        }
+    }
+}
+
+

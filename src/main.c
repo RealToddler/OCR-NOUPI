@@ -43,7 +43,7 @@ int main() {
     if (init_SDL() == 1) {
         err(EXIT_FAILURE, "an error occured while initialising SDL");
     }
-    char* word2="LTM";
+    char* word2="RRR";
     char* path = "/Users/lucasbigot/Documents/EPITA/spe/OCR/OCR-NOUPI/src/inputs/level_1_image_1.png";
 
     iImage *img =
@@ -170,9 +170,11 @@ int main() {
                 t2_y = temp2;
             }
             int last_l = (t2_x - t1_x) / ((strlen(word) - 1));
+
             draw_rectangle(res, t1_x + x_grid, t1_y + y_grid,
                            t2_x +last_l+ x_grid ,
                            t2_y + y_grid + 25, orange);
+            to_red_func(res, t1_x + x_grid+last_l, t1_y + y_grid, t2_x+ x_grid, t2_y+ y_grid);
         } else if (t1.x == t2.x) { // vertical
             if (t2_y - t1_y<0) {
                 int temp1 = t1_x;
@@ -183,7 +185,10 @@ int main() {
                 t2_y = temp2;
             }
             int last_l = (t2_y - t1_y) / ((strlen(word) - 1));
-            draw_rectangle(res, t1_x + x_grid, t1_y + y_grid, t2_x + x_grid ,
+
+            to_red_func(res, t1_x + x_grid+ 15, t1_y + y_grid, t1_x + x_grid+ 15, t2_y + y_grid);
+            
+            draw_rectangle(res, t1_x+ 15 + x_grid, t1_y + y_grid, t2_x+ 15 + x_grid,
                            t2_y + y_grid +last_l, orange);
         } else {
             if (t2_y - t1_y<0) {
