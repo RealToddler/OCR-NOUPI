@@ -18,6 +18,7 @@
 #include "../Image/Detection/cannyParameters.h"
 #include "../Image/resize.h"
 #include "../Image/Detection/detect_letters.h"
+#include "../Image/crop.h"
 
 int compare_filenames_bis(const void *a, const void *b) {
     const char *fname1 = *(const char **)a;
@@ -148,9 +149,7 @@ void process_word_image(const char *full_path, NeuralNetwork *nn,
     iImage *resized = resize_image(image, 2000, 150);
 
     //apply_canny(find_letters_in_word, resized);
-    bBoundingBox_size letterss =  apply_groups_box(resized);
-    bBoundingBox *letters = letterss.boxes;
-    int size = letterss.size;
+    
 
 
     char * ten = gfname();
@@ -159,7 +158,47 @@ void process_word_image(const char *full_path, NeuralNetwork *nn,
 
     cColor pink = {255, 192, 203};
 
-    extract_image((iImage *)load_image(ten, -1), pink);
+    bBoundingBox_size letterss =  apply_groups_box(image);
+
+    bBoundingBox *letters = letterss.boxes;
+    int size = letterss.size;
+    int word_count = 0;
+    int letter_count = 0;
+
+    
+    for (int i = 0; i < size-1; i++) {
+        
+        iImage *letter_image = create_subimage(
+            image,
+            letters[i].min_x,
+            letters[i].min_y,
+            letters[i].width,
+            letters[i].height
+
+        );
+
+        printf("image: %d and in func -> %d %d %d %d \n",image->width, letters[i].min_x,
+            letters[i].min_y,
+            letters[i].width,
+            letters[i].height);
+
+        if (letter_image == NULL) {
+            fprintf(stderr, "Erreur lors de la création de la sous-image pour la lettre %d\n", i);
+            continue;
+        }
+
+        char output_path[256];
+        snprintf(output_path, sizeof(output_path),
+                 "extracted/word_letters/%d.png",
+                 letter_count++);
+
+        save_image(letter_image, output_path);
+
+        free_image(letter_image);
+    }
+    
+
+    //extract_image((iImage *)load_image(ten, -1), pink);
 
     process_letters_in_word(nn, words_file);
 

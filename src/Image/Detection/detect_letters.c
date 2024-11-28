@@ -56,7 +56,9 @@ bBoundingBox_size apply_groups_box(iImage *image) {
                 int yi=y;
                 int xf=x;
                 int yf=y;
+
                 draw_group(image, visited, y, x, &xi, &yi, &xf, &yf);
+                
                 if(xf-xi<yf-yi)
                 {
                     int marge=((yf-yi)-(xf-xi))/2;
@@ -67,10 +69,13 @@ bBoundingBox_size apply_groups_box(iImage *image) {
                 
                 }
                 printf("done\n");
-                bBoundingBox elt = {xi, yi, xf, yf, yf-yi, xf-xi, (yf-yi)*(xf-xi)};
+                //draw_rectangle(image, xi, yi, xf, yf, pink);
+                bBoundingBox elt = {xi, xf, yi, yf, yf-yi, xf-xi, (yf-yi)*(xf-xi)};
                 res[size-1]= elt;
                 size++;
                 res=realloc(res,size*sizeof(bBoundingBox));
+                printf("%d, %d, %d, %d, \n", xi, yi, xf, yf);
+                
                 
             }
         }

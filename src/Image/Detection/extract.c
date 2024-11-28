@@ -103,6 +103,7 @@ void extract_image(iImage *img, cColor color) {
                         snprintf(output_path, sizeof(output_path),
                                  "extracted/word_letters/%d.png",
                                  letter_count++);
+                            
                     }
 
                     else {
@@ -110,6 +111,7 @@ void extract_image(iImage *img, cColor color) {
                         snprintf(output_path, sizeof(output_path),
                                  "img_x%d_y%d.png", y, x);
                     }
+
 
                     if (inner_width > 0 && inner_height > 0) {
                         iImage *new_img = create_image(
@@ -150,7 +152,7 @@ void extract_image(iImage *img, cColor color) {
                             if (resized_img) {
                                 save_image(resized_img, output_path);
                                 free_image(resized_img);
-                            }cd
+                            }
                         } else {
                             save_image(new_img, output_path);
                         }

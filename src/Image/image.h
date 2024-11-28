@@ -36,4 +36,6 @@ void save_image(iImage *img, const char *image_path);
 iImage *crop_image_cord(iImage *original_img, int x, int y,
                         int width, int height);
 
+iImage *create_subimage(const iImage *original, unsigned int x, unsigned int y, unsigned int width, unsigned int height);
+
 #endif // IMAGE_H

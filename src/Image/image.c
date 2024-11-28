@@ -240,3 +240,36 @@ iImage *crop_image_cord(iImage *original_img, int x, int y, int width, int heigh
 
     return cropped_img;
 }
+
+iImage *create_subimage(const iImage *original, unsigned int x, unsigned int y, unsigned int width, unsigned int height) {
+    // Vérification des paramètres d'entrée
+    if (original == NULL) {
+        fprintf(stderr, "Erreur : L'image originale est NULL.\n");
+        return NULL;
+    }
+
+    if (x + width > original->width || y + height > original->height) {
+        printf("%d + %d > %d || %d + %d > %d", x , width , original->width , y , height , original->height);
+        fprintf(stderr, "Erreur : Les coordonnées de découpe dépassent les dimensions de l'image originale.\n");
+        return NULL;
+    }
+
+    // Création de la nouvelle image
+    iImage *subimg = create_image(width, height, original->path);
+    if (subimg == NULL) {
+        fprintf(stderr, "Erreur : Échec de la création de la nouvelle image.\n");
+        return NULL;
+    }
+
+    // Copier les pixels de la région spécifiée
+    for (unsigned int row = 0; row < height; ++row) {
+        for (unsigned int col = 0; col < width; ++col) {
+            subimg->pixels[row][col] = original->pixels[y + row][x + col];
+        }
+    }
+
+    // Copier le label si nécessaire
+    subimg->label = original->label;
+
+    return subimg;
+}
