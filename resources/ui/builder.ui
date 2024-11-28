@@ -36,7 +36,7 @@
                     <property name="name">menu-box</property>
                     <child>
                       <!-- Exemple d'élément de menu -->
-                      <object class="GtkButton" id="menu-item-1">
+                      <object class="GtkButton" id="save-button">
                         <property name="label">Save Image</property>
                         <property name="name">save-image-button</property>
                         <property name="halign">fill</property>
@@ -52,21 +52,21 @@
                       </object>
                     </child>
                     <child>
-                      <object class="GtkButton" id="menu-item-2">
+                      <object class="GtkButton" id="pretreatment-button">
                         <property name="label">Pretreatment</property>
                         <property name="halign">fill</property>
                         <property name="xalign">0.0</property>
                       </object>
                     </child>
                     <child>
-                      <object class="GtkButton" id="menu-item-3">
+                      <object class="GtkButton" id="rotation-button">
                         <property name="label">Rotation</property>
                         <property name="halign">fill</property>
                         <property name="xalign">0.0</property>
                       </object>
                     </child>
                     <child>
-                      <object class="GtkButton" id="menu-item-4">
+                      <object class="GtkButton" id="train-button">
                         <property name="label">Train Neural Network</property>
                         <property name="halign">fill</property>
                         <property name="xalign">0.0</property>

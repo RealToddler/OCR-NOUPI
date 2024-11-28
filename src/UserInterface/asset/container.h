@@ -7,9 +7,11 @@
 GObject *container_init(GtkBuilder *builder, GtkWidget *window);
 
 // Charger une image dans le conteneur
-void container_set_image(GtkWidget *container, const char *image_path);
+void container_set_image(GtkWidget *container, const char *source_image_path);
 
 void container_clear_image();
+
+void get_image_path(char **path);
 
 void on_drag_data_received(GtkWidget *widget, GdkDragContext *context, gint x,
                            gint y, GtkSelectionData *data, guint info,

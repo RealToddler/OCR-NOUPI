@@ -49,3 +49,7 @@ GObject *init_window(GtkBuilder *builder) {
 
     return window;
 }
+
+GObject *get_window() {
+    return window;
+}

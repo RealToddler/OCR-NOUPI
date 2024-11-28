@@ -6,7 +6,7 @@
 // Neural network parameters
 #define IMAGE_SIZE 32
 #define INPUTS_NUMBER (IMAGE_SIZE * IMAGE_SIZE)
-#define HIDDEN_NODES_NUMBER 96
+#define HIDDEN_NODES_NUMBER 32//96
 #define OUTPUTS_NUMBER 52 // Number of letters in the English alphabet
 
 #define WEIGHTS_FILE "neural_network_weights.dat"

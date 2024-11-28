@@ -2,6 +2,7 @@
 #include "widget.h"
 #include <gdk-pixbuf/gdk-pixbuf.h>
 
+static char *image_path = NULL;
 static GtkWidget *image_container = NULL;
 
 // Vérifie si le fichier est une image
@@ -16,16 +17,23 @@ static int is_image_file(const char *filename) {
     return FALSE;
 }
 
-// Fonction pour redimensionner l'image lors du redimensionnement du conteneur
-void container_resize_image(GtkWidget *container, GdkRectangle *allocation, gpointer user_data) {
+void container_resize_image(GtkWidget *container, GdkRectangle *allocation,
+                            gpointer user_data) {
     GtkWidget *image = GTK_WIDGET(user_data);
 
-    // Obtenir les dimensions actuelles du conteneur
+    // Vérifiez que l'image est valide
+    if (!GTK_IS_WIDGET(image)) {
+        g_printerr("Erreur : widget image invalide.\n");
+        return;
+    }
+
+    // Obtenez les dimensions actuelles du conteneur
     int container_width = allocation->width;
     int container_height = allocation->height;
 
-    // Charger le pixbuf d'origine stocké dans les données de l'image
-    GdkPixbuf *original_pixbuf = g_object_get_data(G_OBJECT(image), "original-pixbuf");
+    // Chargez le pixbuf d'origine
+    GdkPixbuf *original_pixbuf =
+        g_object_get_data(G_OBJECT(image), "original-pixbuf");
     if (!original_pixbuf) {
         g_printerr("Erreur : Pixbuf d'origine introuvable.\n");
         return;
@@ -46,10 +54,11 @@ void container_resize_image(GtkWidget *container, GdkRectangle *allocation, gpoi
     }
 
     // Redimensionner l'image
-    GdkPixbuf *scaled_pixbuf = gdk_pixbuf_scale_simple(original_pixbuf, new_width, new_height, GDK_INTERP_BILINEAR);
+    GdkPixbuf *scaled_pixbuf = gdk_pixbuf_scale_simple(
+        original_pixbuf, new_width, new_height, GDK_INTERP_BILINEAR);
     gtk_image_set_from_pixbuf(GTK_IMAGE(image), scaled_pixbuf);
 
-    // Libérer le pixbuf redimensionné
+    // Libérez le pixbuf redimensionné
     g_object_unref(scaled_pixbuf);
 }
 
@@ -87,13 +96,19 @@ GObject *container_init(GtkBuilder *builder, GtkWidget *window) {
     g_signal_connect(container, "drag-data-received",
                      G_CALLBACK(on_drag_data_received), label);
 
-    return container;
+    return drag_drop_zone;
 }
 
-// Charge et affiche une image redimensionnée dans la zone centrale
-void container_set_image(GtkWidget *container, const char *image_path) {
+void container_set_image(GtkWidget *container, const char *source_image_path) {
+    image_path = malloc(strlen(source_image_path) + 1);
+    if (image_path == NULL) {
+        g_printerr("Erreur lors de l'allocation de la mémoire pour le chemin de "
+                   "l'image.\n");
+        return;
+    }
+    strcpy(image_path, source_image_path);
+    
     image_container = container;
-
     GtkWidget *image;
     GdkPixbuf *pixbuf;
     GError *error = NULL;
@@ -123,8 +138,9 @@ void container_set_image(GtkWidget *container, const char *image_path) {
     // Ajouter l'image au conteneur
     gtk_container_add(GTK_CONTAINER(container), image);
 
-    // Connecter le signal "size-allocate" pour redimensionner l'image dynamiquement
-    g_signal_connect(container, "size-allocate", G_CALLBACK(container_resize_image), image);
+    // Connecter le signal "size-allocate" à l'image
+    g_signal_connect(image, "size-allocate", G_CALLBACK(container_resize_image),
+                     image);
 
     // Afficher les modifications
     gtk_widget_show_all(container);
@@ -158,6 +174,15 @@ void container_clear_image() {
     image_container = NULL;
 }
 
+void get_image_path(char **path) {
+    printf("image_path: %s\n", image_path);
+    if (image_path == NULL) {
+        *path = NULL;
+        return;
+    }
+    *path = malloc(strlen(image_path) + 1);
+    strcpy(*path, image_path);
+}
 
 void on_drag_data_received(GtkWidget *widget, GdkDragContext *context,
                            __attribute__((unused)) gint x,

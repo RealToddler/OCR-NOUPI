@@ -5,12 +5,10 @@
 #include <stdlib.h>
 #include <string.h>
 
-#include "../Image/image.h"
+#include "Image/image.h"
 #include "formulas.h"
 #include "neuralNetwork.h"
-
-// Constants
-#define MAX_IMAGES 15000 // Adjust based on your dataset size
+#include "train.h"
 
 // Function to load images from dataset directory
 int load_dataset(const char *dataset_path, iImage **images) {
@@ -87,16 +85,22 @@ int training() {
         load_neural_network(nn, WEIGHTS_FILE);
     } else {
         iImage *images[MAX_IMAGES];
-        int total_images = load_dataset("../../dataset", images);
+        int total_images = load_dataset("dataset", images);
         if (total_images == 0) {
             printf("Aucune image chargée.\n");
             return -1;
         }
         printf("Chargé %d images.\n", total_images);
 
+<<<<<<< HEAD
         int number_of_epochs = 1000;
 
         for (int epoch = 0; epoch < number_of_epochs; epoch++) {
+=======
+        // Boucle d'entraînement
+        for (int epoch = 0; epoch < EPOCHS; epoch++) {
+            // Mélanger les images
+>>>>>>> f9b1ce9 ([ADD] Apply Save, Train, Rotate function)
             shuffle_images(images, total_images);
 
             for (int x = 0; x < total_images; x++) {
@@ -117,7 +121,7 @@ int training() {
                 backpropagation(nn, input_layer, expected_output, lr);
             }
 
-            printf("Époque %d/%d terminée.\n", epoch + 1, number_of_epochs);
+            printf("Époque %d/%d terminée.\n", epoch + 1, EPOCHS);
         }
 
         save_neural_network(nn, WEIGHTS_FILE);
@@ -187,5 +191,5 @@ int training() {
     IMG_Quit();
     SDL_Quit();
 
-    return 0;
+    return 1;
 }
