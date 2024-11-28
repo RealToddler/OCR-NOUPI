@@ -7,6 +7,8 @@
 // TODO REPLACE WITH THE REAL FUNCTION
 #define TRAIN_NEURAL_NETWORK() fooo()
 #define ROTATE_IMAGE(path) (NULL)
+#define SOLVE_IMAGE(path) (NULL)
+#define PRETREATMENT_IMAGE(path) (NULL)
 
 static GtkRevealer *control_revealer;
 
@@ -34,8 +36,20 @@ static void on_clear_button_clicked(GtkWidget *widget, gpointer user_data) {
 }
 
 static void on_solve_button_clicked(GtkWidget *widget, gpointer user_data) {
-    // TODO solve
-    g_print("Solve button clicked.\n");
+    char *path = NULL;
+    get_image_path(&path);
+    if (path == NULL) {
+        g_printerr("Erreur : aucun chemin d'image trouvé.\n");
+        return;
+    }
+    char *solution = SOLVE_IMAGE(path);
+    if (solution == NULL) {
+        g_printerr("Erreur : échec de la résolution de l'image.\n");
+        return;
+    }
+    container_set_image(get_image_container(), solution);
+    free(solution);
+    free(path);
     return;
 }
 
@@ -83,8 +97,22 @@ static void on_save_button_clicked(GtkWidget *widget, gpointer user_data) {
 
 static void on_pretreatment_button_clicked(GtkWidget *widget,
                                            gpointer user_data) {
-    // TODO pretreatment
-    g_print("Pretreatment button clicked.\n");
+    char *path = NULL;
+    get_image_path(&path);
+    if (path == NULL) {
+        g_printerr("Erreur : aucun chemin d'image trouvé.\n");
+        return;
+    }
+    char *new_path = PRETREATMENT_IMAGE(path);
+    if (new_path == NULL) {
+        g_printerr("Erreur : échec du prétraitement de l'image.\n");
+        return;
+    }
+    
+    container_set_image(get_image_container(), new_path);
+    
+    free(new_path);
+    free(path);
     return;
 }
 
@@ -100,9 +128,12 @@ static void on_rotation_button_clicked(GtkWidget *widget, gpointer user_data) {
         g_printerr("Erreur : échec de la rotation de l'image.\n");
         return;
     }
-    //container_set_image(GTK_WIDGET(user_data), new_path);
+    
+    container_set_image(get_image_container(), new_path);
+    
     free(new_path);
-    free(path);
+    if (new_path != path)
+      free(path);
     return;
 }
 

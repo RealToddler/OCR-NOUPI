@@ -18,4 +18,7 @@ void on_drag_data_received(GtkWidget *widget, GdkDragContext *context, gint x,
                            guint time, gpointer user_data);
 
 void on_drag_drop_zone_clicked(GtkWidget *widget, GdkEventButton *event, gpointer user_data);
+
+GtkWidget *get_image_container();
+
 #endif

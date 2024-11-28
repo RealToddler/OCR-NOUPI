@@ -107,7 +107,7 @@ void container_set_image(GtkWidget *container, const char *source_image_path) {
         return;
     }
     strcpy(image_path, source_image_path);
-    
+
     image_container = container;
     GtkWidget *image;
     GdkPixbuf *pixbuf;
@@ -228,7 +228,7 @@ void on_drag_drop_zone_clicked(GtkWidget *widget,
 
     // Créer une boîte de dialogue pour choisir un fichier
     dialog = gtk_file_chooser_dialog_new(
-        "Choisissez un image", GTK_WINDOW(user_data), action, "_Annuler",
+        "Choisissez un image", GTK_WIDGET(user_data), action, "_Annuler",
         GTK_RESPONSE_CANCEL, "_Ouvrir", GTK_RESPONSE_ACCEPT, NULL);
     chooser = GTK_FILE_CHOOSER(dialog);
 
@@ -249,4 +249,8 @@ void on_drag_drop_zone_clicked(GtkWidget *widget,
     }
 
     gtk_widget_destroy(dialog);
+}
+
+GtkWidget *get_image_container() {
+    return image_container;
 }
