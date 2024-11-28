@@ -5,17 +5,23 @@
 #include <gtk/gtk.h>
 
 // TODO REPLACE WITH THE REAL FUNCTION
-#define TRAIN_NEURAL_NETWORK() fooo()
+#define TRAIN_NEURAL_NETWORK() (NULL)
 #define ROTATE_IMAGE(path) (NULL)
 #define SOLVE_IMAGE(path) (NULL)
 #define PRETREATMENT_IMAGE(path) (NULL)
 
 static GtkRevealer *control_revealer;
 
+/**
+ * @brief Copy a file
+ * @param FileSource Source file path
+ * @param FileDestination Destination file path
+ * @return 0 if success, -1 otherwise
+ */
 static int file_copy(char FileSource[], char FileDestination[]) {
-    char c[4096]; // or any other constant you like
+    char c[4096]; 
     FILE *stream_R = fopen(FileSource, "r");
-    FILE *stream_W = fopen(FileDestination, "w"); // create and write to file
+    FILE *stream_W = fopen(FileDestination, "w");
 
     while (!feof(stream_R)) {
         size_t bytes = fread(c, 1, sizeof(c), stream_R);
@@ -24,17 +30,26 @@ static int file_copy(char FileSource[], char FileDestination[]) {
         }
     }
 
-    // close streams
     fclose(stream_R);
     fclose(stream_W);
 
-    return 0;
+    return 0; 
 }
 
+/**
+ * @brief Get the image path
+ * @param widget Widget
+ * @param user_data User data
+ */
 static void on_clear_button_clicked(GtkWidget *widget, gpointer user_data) {
     container_clear_image();
 }
 
+/**
+ * @brief Get the image path
+ * @param widget Widget
+ * @param user_data User data
+ */
 static void on_solve_button_clicked(GtkWidget *widget, gpointer user_data) {
     char *path = NULL;
     get_image_path(&path);
@@ -53,13 +68,17 @@ static void on_solve_button_clicked(GtkWidget *widget, gpointer user_data) {
     return;
 }
 
+/**
+ * @brief Get the image path
+ * @param widget Widget
+ * @param user_data User data
+*/
 static void on_save_button_clicked(GtkWidget *widget, gpointer user_data) {
     // TODO save
     g_print("Save button clicked.\n");
 
-    char *path = NULL;     // Initialiser le pointeur à NULL
-    get_image_path(&path); // Passez un pointeur au pointeur pour qu'il puisse
-                           // être modifié dans la fonction
+    char *path = NULL;
+    get_image_path(&path);
 
     if (path == NULL) {
         g_printerr("Erreur : aucun chemin d'image trouvé.\n");
@@ -86,7 +105,7 @@ static void on_save_button_clicked(GtkWidget *widget, gpointer user_data) {
         if (filename) {
             g_print("File selected: %s\n", filename);
             file_copy(path, filename);
-            g_free(filename); // Libérer correctement la mémoire allouée par GTK
+            g_free(filename);
         }
     }
 
@@ -95,6 +114,11 @@ static void on_save_button_clicked(GtkWidget *widget, gpointer user_data) {
     free(path);
 }
 
+/**
+ * @brief Get the image path
+ * @param widget Widget
+ * @param user_data User data
+ */
 static void on_pretreatment_button_clicked(GtkWidget *widget,
                                            gpointer user_data) {
     char *path = NULL;
@@ -116,6 +140,11 @@ static void on_pretreatment_button_clicked(GtkWidget *widget,
     return;
 }
 
+/**
+ * @brief Get the image path
+ * @param widget Widget
+ * @param user_data User data
+ */
 static void on_rotation_button_clicked(GtkWidget *widget, gpointer user_data) {
     char * path = NULL;
     get_image_path(&path);
@@ -137,9 +166,13 @@ static void on_rotation_button_clicked(GtkWidget *widget, gpointer user_data) {
     return;
 }
 
+/**
+ * @brief Get the image path
+ * @param widget Widget
+ * @param user_data User data
+ */
 static void on_neural_network_training_button_clicked(GtkWidget *widget,
                                                       gpointer user_data) {
-    // TODO neural network training and show popup when done
     g_print("Neural network training button clicked.\n");
     int result = TRAIN_NEURAL_NETWORK();
     GtkWidget *dialog = gtk_message_dialog_new(
@@ -147,7 +180,7 @@ static void on_neural_network_training_button_clicked(GtkWidget *widget,
         result ? GTK_DIALOG_DESTROY_WITH_PARENT : GTK_MESSAGE_ERROR,
         GTK_MESSAGE_INFO, GTK_BUTTONS_CLOSE,
         result ? "Training done." : "Training failed.");
-    //center the dialog
+
     gtk_window_set_position(GTK_WINDOW(dialog), GTK_WIN_POS_CENTER);
     gtk_dialog_run(GTK_DIALOG(dialog));
     gtk_widget_destroy(dialog);
@@ -155,7 +188,6 @@ static void on_neural_network_training_button_clicked(GtkWidget *widget,
     return;
 }
 
-// Fonction pour ajouter la boîte de contrôle à la fenêtre
 GObject *init_control_box(GtkBuilder *builder) {
     GObject *revealer = gtk_builder_get_object(builder, "control-revealer");
     if (!revealer) {
@@ -226,12 +258,10 @@ GObject *init_control_box(GtkBuilder *builder) {
     return revealer;
 }
 
-// Fonction pour afficher la boîte de contrôle
 void show_control_box() {
     gtk_revealer_set_reveal_child(control_revealer, TRUE);
 }
 
-// Fonction pour masquer la boîte de contrôle
 void hide_control_box() {
     gtk_revealer_set_reveal_child(control_revealer, FALSE);
 }

@@ -4,7 +4,6 @@ window {
   font-family: system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, 'Open Sans', 'Helvetica Neue', sans-serif;
 }
 
-/* Style pour le texte en haut */
 #header-label {
   font-family: "Roboto", sans-serif;
   font-size: 40px;
@@ -15,32 +14,21 @@ window {
 
 separator {
   color: #4a4a4a;
-  /* Couleur de la ligne */
   background-color: #4a4a4a;
   min-height: 2px;
-  /* Épaisseur de la ligne */
   margin-top: 5px;
-  /* Espacement au-dessus */
   margin-bottom: 10px;
-  /* Espacement en dessous */
 }
 
-/* Zone centrale */
 #central-box {
   background-color: #363940;
-  /* Couleur de fond pour différencier la zone */
   border: 2px transparent;
-  /* Bordure en pointillés */
   border-radius: 10px;
-  /* Coins arrondis */
   padding: 20px;
-  /* Espacement interne */
 }
 
-/* Zone de drag-and-drop */
 #drag-drop-zone {
   background-color: transparent;
-  /* Fond transparent */
 }
 
 #drag-drop-zone:hover {
@@ -48,7 +36,6 @@ separator {
   border-color: #ffffff;
 }
 
-/* Texte dans la zone de drag-and-drop */
 #drag-drop-label {
   font-size: 15px;
   color: #555555;
@@ -67,62 +54,60 @@ button {
   background-image: none;
   border: none;
   border-image: none;
-  min-width: 1px;  /* Largeur minimale pour le bouton Clear */
-  font-size: 17px;  /* Taille de police pour le texte */
-  border-radius: 5px; /* Coins arrondis */
-  background-color: #242830; /* Rouge clair pour différencier */
-  color: #e1e1e1;     /* Couleur du texte */
-  border: none;     /* Supprimer la bordure par défaut */
-}
+  min-width: 1px; 
+  font-size: 17px; 
+  border-radius: 5px;
+  background-color: #242830;
+  color: #e1e1e1;    
+  border: none;   
+} 
 
 #clear-button:hover {
-  background-color: #ff4c4c; /* Rouge plus sombre au survol */
+  background-color: #ff4c4c; 
 }
 
 #solve-button {
-  min-width: 120px; /* Largeur minimale pour le bouton Solve */
-  font-size: 14px;  /* Taille de police pour le texte */
-  border-radius: 5px; /* Coins arrondis */
-  background-color: #242830; /* Vert pour différencier */
-  color: #e1e1e1;     /* Couleur du texte */
-  border: none;     /* Supprimer la bordure par défaut */
+  min-width: 120px; 
+  font-size: 14px; 
+  border-radius: 5px;
+  background-color: #242830; 
+  color: #e1e1e1;   
+  border: none;    
 }
 
 #solve-button:hover {
-  background-color: #3e8e41; /* Vert plus sombre au survol */
+  background-color: #3e8e41; 
 }
 
 #menu-box {
-  background-color: #20232a; /* Fond noir */
-  padding: 0; /* Pas de padding */
+  background-color: #20232a; 
+  padding: 0;
   border: 2px transparent;
-  /* Bordure en pointillés */
   border-radius: 6px;
-  /* Coins arrondis */
   padding: 20px;
 }
 
 #menu-revealer {
-  border-right: 1px solid #333333; /* Ligne de séparation (facultatif) */
-}
+  border-right: 1px solid #333333;
+} 
 
 #menu-toggle-button {
-  background-color: transparent; /* Pas de fond */
-  color: #e1e1e1; /* Texte blanc */
-  border: none; /* Pas de bordure */
-  font-size: 20px; /* Taille du texte */
-  padding: 5px; /* Un peu de padding pour un clic confortable */
+  background-color: transparent; 
+  color: #e1e1e1; 
+  border: none; 
+  font-size: 20px;
+  padding: 5px; 
 }
 
 #menu-toggle-button:hover {
-  background-color: #444444; /* Fond gris au survol */
+  background-color: #444444;
 }
 
 #menu-revealer button {
-  background-color: transparent; /* Pas de fond */
-  color: #e1e1e1; /* Texte blanc */
-  border: none; /* Pas de bordure */
-  font-size: 15px; /* Taille du texte */
+  background-color: transparent;
+  color: #e1e1e1; 
+  border: none; 
+  font-size: 15px; 
   font-weight: normal;
   font-family: system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, 'Open Sans', 'Helvetica Neue', sans-serif;
   padding-right: 100px;

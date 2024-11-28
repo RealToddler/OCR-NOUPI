@@ -5,15 +5,16 @@
 #include "asset/window.h"
 #include <gtk/gtk.h>
 
+/**
+ * @brief Load the CSS file
+*/
 static void load_css() {
     GtkCssProvider *provider = gtk_css_provider_new();
     GdkDisplay *display = gdk_display_get_default();
     GdkScreen *screen = gdk_display_get_default_screen(display);
 
-    // Charger le fichier CSS
     gtk_css_provider_load_from_path(provider, "resources/ui/style.css", NULL);
 
-    // Appliquer les styles à l'écran par défaut
     gtk_style_context_add_provider_for_screen(
         screen, GTK_STYLE_PROVIDER(provider), GTK_STYLE_PROVIDER_PRIORITY_USER);
 

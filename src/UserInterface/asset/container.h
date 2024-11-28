@@ -3,22 +3,36 @@
 
 #include <gtk/gtk.h>
 
-// Initialiser le conteneur pour le drag-and-drop et l'affichage des images
+/**
+ * @brief Initialize the image container
+ * @param builder GTK Builder
+ * @param window Main window
+ * @return GObject* Image container
+*/
 GObject *container_init(GtkBuilder *builder, GtkWidget *window);
 
-// Charger une image dans le conteneur
+/**
+ * @brief Load an image into the container
+ * @param container Image container
+ * @param source_image_path source image path
+*/
 void container_set_image(GtkWidget *container, const char *source_image_path);
 
+/**
+ * @brief Clear the image container
+*/
 void container_clear_image();
 
+/**
+ * @brief Get the image path
+ * @param path Image path
+*/
 void get_image_path(char **path);
 
-void on_drag_data_received(GtkWidget *widget, GdkDragContext *context, gint x,
-                           gint y, GtkSelectionData *data, guint info,
-                           guint time, gpointer user_data);
-
-void on_drag_drop_zone_clicked(GtkWidget *widget, GdkEventButton *event, gpointer user_data);
-
+/**
+ * @brief Get the image container
+ * @return GtkWidget* Image container
+*/
 GtkWidget *get_image_container();
 
 #endif

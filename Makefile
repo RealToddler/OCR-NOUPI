@@ -25,6 +25,9 @@ $(BUILD_DIR)/%.o: $(SRC_DIR)/%.c
 	@mkdir -p $(dir $@) # Create directory for object file if not exists
 	$(CC) $(CFLAGS) -c $< -o $@
 	
+clang-format:
+	clang-format -i $(SRCS) $(shell find $(SRC_DIR) -name '*.h')
+
 # Clean the build directory and program
 clean:
 	rm -rf $(BUILD_DIR) ocr
