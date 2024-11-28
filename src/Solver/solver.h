@@ -8,6 +8,6 @@
 #include "checks.h"
 #include "loadGrid.h"
 
-cCoords solver(char *word, char *filename);
+cCoords solver(char *word, gGrid *grid);
 
 #endif // SOLVER_H

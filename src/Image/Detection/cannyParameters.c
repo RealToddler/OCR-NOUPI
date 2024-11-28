@@ -78,11 +78,6 @@ void find_grid(bBoundingBox *boxes, int num_boxes, iImage *img) {
     }
     cColor red = {255, 0, 0};
 
-    // int h = (y_max - (y_min));
-    // int w = (x_max - (x_min));
-    // int surface = w * h;
-    // bBoundingBox res = {x_min, x_max, y_min, y_max, h, w, surface};
-
     draw_rectangle(img, x_min, y_min, x_max, y_max, red);
 }
 
@@ -139,11 +134,11 @@ void find_word_lists(bBoundingBox *boxes, int num_boxes, iImage *img) {
 }
 
 void find_letters_in_word(bBoundingBox *boxes, int num_boxes, iImage *img) {
-    merge_bounding_boxes(boxes, &num_boxes, 0, 0);
-    cColor red = {255, 192, 203};
+   //  merge_bounding_boxes(boxes, &num_boxes, 0, 0);
+    cColor pink = {255, 192, 203};
     for (int i = 0; i < num_boxes; i++) {
-        draw_rectangle(img, boxes[i].min_x, boxes[i].min_y, boxes[i].max_x,
-                       boxes[i].max_y, red);
+         draw_rectangle(img, boxes[i].min_x, boxes[i].min_y, boxes[i].max_x,
+                           boxes[i].max_y, pink);
     }
 }
 
@@ -169,7 +164,7 @@ void find_words_in_words_lists(bBoundingBox *boxes, int num_boxes,
 void all(bBoundingBox *boxes, int num_boxes, iImage *img) {
 
     cColor cyan = {43, 255, 255};
-
+    
     for (int i = 0; i < num_boxes; i++) {
         draw_rectangle(img, boxes[i].min_x, boxes[i].min_y, boxes[i].max_x,
                        boxes[i].max_y, cyan);

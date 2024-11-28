@@ -80,7 +80,7 @@ void extract_image(iImage *img, cColor color) {
                     // red == grid
                     if (color.r == 255 && color.g == 0 && color.b == 0) {
                         snprintf(output_path, sizeof(output_path),
-                                 "extracted/grid_%d_%d.png", y, x);
+                                 "extracted/gridfile_%d_%d.png", x, y);
                     }
 
                     // blue == words
@@ -103,6 +103,7 @@ void extract_image(iImage *img, cColor color) {
                         snprintf(output_path, sizeof(output_path),
                                  "extracted/word_letters/%d.png",
                                  letter_count++);
+                            
                     }
 
                     else {
@@ -110,6 +111,7 @@ void extract_image(iImage *img, cColor color) {
                         snprintf(output_path, sizeof(output_path),
                                  "img_x%d_y%d.png", y, x);
                     }
+
 
                     if (inner_width > 0 && inner_height > 0) {
                         iImage *new_img = create_image(

@@ -13,15 +13,12 @@
 // Function to load images from dataset directory
 int load_dataset(const char *dataset_path, iImage **images) {
     int image_count = 0;
-    for (size_t i = 0; i < 2; i++) {
+    for (size_t i = 0; i < 1; i++) {
         char letter_dir[512];
         for (char letter = 'A'; letter <= 'Z'; letter++) {
             if (i == 0) {
                 snprintf(letter_dir, sizeof(letter_dir), "%s/%c", dataset_path,
                          letter);
-            } else {
-                snprintf(letter_dir, sizeof(letter_dir), "%s/%c1", dataset_path,
-                         letter + 32);
             }
 
             DIR *dir = opendir(letter_dir);
@@ -72,7 +69,7 @@ void shuffle_images(iImage **images, int n) {
     }
 }
 
-int training() {
+int train() {
     srand((unsigned int)time(NULL));
 
     const double lr = 0.1f;

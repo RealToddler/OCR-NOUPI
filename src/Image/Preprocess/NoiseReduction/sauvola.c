@@ -57,7 +57,7 @@ void dilate_image(iImage *img, const unsigned int kernel_size) {
     int width = img->width;
     int height = img->height;
 
-    iImage *output_img = create_image(width, height, "ras.png");
+    iImage *output_img = create_image(width, height, "path.png");
 
     int offset = kernel_size / 2;
 
