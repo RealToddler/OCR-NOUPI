@@ -119,6 +119,7 @@ FileEntry *process_files(const char *directory, int *file_count) {
 
 void reconstruct_grid(const char *directory, FileEntry *file_list,
                       int file_count, NeuralNetwork *nn) {
+    // Sort the file_list based on ycoords and then xcoords to ensure proper order
     qsort(file_list, file_count, sizeof(FileEntry), compare_file_entries);
 
     FILE *letters_file = fopen("extracted/txt_data/temp_letters.txt", "w");
@@ -152,9 +153,10 @@ void reconstruct_grid(const char *directory, FileEntry *file_list,
         int first_in_line = 1;
         int line_end_idx = line_start_idx;
 
+        // Group files with similar ycoords (same line)
         while (line_end_idx < file_count &&
                abs(file_list[line_end_idx].ycoords -
-                   file_list[line_start_idx].ycoords) <= 5) {
+                   file_list[line_start_idx].ycoords) <= 10) {
             line_end_idx++;
         }
 
@@ -252,6 +254,7 @@ void reconstruct_grid(const char *directory, FileEntry *file_list,
     fclose(coordinates_file);
     free(processed);
 }
+
 
 int grid_builder() {
     srand((unsigned int)time(NULL));

@@ -90,8 +90,7 @@ void free_tokens(char **tokens) {
 void bubbleSortGrids(char **grid1, char **grid2, int rows, int cols) {
     for (int i = 0; i < rows; i++) {
         char **splitted1 = split_line(grid1[i]);
-        char *splitted2 =
-            strdup(grid2[i]);
+        char *splitted2 = strdup(grid2[i]);
 
         for (int pass = 0; pass < cols - 1; pass++) {
             for (int j = 0; j < cols - pass - 1; j++) {
@@ -141,15 +140,26 @@ void bubbleSortGrids(char **grid1, char **grid2, int rows, int cols) {
 }
 
 int main() {
+    /*
     if (init_SDL() == 1) {
         err(EXIT_FAILURE, "an error occured while initialising SDL");
     }
+    char* word2="RRR";
+    char* path =
+"/Users/lucasbigot/Documents/EPITA/spe/OCR/OCR-NOUPI/src/inputs/level_1_image_1.png";
 
     iImage *img =
+<<<<<<< HEAD
         load_image("/Users/emilien/Downloads/level_1_image_1.png", -1);
 
     iImage *res =
         load_image("/Users/emilien/Downloads/level_1_image_1.png", -1);
+=======
+        load_image(path, -1);
+
+    iImage *res =
+        load_image(path, -1);
+>>>>>>> lucas_soutenance_2
 
     if (img == NULL || res == NULL) {
         fprintf(stderr, "cant charge entry file\n");
@@ -177,6 +187,7 @@ int main() {
 
     // detect and extract words
     apply_canny(find_word_lists, img);
+
     extract_image(img, blue);
 
     const char *directory = "extracted/";
@@ -229,12 +240,22 @@ int main() {
         return EXIT_FAILURE;
     }
 
+<<<<<<< HEAD
     // sort grids
     bubbleSortGrids(coords->grid, letters->grid, coords->rows, coords->cols);
-;    
+;
 
     int x_grid = 0, y_grid = 0;
     sscanf(grid_filename, "gridfile_%d_%d", &x_grid, &y_grid);
+=======
+    // temp
+    const char *word = strdup(word2);
+    cCoords wordCoords = solver((char *)word, "extracted/txt_data/letters.txt");
+
+
+    int x_grid = 0, y_grid = 0;
+    sscanf(grid_filename, "grid_%d_%d", &y_grid, &x_grid);
+>>>>>>> lucas_soutenance_2
 
     FILE *file = fopen("extracted/txt_data/words.txt", "r");
     char word[1024];
@@ -244,6 +265,7 @@ int main() {
 
             cCoords wordCoords = solver(word, letters);
 
+<<<<<<< HEAD
             tTuple t1 = wordCoords.t1;
             tTuple t2 = wordCoords.t2;
 
@@ -301,6 +323,49 @@ int main() {
                                       strlen(word), 1);
                     }
                 }
+=======
+    printf("t1: (%d, %d), t2: (%d, %d)\n", t1.x, t1.y, t2.x, t2.y);
+
+    // need to know the direction (horizontal, vertical diagonal)
+    // in order to know to know to which coords we should apply the correction
+
+    if ((t1.x != -1 && t2.x != -1) && (t1.y != -1 && t2.y != -1)) {
+
+        printf("in func\n");
+        sscanf(get_val(coords, t1.y, t1.x), "(%d,%d)", &t1_x, &t1_y);
+        sscanf(get_val(coords, t2.y, t2.x), "(%d,%d)", &t2_x, &t2_y);
+
+
+        if (t1.y == t2.y) // horizontal
+        {
+            printf("horizontal");
+            if (t2_x - t1_x<0) {
+                int temp1 = t1_x;
+                int temp2 = t1_y;
+                t1_x = t2_x;
+                t1_y = t2_y;
+                t2_x = temp1;
+                t2_y = temp2;
+            }
+            int last_l = (t2_x - t1_x) / ((strlen(word) - 1));
+
+            draw_rectangle(res, t1_x + x_grid, t1_y + y_grid,
+                           t2_x +last_l+ x_grid ,
+                           t2_y + y_grid + 25, orange);
+            to_red_func(res, t1_x + x_grid+last_l, t1_y + y_grid, t2_x+ x_grid,
+t2_y+ y_grid); } else if (t1.x == t2.x) { // vertical if (t2_y - t1_y<0) { int
+temp1 = t1_x; int temp2 = t1_y; t1_x = t2_x; t1_y = t2_y; t2_x = temp1; t2_y =
+temp2;
+            }
+            int last_l = (t2_y - t1_y) / ((strlen(word) - 1));
+
+            to_red_func(res, t1_x + x_grid+ 15, t1_y + y_grid, t1_x + x_grid+
+15, t2_y + y_grid);
+
+            draw_rectangle(res, t1_x+ 15 + x_grid, t1_y + y_grid, t2_x+ 15 +
+x_grid, t2_y + y_grid +last_l, orange); } else { if (t2_y - t1_y<0) { int temp1
+= t1_x; int temp2 = t1_y; t1_x = t2_x; t1_y = t2_y; t2_x = temp1; t2_y = temp2;
+>>>>>>> lucas_soutenance_2
             }
 
             printf("(%d, %d), (%d, %d)\n", t1_x + x_grid, t1_y + y_grid,
@@ -319,5 +384,6 @@ int main() {
 
     IMG_Quit();
     SDL_Quit();
+    */
     return EXIT_SUCCESS;
 }

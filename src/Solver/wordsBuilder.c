@@ -8,6 +8,7 @@
 
 #include "wordsBuilder.h"
 
+
 #include "../Image/Detection/canny.h"
 #include "../Image/Detection/extract.h"
 #include "../Image/image.h"
@@ -16,6 +17,8 @@
 
 #include "../Image/Detection/cannyParameters.h"
 #include "../Image/resize.h"
+#include "../Image/Detection/detect_letters.h"
+#include "../Image/crop.h"
 
 int compare_filenames_bis(const void *a, const void *b) {
     const char *fname1 = *(const char **)a;
@@ -55,6 +58,30 @@ char recognize_letter(const char *letter_full_path, NeuralNetwork *nn) {
     free_image(letter_image);
 
     return letter;
+}
+
+char* gfname() {
+    const char charset[] = "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789";
+    int longueur_nom = 10; // Longueur du nom aléatoire sans l'extension
+    char *nom_fichier = malloc(longueur_nom + 5); // +5 pour ".png" et le caractère nul
+
+    if (nom_fichier == NULL) {
+        return NULL; // Échec de l'allocation mémoire
+    }
+
+    for (int i = 0; i < longueur_nom; i++) {
+        int index = rand() % (sizeof(charset) - 1);
+        nom_fichier[i] = charset[index];
+    }
+
+    // Ajouter l'extension ".png"
+    nom_fichier[longueur_nom] = '.';
+    nom_fichier[longueur_nom + 1] = 'p';
+    nom_fichier[longueur_nom + 2] = 'n';
+    nom_fichier[longueur_nom + 3] = 'g';
+    nom_fichier[longueur_nom + 4] = '\0';
+
+    return nom_fichier;
 }
 
 void process_letters_in_word(NeuralNetwork *nn, FILE *words_file) {
@@ -108,7 +135,7 @@ void process_letters_in_word(NeuralNetwork *nn, FILE *words_file) {
     }
     free(letter_filenames);
 
-    sys_cmd("rm -rf extracted/word_letters/*");
+    // sys_cmd("rm -rf extracted/word_letters/*");
 }
 
 void process_word_image(const char *full_path, NeuralNetwork *nn,
@@ -121,13 +148,61 @@ void process_word_image(const char *full_path, NeuralNetwork *nn,
 
     iImage *resized = resize_image(image, 3000, 180);
 
-    apply_canny(find_letters_in_word, resized);
+    //apply_canny(find_letters_in_word, resized);
+    
 
-    save_image(resized, "test.png");
+
+    char * ten = gfname();
+
+    
 
     cColor pink = {255, 192, 203};
 
-    extract_image((iImage *)load_image("test.png", -1), pink);
+    bBoundingBox_size letterss =  apply_groups_box(image);
+
+
+    save_image(resized, ten);
+    
+
+    bBoundingBox *letters = letterss.boxes;
+    int size = letterss.size;
+    int word_count = 0;
+    int letter_count = 0;
+
+    
+    for (int i = 0; i < size-1; i++) {
+        
+        iImage *letter_image = create_subimage(
+            image,
+            letters[i].min_x,
+            letters[i].min_y,
+            letters[i].width,
+            letters[i].height
+
+        );
+
+        printf("image: %d and in func -> %d %d %d %d \n",image->width, letters[i].min_x,
+            letters[i].min_y,
+            letters[i].width,
+            letters[i].height);
+
+        if (letter_image == NULL) {
+            fprintf(stderr, "Erreur lors de la création de la sous-image pour la lettre %d\n", i);
+            continue;
+        }
+
+        char output_path[256];
+        snprintf(output_path, sizeof(output_path),
+                 "extracted/word_letters/%d.png",
+                 letter_count++);
+
+        save_image(letter_image, output_path);
+
+        free_image(letter_image);
+    }
+    
+
+    //extract_image((iImage *)load_image(ten, -1), pink);
 
     process_letters_in_word(nn, words_file);
 
