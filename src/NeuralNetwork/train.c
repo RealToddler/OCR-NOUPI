@@ -92,15 +92,9 @@ int training() {
         }
         printf("Chargé %d images.\n", total_images);
 
-<<<<<<< HEAD
-        int number_of_epochs = 1000;
-
-        for (int epoch = 0; epoch < number_of_epochs; epoch++) {
-=======
         // Boucle d'entraînement
         for (int epoch = 0; epoch < EPOCHS; epoch++) {
             // Mélanger les images
->>>>>>> f9b1ce9 ([ADD] Apply Save, Train, Rotate function)
             shuffle_images(images, total_images);
 
             for (int x = 0; x < total_images; x++) {
