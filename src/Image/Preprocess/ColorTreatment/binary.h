@@ -1,7 +1,7 @@
 #ifndef BINARY_H
 #define BINARY_H
 
-#include "../../image.h"
+#include "Image/image.h"
 
 void binary(iImage *img);
 

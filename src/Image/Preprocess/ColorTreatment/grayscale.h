@@ -1,7 +1,7 @@
 #ifndef GRAYSCALE_H
 #define GRAYSCALE_H
 
-#include "../../image.h"
+#include "Image/image.h"
 
 void grayscale(iImage *img);
 

@@ -1,7 +1,7 @@
 #ifndef INVERTCOLORS_H
 #define INVERTCOLORS_H
 
-#include "../../image.h"
+#include "Image/image.h"
 
 void invert_colors(iImage *img);
 
