@@ -73,13 +73,14 @@ int extraction(iImage *img) {
 
   // detect and extract grid
   apply_canny(find_grid, img);
+  // save_image(img, "grid_extracted.png");
   extract_image(img, red);
+
 
   // detect and extract words
   apply_canny(find_word_lists, img);
+  // save_image(img, "words.png");
   extract_image(img, blue);
-
-  // save_image(img, "resources/test.png");
 
   char *grid_filename = find_grid_file(GRID_DIRECTORY);
 
@@ -112,7 +113,9 @@ int extraction(iImage *img) {
 
   // detect and extract letters from grid
   apply_canny(all, grid);
+  // save_image(grid, "letters.png");
   extract_image(grid, cyan);
+
   return 1;
 }
 
@@ -179,9 +182,10 @@ int solve(const char *savePath, const char *grid_filename, char **solvedPath) {
       sscanf(get_val(coords, t2.y, t2.x), "(%d,%d)", &t2_x, &t2_y);
       cColor color = {rand() % 255, rand() % 255, rand() % 255};
 
-      if (t1.y == t2.y) // horizontal
+      if (t1.y == t2.y) // horizontal perfect
       {
-        if (t2_x - t1_x < 0) {
+        if (t2_x - t1_x < 0)
+        {
           int temp1 = t1_x;
           int temp2 = t1_y;
           t1_x = t2_x;
@@ -189,13 +193,25 @@ int solve(const char *savePath, const char *grid_filename, char **solvedPath) {
           t2_x = temp1;
           t2_y = temp2;
         }
-        int last_l = (t2_x - t1_x) / ((strlen(word) - 1));
 
-        draw_rectangle(res, t1_x + x_grid, t1_y + y_grid,
-                       t2_x + last_l + x_grid, t2_y + y_grid + last_l * 0.8,
-                       color, 3);
-      } else if (t1.x == t2.x) { // vertical
-        if (t2_y - t1_y < 0) {
+        float length = (float)(t2_x - t1_x);
+        float div = (float)(strlen(word) - 1);
+        float last_l = length / div;
+
+        
+          draw_rectangle(
+              res,
+              (float)t1_x + x_grid,
+              (float)t1_y + y_grid - last_l * 0.05f,
+              (float)(t2_x + last_l * 0.75f) + x_grid,
+              (float)t2_y + y_grid + last_l * 0.65,
+              color,
+              4);
+      }
+      else if (t1.x == t2.x) // vertical perfect
+      {
+        if (t2_y - t1_y < 0) // diagonal perfect
+        {
           int temp1 = t1_x;
           int temp2 = t1_y;
           t1_x = t2_x;
@@ -203,13 +219,24 @@ int solve(const char *savePath, const char *grid_filename, char **solvedPath) {
           t2_x = temp1;
           t2_y = temp2;
         }
-        int last_l = (t2_y - t1_y) / ((int)(strlen(word)));
 
-        draw_rectangle(res, t1_x + x_grid - 10, t1_y + y_grid,
-                       t2_x + x_grid + last_l, t2_y + y_grid + last_l, color,
-                       3);
-      } else {
-        if (t2_y - t1_y < 0) {
+        float length = (float)(t2_y - t1_y);
+        float div = (float)(strlen(word));
+        float last_l = length / div;
+
+                draw_rectangle(
+              res,
+              (float)t1_x + x_grid - last_l * 0.2f,
+              (float)t1_y + y_grid,
+              (float)t2_x + x_grid + last_l * 0.8f,
+              (float)t2_y + y_grid + last_l,
+              color,
+              4);
+      }
+      else
+      {
+        if (t2_y - t1_y < 0)
+        {
           int temp1 = t1_x;
           int temp2 = t1_y;
           t1_x = t2_x;
@@ -217,18 +244,36 @@ int solve(const char *savePath, const char *grid_filename, char **solvedPath) {
           t2_x = temp1;
           t2_y = temp2;
         }
-        if (t2_x < t1_x) {
-          draw_diagonal(res, t1_x + x_grid, t1_y + y_grid, t2_x + x_grid,
-                        t2_y + y_grid, color, strlen(word), 2, 3);
-        } else {
 
-          draw_diagonal(res, t1_x + x_grid, t1_y + y_grid, t2_x + x_grid,
-                        t2_y + y_grid, color, strlen(word), 1, 3);
+        if (t2_x < t1_x)
+        {
+          draw_diagonal(
+              res,
+              (float)t1_x + x_grid,
+              (float)t1_y + y_grid,
+              (float)t2_x + x_grid,
+              (float)t2_y + y_grid,
+              color,
+              strlen(word),
+              2,
+              4);
+        }
+        else
+        {
+          draw_diagonal(
+              res,
+              (float)t1_x + x_grid,
+              (float)t1_y + y_grid,
+              (float)t2_x + x_grid,
+              (float)t2_y + y_grid,
+              color,
+              strlen(word),
+              1,
+              4);
         }
       }
     }
   }
-
   fclose(file);
   save_image(res, SOLVED_PATH);
 

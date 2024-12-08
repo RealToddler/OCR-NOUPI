@@ -100,6 +100,7 @@ void bubbleSortGrids(char **grid1, char **grid2, int rows, int cols) {
 
     free(grid2[i]);
     grid2[i] = strdup(splitted2);
+    
 
     free_tokens(splitted1);
     free(splitted2);

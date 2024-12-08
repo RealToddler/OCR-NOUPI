@@ -193,11 +193,12 @@ void process_word_image(const char *full_path, NeuralNetwork *nn,
   bBoundingBox *letters = letterss.boxes;
   int size = letterss.size;
   int letter_count = 0;
-
+  
   for (int i = 0; i < size; i++) {
-    iImage *letter_image =
-        create_subimage(image, letters[i].min_x, letters[i].min_y,
-                        letters[i].width, letters[i].height);
+
+        iImage *letter_image =
+            create_subimage(image, letters[i].min_x, letters[i].min_y,
+                            letters[i].width, letters[i].height);
     if (letter_image == NULL) {
       fprintf(stderr, "error while creating subimage %d\n", i);
       continue;

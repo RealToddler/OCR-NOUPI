@@ -70,7 +70,7 @@ void draw_diagonal(iImage *img, int xi, int yi, int xf, int yf, cColor color,
     yf = img->height - 1;
   }
   if (mod == 1) {
-    int size = (yf - yi) / ((nb - 1));
+    int size = (yf - yi) / ((nb - 1)) * 0.85;
     draw_line(img, xi, yi, xi + size, yi, color, thickness);
     draw_line(img, xi, yi, xi, yi + size, color, thickness);
     draw_line(img, xi + size, yi, xf + size, yf, color, thickness);
@@ -78,7 +78,7 @@ void draw_diagonal(iImage *img, int xi, int yi, int xf, int yf, cColor color,
     draw_line(img, xf, yf + size, xf + size, yf + size, color, thickness);
     draw_line(img, xf + size, yf, xf + size, yf + size, color, thickness);
   } else {
-    int size = (yf - yi) / (2 * (nb - 1));
+    int size = (yf - yi) / (2 * (nb - 1)) * 1.2f;
     draw_line(img, xi, yi, xi + size, yi, color, thickness);
     draw_line(img, xi + size, yi, xi + size, yi + size, color, thickness);
     draw_line(img, xi + size, yi + size, xf + size, yf + size, color,

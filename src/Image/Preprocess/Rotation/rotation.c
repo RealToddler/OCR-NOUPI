@@ -30,7 +30,7 @@ void rotate_point(double x, double y, double center_x, double center_y,
 }
 
 /*
-
+  Its name talks for itself
 */
 void compute_new_dimensions(unsigned int width, unsigned int height,
                             double angle_deg, unsigned int *new_width,
@@ -44,6 +44,9 @@ void compute_new_dimensions(unsigned int width, unsigned int height,
   *new_height = (unsigned int)(width * sin_theta + height * cos_theta);
 }
 
+/*
+  Its name talks for itself
+*/
 iImage *rotate_image(iImage *image, double angle_deg) {
 
   unsigned int width = image->width;
@@ -115,7 +118,7 @@ iImage *rotate_image(iImage *image, double angle_deg) {
 }
 
 /*
-
+  Its name talks for itself
 */
 void detect_edges(iImage *image, double **edges, double **angles) {
   unsigned int width = image->width;
@@ -157,7 +160,7 @@ void detect_edges(iImage *image, double **edges, double **angles) {
 }
 
 /*
-
+  Its name talks for itself
 */
 double find_dominant_angle(double **edges, double **angles, unsigned int width,
                            unsigned int height) {
@@ -196,7 +199,7 @@ double find_dominant_angle(double **edges, double **angles, unsigned int width,
 }
 
 /*
-
+  Its name talks for itself
 */
 double determine_rotation_angle(iImage *image) {
   unsigned int width = image->width;
@@ -232,7 +235,7 @@ double determine_rotation_angle(iImage *image) {
 }
 
 /*
-
+  Its name talks for itself
 */
 char *rotate_image_auto(char *path) {
   iImage *image = load_image(path, -1);
